@@ -22,6 +22,7 @@
 
 #include <boost/program_options/value_semantic.hpp>
 #include <boost/any.hpp>
+#include <boost/version.hpp>
 #include <functional>
 #include <vector>
 #include <string>
@@ -60,6 +61,11 @@ public:
     /// There are no tokens for an accumulator_type
     virtual unsigned min_tokens() const { return 0; }
     virtual unsigned max_tokens() const { return 0; }
+
+#if BOOST_VERSION >= 105900
+    /// There are no tokens, so this is indifferent.
+    virtual bool adjacent_tokens_only() const { return false; }
+#endif
 
     /// Accumulating from different sources is silly.
     virtual bool is_composing() const { return false; }

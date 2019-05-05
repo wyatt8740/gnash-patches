@@ -418,8 +418,8 @@ public:
             _ras.add_path(stroke);
 
             // Set the color and render the scanlines
-            _renderer.color(agg::rgba8_pre(color.m_r, color.m_g, 
-                        color.m_b, color.m_a));
+            _renderer.color(agg::rgba8(color.m_r, color.m_g, 
+                        color.m_b, color.m_a).premultiply());
 
             agg::render_scanlines(_ras, sl, _renderer);
 
@@ -553,7 +553,7 @@ public:
     
     // cloning image accessor is used to avoid disturbing pixels at
     // the edges for rotated video. 
-    typedef agg::image_accessor_clone<SourceFormat> Accessor;
+    typedef agg::image_accessor_clone<const SourceFormat> Accessor;
 
     /// Types used for different quality.
     //
@@ -615,7 +615,7 @@ private:
         }
         else {
             // Untested.
-            typedef agg::scanline_u8_am<agg::alpha_mask_gray8> Scanline;
+            typedef agg::scanline_u8_am<const agg::alpha_mask_gray8> Scanline;
             Scanline sl(masks.back().getMask());
             renderScanlines(path, rbase, sl, sg);
         }
@@ -852,7 +852,7 @@ public:
     // clear the stage using the background color
     if ( ! _clipbounds.empty() )
     {
-        const agg::rgba8& col = agg::rgba8_pre(bg.m_r, bg.m_g, bg.m_b, bg.m_a);
+        const agg::rgba8& col = agg::rgba8(bg.m_r, bg.m_g, bg.m_b, bg.m_a).premultiply();
         for (const auto& bounds : _clipbounds)
         {
             clear_framebuffer(bounds, col);
@@ -981,7 +981,7 @@ public:
         }
         else {
             // Mask is active!
-            typedef agg::scanline_u8_am<agg::alpha_mask_gray8> sl_type;
+            typedef agg::scanline_u8_am<const agg::alpha_mask_gray8> sl_type;
             sl_type sl(_alphaMasks.back().getMask());      
             lr.render(sl, stroke, color);
         }
@@ -1425,7 +1425,7 @@ public:
     
       // Mask is active, use alpha mask scanline renderer
       
-      typedef agg::scanline_u8_am<agg::alpha_mask_gray8> scanline_type;
+      typedef agg::scanline_u8_am<const agg::alpha_mask_gray8> scanline_type;
       
       scanline_type sl(_alphaMasks.back().getMask());
       
@@ -1538,7 +1538,7 @@ public:
       // Woohoo! We're drawing a nested mask! Use the previous mask while 
       // drawing the new one, the result will be the intersection.
       
-      typedef agg::scanline_u8_am<agg::alpha_mask_gray8> scanline_type;
+      typedef agg::scanline_u8_am<const agg::alpha_mask_gray8> scanline_type;
       
       scanline_type sl(_alphaMasks[mask_count - 2].getMask());
       
@@ -1632,7 +1632,7 @@ public:
     
       // Mask is active, use alpha mask scanline renderer
       
-      typedef agg::scanline_u8_am<agg::alpha_mask_gray8> scanline_type;
+      typedef agg::scanline_u8_am<const agg::alpha_mask_gray8> scanline_type;
       
       scanline_type sl(_alphaMasks.back().getMask());
       
@@ -1740,7 +1740,7 @@ public:
         ras.add_path(stroke);
         
         rgba color = cx.transform(lstyle.get_color());
-        ren_sl.color(agg::rgba8_pre(color.m_r, color.m_g, color.m_b, color.m_a));       
+        ren_sl.color(agg::rgba8(color.m_r, color.m_g, color.m_b, color.m_a).premultiply());       
                 
         agg::render_scanlines(ras, sl, ren_sl);
         
@@ -1812,7 +1812,7 @@ public:
       // fill polygon
       if (fill.m_a>0) {
         ras.add_path(path);
-        ren_sl.color(agg::rgba8_pre(fill.m_r, fill.m_g, fill.m_b, fill.m_a));
+        ren_sl.color(agg::rgba8(fill.m_r, fill.m_g, fill.m_b, fill.m_a).premultiply());
         
         agg::render_scanlines(ras, sl, ren_sl);
       }
@@ -1823,7 +1823,7 @@ public:
         
         stroke.width(1);
         
-        ren_sl.color(agg::rgba8_pre(outline.m_r, outline.m_g, outline.m_b, outline.m_a));
+        ren_sl.color(agg::rgba8(outline.m_r, outline.m_g, outline.m_b, outline.m_a).premultiply());
         
         ras.add_path(stroke);
         
@@ -1841,7 +1841,7 @@ public:
     
       // apply mask
       
-      typedef agg::scanline_u8_am<agg::alpha_mask_gray8> sl_type; 
+      typedef agg::scanline_u8_am<const agg::alpha_mask_gray8> sl_type; 
       
       sl_type sl(_alphaMasks.back().getMask());
          

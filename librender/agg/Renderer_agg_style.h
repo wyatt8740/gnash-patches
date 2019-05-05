@@ -614,8 +614,8 @@ struct AddStyles : boost::static_visitor<>
 
         // add the color to our self-made style handler (basically
         // just a list)
-        _sh.add_color(agg::rgba8_pre(color.m_r, color.m_g, color.m_b,
-                  color.m_a));
+        _sh.add_color(agg::rgba8(color.m_r, color.m_g, color.m_b,
+                  color.m_a).premultiply());
     }
 
     void operator()(const BitmapFill& f) const {
@@ -652,11 +652,11 @@ struct AddStyles : boost::static_visitor<>
 
         if (!bm) {
             // See misc-swfmill.all/missing_bitmap.swf
-            _sh.add_color(agg::rgba8_pre(255,0,0,255));
+            _sh.add_color(agg::rgba8(255,0,0,255).premultiply());
         }
         else if ( bm->disposed() ) {
             // See misc-ming.all/BeginBitmapFill.swf
-            _sh.add_color(agg::rgba8_pre(0,0,0,0));
+            _sh.add_color(agg::rgba8(0,0,0,0).premultiply());
         }
         else {
             _sh.add_bitmap(dynamic_cast<const agg_bitmap_info*>(bm),
