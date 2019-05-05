@@ -175,7 +175,7 @@
 # NOTE that the NPAPI plugin provides an host request FD
 # to send url opening requests to.
 #
-# Default: xdg-open '%u'
+# Default: sensible-browser '%u'
 #
 #set urlOpenerFormat lynx '%u'
 
