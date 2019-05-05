@@ -1,0 +1,2 @@
+application/x-shockwave-flash; gnash %s; test=test -n "$DISPLAY"; description=Shockwave Flash file; nametemplate=%s.swf; priority=2
+application/futuresplash; gnash %s; test=test -n "$DISPLAY"; description=FutureSplash Flash file; nametemplate=%s.spl; priority=2

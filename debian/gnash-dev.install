@@ -1,0 +1,8 @@
+usr/include/gnash
+usr/lib/gnash/libgnashamf.so
+usr/lib/gnash/libgnashbase.so
+usr/lib/gnash/libgnashcore.so
+usr/lib/gnash/libgnashmedia.so
+usr/lib/gnash/libgnashnet.so
+usr/lib/gnash/libgnashrender.so
+usr/lib/pkgconfig/*

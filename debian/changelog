@@ -1,0 +1,1209 @@
+gnash (0.8.11~git20160608-1.4) unstable; urgency=medium
+
+  * Non-maintainer upload.
+
+  [ Steve Langasek ]
+  * Add agg-2.4-r127-compatibility.patch from Ubuntu:
+    - fix compatibility with agg 2.4r127. (Closes: #853424)
+
+  [ Jeremy Bicha ]
+  * Build without gconf support
+  * Remove Gabriele Giacone from Uploaders. Thank you for your contributions!
+    (Closes: #856756)
+  * Have gnucash-dev Suggest gnash-doc (Closes: #827372)
+
+ -- Jeremy Bicha <jbicha@debian.org>  Mon, 26 Mar 2018 22:49:53 -0400
+
+gnash (0.8.11~git20160608-1.3) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Switch from libmysqlclient-dev to default-libmysqlclient-dev.
+    (Closes: #845847)
+
+ -- Markus Koschany <apo@debian.org>  Tue, 20 Dec 2016 21:44:00 +0100
+
+gnash (0.8.11~git20160608-1.2) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Disable Build-Depends on ming (Closes: #827462)
+
+ -- Ondřej Surý <ondrej@debian.org>  Mon, 05 Dec 2016 14:51:57 +0100
+
+gnash (0.8.11~git20160608-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * debian/patches/fix-boost-1.60.patch (Closes: #833776):
+    - fix build failure with upstream patch for boost 1.60
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Thu, 11 Aug 2016 14:41:14 +0200
+
+gnash (0.8.11~git20160608-1) unstable; urgency=medium
+
+  * New upstream snapshot.
+    + Includes fix for crash in ExternalInterface. (Closes: #811106)
+  * Delete 01ffmpeg_2.9.patch - fixed upstream.
+
+ -- Tim Retout <diocles@debian.org>  Wed, 08 Jun 2016 23:33:20 +0100
+
+gnash (0.8.11~git20160109-1) unstable; urgency=medium
+
+  * New upstream snapshot.
+  * Fix FTBFS with ffmpeg 2.9 (Closes: #803819). Thanks Andreas Cadhalpun.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Sat, 09 Jan 2016 14:58:48 +0100
+
+gnash (0.8.11~git20150419-3) unstable; urgency=medium
+
+  * Run dpkg-vendor at build time (Closes: #792464).
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Thu, 16 Jul 2015 02:11:02 +0200
+
+gnash (0.8.11~git20150419-2) unstable; urgency=medium
+
+  * Remove gst0.10 build-deps, it doesn't support gst1.0.  Build only
+    ffmpeg/libav media handler.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Wed, 13 May 2015 12:53:42 +0200
+
+gnash (0.8.11~git20150419-1) unstable; urgency=medium
+
+  * New upstream snapshot.
+  * Bump Standards-Version to 3.9.6 (no changes).
+  * Fix alternative system on ubuntu (LP: #1266088).
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Sun, 19 Apr 2015 15:14:31 +0200
+
+gnash (0.8.11~git20140708-3) unstable; urgency=medium
+
+  * Fix libgnashsound.so install, FTBFS on hurd.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Thu, 10 Jul 2014 10:26:09 +0200
+
+gnash (0.8.11~git20140708-2) unstable; urgency=medium
+
+  * Install libgnashsound.so on !hurd-any.
+  * Borrow #733890 patch to try to fix build on powerpc* and mips*.
+  * docs: install missing rtmp.png image.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Wed, 09 Jul 2014 01:27:44 +0200
+
+gnash (0.8.11~git20140708-1) unstable; urgency=medium
+
+  * New upstream snapshot.
+    + Remove libboost-thread-dev B-D, switched to std::thread.
+  * Add --enable-sound=none configure option on hurd.
+  * Make testsuite failures more verbose.
+  * Switch from xulrunner-dev to npapi-sdk-dev B-D (Closes: #752836).
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Tue, 08 Jul 2014 20:32:19 +0200
+
+gnash (0.8.11~git20140419-1) unstable; urgency=medium
+
+  * New upstream snapshot.
+  * Enable testsuite.
+    + Do not remove sourceless SWF files from upstream tarball anymore,
+      override lintian tag.
+    + Add csound, haxe, libming-dev, libming-util, mtasc, swfmill,
+      swftools as B-D.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Sat, 19 Apr 2014 10:02:46 +0200
+
+gnash (0.8.11~git20140319+dfsg-1) unstable; urgency=medium
+
+  * New upstream snapshot.
+    + Support libav10 (Closes: #739303).
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Wed, 19 Mar 2014 12:53:19 +0100
+
+gnash (0.8.11~git20140121+dfsg-1) unstable; urgency=medium
+
+  * Git snapshot.
+    + Remove cookie files when child dies (Closes: #679116).
+  * Remove sourceless SWF files from upstream tarball (Closes: #736190).
+  * Bump Standards-Version to 3.9.5 (no changes).
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Tue, 21 Jan 2014 19:57:42 +0100
+
+gnash (0.8.11~git20130903-3) unstable; urgency=low
+
+  * Fix memory leak introduced by recent audio resampling changes in ffmpeg
+    media handler (Closes: #575089).
+  * Enable jemalloc on kfreebsd-*.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Tue, 10 Sep 2013 00:23:04 +0200
+
+gnash (0.8.11~git20130903-2) unstable; urgency=low
+
+  * B-D on libjemalloc-dev on linux-any only.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Tue, 03 Sep 2013 23:36:35 +0200
+
+gnash (0.8.11~git20130903-1) unstable; urgency=low
+
+  * Git snapshot.
+    + Embedded jemalloc copy has been replaced by system one.
+      - Add libjemalloc-dev to B-D.
+      - Disable jemalloc on hurd and kfreebsd-*. No longer disabled upstream.
+    + ffmpeg/libav internal resampler replaced with external resampling library.
+      - Add libavresample-dev to B-D.
+  * Add gnash-cygnal to gnash-dev runtime deps (Closes: #715067)
+  * Switch to dh compatibility 9.
+    + Remove hardening-wrapper from B-D.
+  * Make Vcs-* fields canonical.
+  * Bump Standards-Version to 3.9.4 (no changes).
+  * Remove DMUA flag.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Tue, 03 Sep 2013 18:24:18 +0200
+
+gnash (0.8.11~git20120629-1) unstable; urgency=low
+
+  * Git snapshot.
+    + IPv6 support.
+    + Fix FTBFS with gcc 4.7 and clang.
+    + Fix opening of external URL with gnash standalone.
+  * Remove gstreamer0.10-fluendo-mp3 from runtime deps (Closes: #679527).
+  * Use sensible-browser instead of xdg-open (Closes: #597195).
+  * Set NoDiplay=true in desktop icons (Closes: #679573). 
+  * Switch source and binary to xz compression.
+  * Remove gcc4.7 and CVE-2012-1175 patches.
+  * Add hardening lintian overrides.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Sat, 30 Jun 2012 02:35:32 +0200
+
+gnash (0.8.10-6) unstable; urgency=low
+
+  * Fix FTBFS with gcc4.7 (Closes: #672621).
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Mon, 14 May 2012 01:46:12 +0200
+
+gnash (0.8.10-5) unstable; urgency=low
+
+  * Fix CVE-2012-1175 (Closes: #664023).
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Thu, 15 Mar 2012 03:04:37 +0100
+
+gnash (0.8.10-4) unstable; urgency=low
+
+  * B-D on libpng-dev for libpng15 transition (Closes: #662353).
+  * Bump Standards-Version to 3.9.3 (no changes).
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Mon, 05 Mar 2012 13:11:02 +0000
+
+gnash (0.8.10-3) unstable; urgency=low
+
+  * Fix CXX optimization (Closes: #659495).
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Sat, 11 Feb 2012 16:48:45 +0100
+
+gnash (0.8.10-2) unstable; urgency=low
+
+  * Fix cygnal upgrade (Closes: #659095).
+  * Suggest browser-plugin-lightspark, mention in d/README.Debian (Closes:
+    #652092).
+  * Update d/README.Debian.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Thu, 09 Feb 2012 02:26:34 +0100
+
+gnash (0.8.10-1) unstable; urgency=low
+
+  * New upstream release.
+    + Fix CVE-2011-4328 (Closes: #649384).
+    + Fix parsing of lossless 15bit bitmaps (Closes: #634867).
+  * Add Gnome 3 thumbnailer.
+  * Add libboost-iostreams-dev and libgconf2-dev build deps.
+  * Transition to dh_python2.
+  * Fix d/copyright according to DEP-5.
+  * Remove dash escaping in manpages (Closes: #640107).
+  * Add noapidoc and nocheck build options.
+  * Move cygnal-only libs to cygnal package.
+  * Add revno.h generation to get-source target.
+  * Replace upstream changelog with upstream NEWS.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Wed, 08 Feb 2012 03:48:11 +0100
+
+gnash (0.8.10~git20111001-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix "FTBFS (npapi/plugin.cpp)": add patch fix-const.patch from peter green
+    (adds const quailifiers to function signatures).
+    Also clean up properly in debian/rules.
+    (Closes: #651625)
+
+ -- gregor herrmann <gregoa@debian.org>  Wed, 11 Jan 2012 18:19:34 +0100
+
+gnash (0.8.10~git20111001-1) unstable; urgency=low
+
+  * Git snapshot.
+    + Build against libav (Closes: #638247, #643614).
+  * Wrap-and-sorted (Closes: #632753).
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Sat, 01 Oct 2011 21:23:24 +0200
+
+gnash (0.8.10~git20110618-3) unstable; urgency=low
+
+  * Remove opengl renderer. 
+  * Enable hardening.
+  * Add libxv-dev as B-D (Closes: #518520, #620840).
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Fri, 01 Jul 2011 01:25:45 +0200
+
+gnash (0.8.10~git20110618-2) unstable; urgency=low
+
+  * Add multiarch support (02multiarch).
+  * Fix cygnal manpage (01cygnalman).
+  * lintian:
+    + Another hyphen-used-as-minus-sign fix.
+    + Fix python-debug-in-wrong-location tag.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Tue, 21 Jun 2011 21:51:19 +0200
+
+gnash (0.8.10~git20110618-1) unstable; urgency=low
+
+  * Git snapshot.
+    + Fix dash escaping (Closes: #620197).
+    + Fix g/g-tools deps on mysql (Closes: #616028).
+  * Bump Standards-Version to 3.9.2 (no changes).
+  * Add libspeexdsp-dev as B-D.
+  * Remove 01mysqltypo patch.
+  * Rename kde4 stuff to qt4.
+  * Remove without-included-ltdl config option.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Sun, 19 Jun 2011 00:33:15 +0200
+
+gnash (0.8.9-1) unstable; urgency=low
+
+  * New upstream release.
+  * Add xulrunner-dev to B-D.
+  * Remove gnash-dbg deps on all gnash binaries.
+  * Add 01mysqltypo patch to fix mysql extension linking.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Mon, 21 Mar 2011 02:15:57 +0100
+
+gnash (0.8.9~git20110220-1) unstable; urgency=low
+
+  * Git snapshot.
+    + KDE plugin dir uses lib64 only on Fedora; fixes FTBFS.
+      (Closes: #614229)
+  * debian/control: Add self to Uploaders.
+
+ -- Tim Retout <diocles@debian.org>  Sun, 20 Feb 2011 19:59:31 +0000
+
+gnash (0.8.9~git20110217-1) unstable; urgency=low
+
+  * Git snapshot.
+  * d/copyright: conversion to DEP-5.
+  * d/control: Vcs* fields to git.
+  * d/rules: switch to override_dh_* targets.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Thu, 17 Feb 2011 02:59:02 +0100
+
+gnash (0.8.8-9) unstable; urgency=low
+
+  * Add epoch to swfdec-gnome transitional package.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Tue, 25 Jan 2011 01:08:44 +0100
+
+gnash (0.8.8-8) unstable; urgency=low
+
+  * Fixed spelling in long descriptions (Closes: #608911).
+  * Fixed binnmu-ability.
+  * lintian: added browser-plugin-gnash override.
+  * Removed .po files regeneration from build process (Closes: #605352).
+  * Added patches
+    + 08_sectempfiles: Create configure temporary files in a secure way
+      (CVE-2010-4337).
+    + fixmanpage: Update command options in manpage.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Wed, 19 Jan 2011 01:47:55 +0100 
+
+gnash (0.8.9~git20101219-1) experimental; urgency=low
+
+  * Git snapshot.
+  * Added binary packages:
+    + gnash-dev (development files)
+    + python-gtk-gnash (python bindings)
+    + gnash-ext-fileio (fileio extension)
+    + gnash-ext-mysql (mysql extension)
+    + gnash-ext-lirc (lirc extension)
+  * Debhelper compatibility to 7.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Sun, 19 Dec 2010 19:59:39 +0100
+
+gnash (0.8.8-7) unstable; urgency=low
+
+  * Added patch 07_jemalloc to make kfreebsd-* archs treated like *bsd oses
+    (Closes: #604573).
+  * Transitional packages architecture from any to all (Closes: #603609).
+  * Added patch to fix texinfo docs.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Sun, 28 Nov 2010 20:41:19 +0100
+
+gnash (0.8.8-6) unstable; urgency=low
+
+  * Added patches that fix some upstream bugs
+    + 01_38be50cecc, 02_b3d5da01fb, 03_c22769f0ab
+    + 04_baseuri1, 05_baseuri2
+    + 06_ytfix: youtube videos starts immediately.
+  * Fixed browser-plugin-gnash piuparts error.
+  * Add "DM-Upload-Allowed: yes".
+
+  * Upload sponsored by Petter Reinholdtsen.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Mon, 15 Nov 2010 23:42:26 +0100
+
+gnash (0.8.8-5) unstable; urgency=low
+
+  [ Gabriele Giacone ]
+  * Fixed Section and Priority fields in debian/control
+
+  [ Miriam Ruiz ]
+  * Uploading package to unstable
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Sun, 12 Sep 2010 21:45:04 +0200
+
+gnash (0.8.8-4) experimental; urgency=low
+
+  * Added epoch to swfdec-gnome dummy package for transition.
+  * Renamed mozilla-plugin-gnash package to browser-plugin-gnash.
+  * Reworded short and long descriptions.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Wed, 08 Sep 2010 15:55:21 +0200
+
+gnash (0.8.8-3) experimental; urgency=low
+
+  [ Gabriele Giacone ]
+  * Added reference and user manuals to gnash-common (Closes: #477477).
+    + Added xsltproc, docbook-xsl as Build-Depends.
+  * Added patch fixtypos.patch to fix typos.
+  * Escaped dashes in man pages (lintian tag hyphen-used-as-minus-sign).
+  * Added parallel=n build option.
+  * Added -dbg package for debug symbols.
+  * Added -doc package for API documentation.
+    + Added doxygen as Build-Depends.
+  * Added swfdec-mozilla and swfdec-gnome dummy packages for swfdec transition.
+  * Source format to 3.0 (quilt).
+    + Removed quilt from Build-Depends.
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Sun, 29 Aug 2010 23:07:12 +0200
+
+gnash (0.8.8-2) unstable; urgency=low
+
+  [ Miriam Ruiz ]
+  * Added support for MIME for ShockWave Flash and FutureSplash Flash
+  * Changed Section from utils to video
+  * Removed Robert Millan from uploaders
+  * Added Gabriele to uploaders
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Sun, 29 Aug 2010 05:33:18 +0200
+
+gnash (0.8.8-1) experimental; urgency=low
+
+  [ Miriam Ruiz ]
+  * New Upstream Release
+    - 100% of all YouTube videos should work. If you have problems,
+      delete all YouTube cookies and refresh.
+    - Gnash can switch at runtime between the Cairo, OpenGL, and AGG
+      renderers.
+    - Gnash can switch media handlers at runtime, too, between FFmpeg
+      and Gstreamer,
+    - Gnash can now decode video quickly on hardware compatible with the
+      VAAPI library (a few NVidia, ATI, and Intel graphics processors).
+    - Gnash now compiles faster due to reduced internal dependencies.
+      Scriptable Plugin support so Javascript in the browser can
+      work with ActionScript in Gnash.
+    - Improved input device handling when using a raw framebuffer.
+  * Refreshed patches. Removed patch: build_on_ia64.patch, no longer needed
+  * Modified ./configure parameters: --enable-media='gst,ffmpeg'
+  * Removed get-bzr-source target from debian/rules. Upstream has moved to git
+  * Changed Maintainer to pkg-flash-devel@lists.alioth.debian.org
+
+  [ Gabriele Giacone ]
+  * New desktop files translations.
+    + German (Closes: #557108)
+    + Japanese (Closes: #560706)
+    + Vietnamese (Closes: #576139)
+  * Added Vcs-* fields.
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Sun, 22 Aug 2010 23:19:46 +0200
+
+gnash (0.8.8~bzr20100809.2250-1) experimental; urgency=low
+
+  * New Upstream Release. Downloaded from Bazaar.
+  * Added --enable-hwaccel=none to ./configure
+  * Removed the -opengl packages
+  * Removed --enable-avm2, it doesn't compile otherwise
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Tue, 10 Aug 2010 00:57:51 +0200
+
+gnash (0.8.7-3) unstable; urgency=low
+
+  [ Miriam Ruiz ]
+  * Fixed dependencies so that it compiles against latest boost.
+    Closes: #587967. Closes: #590370
+  * Fixed problem with libtool. CLoses: #523902
+  * Upgraded Standards Version from 3.8.4 to 3.9.1
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Wed, 04 Aug 2010 22:30:19 +0200
+
+gnash (0.8.7-2) unstable; urgency=low
+
+  [ Miriam Ruiz ]
+  * Cleaned up debian/rules a bit
+  * Added patch build_on_ia64.patch. Closes: #571319
+  * Removed csound from recommeds. Closes: #570212
+  * Changed short descriptions so that "aptitude search flash" finds this
+    package. Closes: #522865
+  * Fix debian/*.desktop.in files. Closes: #475853
+  * Thanks to Petter Reinholdtsen <pere@hungry.com>
+  * debian/rules: Added --without-included-ltdl to ./configure. See #559808
+  * Added support for Renesas SH4. Closes: #563167
+  * Updated debian/*.local files. Closes: #548282
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Fri, 19 Feb 2010 23:25:26 +0100
+
+gnash (0.8.7-1) unstable; urgency=low
+
+  [ Miriam Ruiz ]
+  * New upstream release
+    + Automatic and spontaneous screenshots support in all GUIs
+    + Significant memory savings in parsing large XML trees and in
+      some function calls
+    + Enhancements in video streaming
+    + Non blocking load of bitmaps, movies, data
+    + Refactoring to eliminate most static data and get closer to
+      re-entrant VM
+    + Cygnal now supports multiple network connections, handling multiple
+      video streams
+    + Cygnal now supports plugins for server side scripting in C/C++
+  * Refreshed patches
+  * Upgraded Standards-Version from 3.8.3 to 3.8.4
+  * Removed dh_desktop from debian/rules (deprecated)
+  * Upgraded build dependencies
+  * Fixed Watch file. Closes: #570323. Thanks to Sindhudweep Sarkar.
+  * Replaced --enable-media=ffmpeg by --enable-media=gst in ./configure
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Mon, 15 Feb 2010 11:12:23 +0100
+
+gnash (0.8.6-2) unstable; urgency=low
+
+  [ Miriam Ruiz ]
+  * Activate rudimentary AVM2 implementation. Closes: #555044
+  * Added -Wl,--no-add-needed to LDFLAGS.
+    See: http://lists.debian.org/debian-devel/2009/11/msg00099.html
+
+  [ Robert Millan ]
+  * Misc improvements to gnash.desktop.  Thanks Josselin Mouette.
+    Closes: #550181
+  * L10N support for gnash.desktop.  Thanks Josselin Mouette.
+  * Add PO files for Catalan and Castillian languages.
+
+  [ New translations ]
+  * Czech (cs.po) by Michal Simunek
+  * Finnish (fi.po) by Esko Arajärvi
+  * Polish (pl.po) by Wiktor Wandachowicz
+  * Russian (ru.po) by Yuri Kozlov
+  * Swedish (sv.po) by Martin Bagge
+  * Simplified Chinese (zh_CN.po) by 苏运强
+
+ -- Robert Millan <rmh.debian@aybabtu.com>  Thu, 03 Dec 2009 22:25:42 +0100
+
+gnash (0.8.6-1) unstable; urgency=low
+
+  [ Miriam Ruiz ]
+  * New Upstream Release
+    + TextSnapshot, Camera, Microphone, TextField and TextFormat
+      implemented.
+    + ASSetNative, ASSetNativeAccessor, ASconstructor implemented.
+    + New utilities for finding input devices for Camera and Microphone.
+    + PyGTK module support and Custom Gnash GTK widget.
+    + Better A/V synchronization.
+    + Various improvements to text handling and formatting.
+    + Code refactoring:
+    + Fix bitmap smoothing handling in AGG renderer.
+    + Native and built-in functions properly separated, more native
+      functions added.
+    + AmigaOS4 support (gui and sound handler)
+    + Fixes to XMLSocket crash and event order.
+    + Performance improvement for SDL gui.
+    + Corrected timing of various AS events, fixing various SWFs that
+      rely on them.
+    + Rudimentary AVM2 implementation.
+    + Fixed bugs found since since the 0.8.5 release.
+    + Improved RTMP support in Cygnal.
+  * Cleaned debian/rules. Thanks to Felix Salfelder <felix@salfelder.org>
+  * Fixed klash-opengl dependencies. It was not installable.
+  * Upgraded Standards-Version to 3.8.3
+
+  [ Robert Millan ]
+  * Remove hardcoded libqt3-mt dependency.  It was only there for GPLv3
+    compliance, and we don't need it with Qt4.
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Mon, 21 Sep 2009 23:26:59 +0200
+
+gnash (0.8.5-1) unstable; urgency=low
+
+  * New Upstream Release.
+    + Cygnal media server alpha release!
+    + New MIT-SHM and XVideo support for better performance.
+    + Due to better XML parsing compatibility and a minor fix to
+      NetConnection, many more video sites work than in the last
+      release.
+    + Support for saving all streamed (FLV, H264, MP3 etc) and loaded
+      (JPEG, SWF, PNG, GIF) media to disk.
+    + Basic GUI warning messages when media decoding fails (usually
+      missing codecs).
+    + Support for new codecs keeps YouTube support up to date.
+    + Added support for FLV parsing and decoding of H.264 video and
+      AAC audio.
+    + Scaled video smoothing implemented in AS and in default renderer
+      (AGG). YouTube video looks better when Gnash is running with
+      high quality or better.
+    + Support for _quality implemented with user-specified
+      override. (Presently only affects video smoothing in the default
+      renderer).
+    + Made NPAPI plugin quiet, except on plugin-specific errors (to
+      reduce .xsession-errors pollution).
+    + New GUI for KDE4 / Qt4 with SWF properties and Gnash preferences
+      dialog boxes.
+    + Added support for parsing and decoding Speex audio in FLV files
+      using libspeex.
+    + Fix decoding of RAW and UNCOMPRESSED audio with gstreamer media handler
+    + Remoting support generally improved.
+    + Support for Mixed SWF Versions added.
+    + Fixed bugs found since since the 0.8.4 release.
+  * Build depends on automake > 1.10 instead of > 1.9
+  * Added build-dependencies: csound
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Sat, 11 Apr 2009 19:59:30 +0200
+
+gnash (0.8.5~pre20090227-1) experimental; urgency=low
+
+  * New Upstream Release
+  * Using FFMPEG instead of GStreamer
+  * Using KDE4 instead of KDE3
+  * Fixed Build Dependencies accordingly
+  * Added libspeex-dev, libcsound64-dev to Build Dependencies
+  * Removed dependency from help2man and Debian-specific man pages
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Sat, 28 Feb 2009 05:12:12 +0100
+
+gnash (0.8.4-2) unstable; urgency=low
+
+  * Make AGG and OpenGL versions have the same release numbers, so that
+    gnash-tools works again with both gnash-common and gnash-common-opengl
+    Closes: #504048
+  * Added $LD_LIBRARY_PATH to LD_LIBRARY_PATH redefinition in dpkg-shlibdeps
+    to make it properly work with fakeroot.
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Sun, 02 Nov 2008 06:50:32 +0100
+
+gnash (0.8.4-1) unstable; urgency=low
+
+  * New Upstream Release.
+    + Keep Adobe happy with our users and our users happy with us by
+      changing "Flash player" into "SWF player" everywhere.  Adobe
+      claims "Flash" as a trademark and had asked a Linux distributor
+      to fix it.
+    + The popular SWF Twitter badge now renders correctly.
+    + Fix parsing of urls containing multiple question marks
+    + Fix support for movies embedding multiple sound streams
+    + Support for loading PNG and GIF images added.
+    + Improved rendering of SWF movies because of the less visible
+      changes listed below.
+    + Support for writing RGB/RGBA PNG images and JPEG images.
+    + Works with Potlatch OpenStreetMap editor
+    + New 'flvdumper' utility for analyzing FLV video files.
+    + XPI packaging support for Mozilla & Firefox.
+  * Replaced get-cvs-source by get-bzr-source in debian/rules to get latest
+    changes from the Bazaar repository.
+  * Added build dependencies: libungif4-dev, libsdl1.2-dev
+  * Added patch release_version.patch to set release version in all
+    shared objects
+  * Using sng to add png images
+  * Replaced gstreamer0.10-plugins-good by gstreamer0.10-plugins-ugly
+    in recommends
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Sat, 25 Oct 2008 03:34:30 +0200
+
+gnash (0.8.3-6) unstable; urgency=low
+
+  [ Miriam Ruiz ]
+  * Include /usr/lib/mozilla/plugins directory in the package, in case
+    it does not exist. Closes: #495333
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Sat, 16 Aug 2008 18:49:58 +0200
+
+gnash (0.8.3-5) unstable; urgency=low
+
+  [ Miriam Ruiz ]
+  * Reached an agreement between swfdec and gnash maintainers to use
+    the alternatives system to handle the installation of multiple swf player
+    plugins for mozilla. The common name for the alternatives link and for the
+    plugin will be flash-mozilla.so.
+  * Added debian/postinst and debian/prerm to handle alternatives
+  * Removed direct symbolic links to usr/lib/gnash/libgnashplugin.so in the
+    browsers' plugins directories.
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Tue, 12 Aug 2008 19:21:46 +0200
+
+gnash (0.8.3-4) unstable; urgency=low
+
+  [ Miriam Ruiz ]
+  * Added patch to Remove segfault (Closes: #423865). Thanks to jiiksteri.
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Mon, 14 Jul 2008 15:41:10 +0200
+
+gnash (0.8.3-3) experimental; urgency=low
+
+  [ Miriam Ruiz ]
+  * Added two binary packages to handle opengl rendering backend
+    properly: gnash-opengl and klash-opengl. Closes: #489220
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Fri, 04 Jul 2008 10:04:28 +0200
+
+gnash (0.8.3-2) unstable; urgency=low
+
+  [ Robert Millan ]
+  * Add debian/patches/disable_fvisibility-inlines-hidden.  Fixes build on
+    powerpc/etch.  Thanks Sylvain Beucler.
+  * Only pass --ignore-missing-info to dpkg-shlibdeps when the version
+    we're using supports this option.
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Wed, 02 Jul 2008 22:33:43 +0200
+
+gnash (0.8.3-1) unstable; urgency=low
+
+  [ Miriam Ruiz ]
+  * New Upstream Release. Improvements since 0.8.2 release are:
+    - Native fullscreen support (from AS) implemented.
+    - Long command-line options properly supported.
+    - View detailed movie information from GTK gui.
+    - Added an option in Preferences to initially display a movie
+      as a blank ("Click here to start") screen.
+    - Added "dump" GUI to dump a movie to disk.
+    - Improved Cairo rendering performance.
+    - Fix support for OpenOffice Impress SWF exporter (malformed..)
+  * Added missing Build-Depends libboost-filesystem-dev (Closes: #480634)
+  * Fixed patch do-not-delete-gmo-files
+  * Modified README.Debian file
+  * Generate man pages while building the package
+  * Upgraded Standards-Version to 3.8.0
+    - Added patch target to debian/rules
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Thu, 12 Jun 2008 16:49:26 +0000
+
+gnash (0.8.3~rc2-1) experimental; urgency=low
+
+  [ Miriam Ruiz ]
+  * New Upstream Release.
+    -  Garbage Collector usage reduced where appropriate.
+    - Mouse.hide and Mouse.show implemented in GTK.
+    - ActionScript inheritance fixes:
+        + super implemented correctly (still not 100% compatible for SWF7)
+        + implements / instanceof works correctly now
+     - FsCommands quit, fullscreen and showMenu implemented.
+    - FsCommand-to-javascript implemented (plugin).
+    - Minor ActionScript compatibility fixes: String, XML, toLocaleString,
+      int, parseInt. fromCharCode, toString (SWF4) etc.
+    - Fixes to arguments class.
+    - Native fullscreen support (from AS) implemented.
+    - Stage.scaleMode implemented (fixes resizing of various movies).
+    - Stage.align implemented.
+    - Long command-line options properly supported.
+    - Fixes to Date class (platform consistent).
+    - Logging uses boost::format.
+    - View detailed movie information from GTK gui.
+    - Widget to start stopped movies (e.g. when starting in stopped mode)
+    - Improved Win32 support: builds using MinGW/MSYS (cross-compile not
+      tested yet), and initial implementation of npgnash.dll exists.
+    - Sprite handling improved, fixing FlowPlayer and other video SWFs.
+    - TextField handling:
+        + Fix in device font handling (DefineFontInfo tag)
+        + Fix support for DefineFont2 tag (sizes)
+        + Improve TextField support for TextFormat use. 
+    - Improved Cairo rendering performance.
+    - Fix parsing of malformed XML files
+    - Fix support for OpenOffice Impress SWF exporter (malformed).
+    - Fix loading of text / XML with Byte Order Marks.
+    - Minor fix to _x and _y translation.
+    - More functions correctly registered as ASnative.
+    - System.capabilities information expanded.
+    - Jemalloc memory allocator from Mozilla added as an option.
+    - Redesigned and implemented AMF0 support, with the beginning of AMF3
+      support.
+    - Added "dump" GUI to dump video streams to disk.
+    - SWF8 line styles support (both from tag and drawing api) 
+  * Added new patch to fix minor compilation bug: kde_include_types.patch
+  * Removed "DM-Upload-Allowed: yes" from debian/control
+  * Added alternative packages with OpenGL as rendering backend:
+    gnash-common-opengl
+  * Removed bashism in debian/rules (Closes: #484384)
+
+  [ Robert Millan ]
+  * Removed debian/patches/rename_sysgnashrc_to_gnashrc.diff (merged).
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Thu, 05 Jun 2008 11:49:19 +0000
+
+gnash (0.8.3~cvs20080510.1114-1) experimental; urgency=low
+
+  [ Miriam Ruiz ]
+  * Compare libqt3-mt-dev and libqt3-mt with 3:3.3.8 instead of 3.3.8 to check
+    that it's GPLv3 sompatible
+
+  [ Robert Millan ]
+  * New upstream snapshot.
+    + Remove debian/patches/paused-widget.patch (merged).
+    + Replace --with-plugindir with --with-npapi-plugindir and
+      --with-kde-pluginprefix.
+    + Add libgnashnet to gnash-common.install and shlibs.local.
+  * Pass CXXFLAGS to configure script to make DEB_BUILD_OPTIONS=noopt
+    work.  Thanks Willi Mann <willi@wm1.at>.  (Closes: #471833)
+  * Install missing upstream /etc/gnash{,plugin}rc files.
+  * Remove gcc-4.3.patch.  It's apparently not needed anymore (Martin
+    Michlmayr confirmed it).
+  * Use --ignore-missing-info to make dpkg-shlibdeps happy (no big deal
+    for a library package that has zero external dependencies).
+
+ -- Robert Millan <rmh@aybabtu.com>  Sat, 10 May 2008 13:15:09 +0200
+
+gnash (0.8.2-2) unstable; urgency=low
+
+  * Add myself to Uploaders (with Miriam's blessing).
+  * debian/patches/paused-widget.patch: New.  Backport from upstream CVS.
+    Implements a widget for paused mode.  (Closes: #477911)
+  * debian/control (Build-Depends): Remove base-files.  (Closes: #441019)
+
+ -- Robert Millan <rmh@aybabtu.com>  Sun, 27 Apr 2008 14:18:36 +0200
+
+gnash (0.8.2-1) unstable; urgency=low
+
+  [ Miriam Ruiz ]
+  * New Upstream Release: First Beta Version. Closes: #469944
+    Improvements since the 0.8.1 alpha release are:
+    + Improved timeline redesign.
+    + Action execution order fixes.
+    + Keyboard handling improved.
+    + New classes implemented: System.capabilities (partial), SharedObject,
+        LocalConnection.
+    + New opcodes implemented: ActionImplements, Try/Throw.
+    + Movieclip.beginGradientFill completes drawing API support.
+    + MovieClip._lockroot support added.
+    + Implement GET/POST for MovieClip.loadVariables and MovieClip.loadMovie
+    + Textfield support improved.
+    + Security: configurable sandbox restricts filesystem access by movies.
+    + Better support for SWF8.
+    + Streaming OGG-contained multimedia (e.g. vorbis/theora or
+        vorbis/dirac), and other free formats.
+    + OGL and Cairo renderers much improved.
+    + Improvements of the Framebuffer GUI (hide text messages, support
+        Linux events system, built-in touchscreen calibration, simple
+        keyboard support, better architecture support).
+    + SOLdumper utility for reading SOL files ('flash cookies').
+    + DumpShm utility finds and dumps Local Connection memory segments.
+    + Fullscreen display possible.
+    + Extensions for LIRC and DBus.
+    + High quality, cross-platform psuedo-randomness using boost random.
+    + NPAPI (Mozilla) plugin: keyboard events work, navigation and
+        JavaScript from within movies.
+    + Set and save preferences from the GUI (GTK).
+    + Improved stability and robustness with malformed SWFs.
+    + New User manual! Rewritten reference manual, brought up to date.
+    + Many other bugfixes.
+  * Added versioned dependency libqt3-mt >= 3.3.8 to klash binary package
+    to prevent runtime dynamic linking against GPLv2. Closes: #464615
+  * Shortened long description for most of binary packages. Closes: #423594
+  * Updated package descriptions in debian/control and README.Debian file.
+  * Removed mtasc form build dependencies.
+  * Fixed shlibs.local
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Fri, 07 Mar 2008 09:54:08 +0100
+
+gnash (0.8.1+cvs20080212.1133-1) unstable; urgency=low
+
+  [ Miriam Ruiz ]
+  * New Upstream Release. Downloaded from CVS.
+  * Removed full GFDL text from debian/copyright and added link to Debian's
+    version in /usr/share/common-licenses/GFDL-1.2
+  * Added runtime dependency to base-files (>= 4.0.1) to guarantee that it is
+    legally linked against Gnash GPLv3 licensed code (Closes: #441019)
+  * Added Homepage field to debian/control. Removed it from long descriptions.
+  * Updated Standards-Version to 3.7.3.
+  * Added dh_desktop to debian/rules.
+  * Added support for dh-buildinfo.
+  * Added new build dependencies: libboost-serialization-dev, python
+  * Added DM-Upload-Allowed: yes to debian/control to support uploads made
+    by debian maintainers in the uploaders field.
+  * Added patch to disable the testsuite: disable-testsuite.patch
+  * Removed libgnashgeo and libgnashbackend from debian/gnash-common.install
+  * removed gparser from debian/gnash-tools.install
+  * Fixed man pages generation system and built new manpages.
+  * Added proper version numbering, including date, to build results.
+  * Delete po/*.gmo and ./compile in clean target in debian/rules.
+  * Fixed disable-testsuite.patch.
+  * debian/rules: Added make install-plugins to install the plugins.
+  * Added Lintian overrides to ignore warning: description-contains-homepage
+    Keeping Homepage in long description for some time for backports.
+  * Added links from gnash manpage to gtk-gnash, kde-gnash and klash.
+  * Removed unneeded build-deps: libdirectfb-dev
+  * Added versioned build dependency on libqt3-mt-dev >= 3.3.8 to make sure
+    that it is licensed under a GPLv3 compatible license. (Closes: #464615)
+  * Added recommends to gstreamer0.10-gnomevfs in gnash-common
+  * Added patch to fix error in upstream manpage.
+  * Added patch ftbfs-gcc-4.3.patch to solve compilation problems with
+    GCC 4.3. Closes: #455395
+  * Removed the XS prefix from Xs-Vcs-Bzr in debian/control, as it is an
+    official tag now.
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Tue, 12 Feb 2008 11:33:29 +0000
+
+gnash (0.8.1~rc.070818-2.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Add debian/shlibs.local so gnash-tools, gnash-cygnal automatically pick
+    up a dependency on gnash-common (= ${binary:Version}) due to use of
+    the private shared libraries (Closes: #451348); remove resulting duplicate
+    dependency from gnash, klash
+  * Set LD_LIBRARY_PATH while running dpkg-shlibdeps; this and the above
+    fix an unreported FTBFS with new dpkg-shlibdeps versions
+  * Amend changelog for version 0.7.2+cvs20070518.1557-1 to include missing
+    CVE ID CVE-2007-2500 for future reference
+
+ -- Simon McVittie <smcv@ianadd.pseudorandom.co.uk>  Tue, 11 Dec 2007 01:45:07 +0000
+
+gnash (0.8.1~rc.070818-2) unstable; urgency=low
+
+  Upload prepared by by Cyril Brulebois to fix RC bugs:
+
+  [ Cyril Brulebois ]
+  * Deleted the *.gmo from the CLEANFILES in po/Makefile.am to fix package
+    content change on double-build (Closes: #441706). Added the following
+    files into debian/patches to do so:
+     - do-not-delete-gmo-files: one-liner to avoid the deletion.
+     - series: restored series file since there was none left.
+    (Note: po/Makefile.in not patched since it is removed by the clean rules,
+    the patch wouldn't apply if it were modified.)
+  * Updated debian/copyright from GPLv2 to GPLv3 (copyright blurb), and added
+    a versioned dependency on base-files to ensure that the GPL symlink points
+    to the appropriate version, as reported by Robert Millan (Closes: #441019).
+
+ -- Alexander Sack <asac@ubuntu.com>  Mon, 01 Oct 2007 12:28:03 +0000
+
+gnash (0.8.1~rc.070818-1) unstable; urgency=low
+
+  [ Miriam Ruiz ]
+  * debian/control: point Xs-Vcs-Bzr: to Debian release branch
+    http://bzr.debian.org/bzr/pkg-flash/debian.sid
+  * debian/control: break long Build-Depends line into multiple lines
+    for the sake of readability
+  * debian/patches/use_pkglibdir_for_unversioned_libs, debian/patches/series:
+    remove upstream applied patch 'use_pkglibdir_for_unversioned_libs' from bzr
+    and quilt series.
+  * debian/patches/ming_headers.patch, debian/patches/no-kde-ldflags
+    debian/patches/exclude-testsuite-from-built: Removed unneeded patches
+  * debian/rules: make errors in make clean fatal
+  * debian/rules, debian/autogen.sh: Added script to regenerate the autotools
+    building system in case it's not present in the tarball
+  * debian/gnash-common.install: Install libraries whether they're CVS version
+    or not.
+  * debian/rules, debian/gnash-dev.install: Removed references to gnash-dev, as
+    it's not predictable to exist in a near future.
+  * debian/rules, debian/*.install: Modify source so that files to be installed
+    can be referenced from debian/ directory without having to move them.
+  * debian/overrides/* : Added override files for lintian warnings
+  * debian/rules: Comment out dh_makeshlibs, as we're not releasing any public
+    shared library anymore.
+  * debian/rules: Don't copy files from debian/ into debian/tmp: not needed
+    anymore.
+  * debian/*.desktop: Fixed desktop files.
+
+  [ Alexander Sack ]
+  * debian/control: choose sane explicit depends: 'gstreamer0.10-plugins-base,
+    gstreamer0.10-videosink | gstreamer0.10-plugins-good,
+    gstreamer0.10-audiosink | gstreamer0.10-alsa'; promote
+    gstreamer0.10-fluendo-mp3, gstreamer0.10-ffmpeg to recommends as
+    debian has no easy-codec-install backend (yet); fix short
+    description typo.
+  * debian/patches/disable-testsuite: gnash builds now fine without
+    hacking build system to not include testsuite in build
+  * debian/patches/series: drop this patch from quilt series file
+    accordingly.
+
+ -- Alexander Sack <asac@debian.org>  Tue, 21 Aug 2007 13:07:53 +0200
+
+gnash (0.8.1~trunk.070802-1) UNRELEASED; urgency=low
+
+  * debian targetted trunk build 070802 aka preview 0.8.1:
+      bzr repo: https://code.launchpad.net/~vcs-imports/gnash/trunk
+      revno: 5534
+
+ -- Alexander Sack <asac@ubuntu.com>  Thu, 02 Aug 2007 12:30:58 +0000
+
+gnash (0.8.1~trunk.070802-0ubuntu1) UNRELEASED; urgency=low
+
+  Update source for trunk build 070802 aka preview 0.8.1:
+      bzr repo: https://code.launchpad.net/~vcs-imports/gnash/trunk
+      revno: 5534
+  
+  Redo and cleanup packaging in consequence of upstream buildsystem
+  refactoring:
+
+  * debian/rules: dropping obsolete --enable-sound and --enable-mp3 and
+    the bogus --enable-static switch; fixing --enable-gui switch
+  * debian/patches/series: don't apply no-kde-ldflags anymore ... applied
+    upstream
+  * debian/patches/series: don't apply easy-codec-install anymore ... applied
+    upstream
+  * debian/rules: use agg renderer
+  * debian/patches/{disable-testsuite,series}: disable testsuite patch
+  * debian/control: drop firefox-dev from build-depends
+  * debian/patches/*: drop ming headers patch - not used
+  * debian/rules: use enable-gui='gtk,kde'
+  * debian/rules: dropping obsolete --enable-sound and --enable-mp3 and the
+    bogus --enable-static switch; fixing --enable-gui switch
+  * debian/patches/use_pkglibdir_for_unversioned_libs, debian/patches/series:
+    install libs in pkglibdir instead of just libdir - as they are unversioned
+  * reorganize gnash packaging to take upstream changes into account:
+    all common files are now stored in pkglibdir and provided by gnash-common 
+    package; in turn no libgnash0 nor libklash0 package exist anymore; gui
+    code is not linked into the binaries, which are provided by gnash and klash
+    package respectively; since no stable lib api is provided anymore
+    libgnash-dev package is now just gnash-dev (though its currently disabled
+    completely).
+  * debian/gnash-common.install: install those libs we need explicitly to
+    prevent libgnashplugin.so from getting pulled into gnash-common package
+  * debian/rules: don't run dh_makeshlibs for libgnash0 libklash0 anymore ...
+    as they don't exist
+  * debian/control: make gnash-common conflicts/replaces on libklash0,
+    libgnash0, gnash << 0.8.1~
+  * debian/gnash.manpages: remove manpages for gnash package as gnash manpage
+    is now shipped in gnash-common
+  * debian/TODO,debian/overrides/libgnash0,debian/overrides/libklash0:
+    dropping these old/unused files from bzr.
+  
+ -- Alexander Sack <asac@ubuntu.com>  Thu, 02 Aug 2007 09:06:22 +0000
+
+gnash (0.8.0~cvs20070611.1016-1ubuntu3) gutsy; urgency=low
+
+  * Rebuild for the libcurl transition mess.
+
+ -- Steve Kowalik <stevenk@ubuntu.com>  Thu,  5 Jul 2007 01:35:59 +1000
+
+gnash (0.8.0~cvs20070611.1016-1ubuntu2~mt1) feisty; urgency=low
+
+  * feisty backport for mozillateam preview archive
+
+ -- Alexander Sack <asac@ubuntu.com>  Sun, 17 Jun 2007 17:37:00 +0200
+
+gnash (0.8.0~cvs20070611.1016-1ubuntu2) gutsy; urgency=low
+
+  * debian/control: add libgstreamer-plugins-base0.10-dev to fix ftbfs
+
+ -- Alexander Sack <asac@ubuntu.com>  Wed, 13 Jun 2007 09:41:59 +0200
+
+gnash (0.8.0~cvs20070611.1016-1ubuntu1) gutsy; urgency=low
+
+  * debian/patches/gnash_easy_codec_install: initial version of easy codec
+    install patch for gnash
+  * debian/patches/series: adapt quilt series file accordingly
+  * debian/control: adapt Maintainer field for ubuntu upload
+  * debian/control: Depends, Recommends and Suggests for libgnash0 and libklash0
+    changed in preparation of easy-codec-installation:
+       demote gstreamer0.10-fluendo-mp3, gstreamer0.10-ffmpeg from Recommends to Suggests
+       promote gstreamer0.10-plugins-base, gstreamer0.10-alsa from Recommends to Depends
+
+ -- Alexander Sack <asac@ubuntu.com>  Tue, 12 Jun 2007 15:50:37 +0200
+
+gnash (0.8.0~cvs20070611.1016-1) unstable; urgency=low
+
+  * New CVS snapshot 20070611.1016 from release-0-8-0 branch
+  * debian/libklash0.install, debian/control, debian/rules: produce libklash0
+    package and provide proper shlibs version info
+  * debian/patches/ming_headers.patch: resurrect ming_headers patch that was
+    previously reverted
+  * debian/patches/exclude-testsuite-from-built: add patch to exclude
+    testsuite from being build
+  * debian/patches/no-kde-ldflags: take care that gnash binaries don't pull in
+    kde libs/depends
+  * debian/patches/series: update quilt series accordingly
+  * debian/rules: use --enable-renderer=opengl for now in order to build klash
+    without doing hackish stuff> * debian/control: omit extra whitespace before
+    Homepage: line *all* package descriptions
+  * debian/control: drop swfmill from build-depends (since we don't build the
+    testsuite atm)
+  * debian/control: add Alexander Sack <asac@jwsdot.com> to Uploaders field
+  * debian/control: new packages for kde: libklash0 and klash; fix depends of
+    konqueror-plugin-gnash package accordingly
+  * debian/control: drop libsdl1.2-dev, libsdl-mixer1.2-dev, libfltk1.1-dev
+    from build-depends
+  * debian/control: use automake1.9 | automake in Build-Depends
+  * debian/control: don't support gstreamer 0.8 anymore -> drop from Build-Depends
+
+ -- Alexander Sack <asac@jwsdot.com>  Tue, 12 Jun 2007 14:10:00 +0200
+
+gnash (0.7.2+cvs20070525.0721-1) unstable; urgency=low
+
+  * New Upstream Release. Downloaded from CVS.
+  * Added ming_headers.patch patch so that the missing definitions in ming
+    headers are available for the check. Closes: #425888
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Fri, 25 May 2007 07:21:23 +0000
+
+gnash (0.7.2+cvs20070518.1557-1) unstable; urgency=low
+
+  * New Upstream Release. Downloaded from CVS.
+  * Depending on libcurl?-gnutls-dev instead of libcurl?-openssl-dev for
+    not depending on OpenSSL (incompatible with GPL license). Closes: #423884
+  * Closes: #423433 , memory corruption vulnerability in gnash, due to a out
+    of bounds memory access ( http://savannah.gnu.org/bugs/?19774,
+    CVE-2007-2500 )
+  * gstreamer0.10-audiosink is a virtual package, modifying control.
+  * Updated dependencies to use libcurl4 instead of libcurl3.
+  * Depending on swfmill for check (as well as from ming and mtasc)
+  * Make check is fatal error now.
+  * Upload sponsored by Petter Reinholdtsen.
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Fri, 18 May 2007 15:57:38 +0000
+
+gnash (0.7.2+cvs20070512.1527-1) unstable; urgency=low
+
+  * New Upstream Release. Downloaded from CVS.
+    + YouTube seems to be working now
+      http://lists.gnu.org/archive/html/gnash-dev/2007-05/msg00000.html
+  * Enabled gstreamer in configure: --enable-gstreamer --enable-media=gst
+  * Changed to use AGG renderer now: --enable-renderer=agg
+  * Added build dependency: libagg-dev
+  * gstreamer0.10-plugins-base, gstreamer0.10-alsa, gstreamer0.10-ffmpeg,
+    and gstreamer0.10-audiosink are needed for YouTube. Added as recommends
+      http://www.mail-archive.com/gnash@gnu.org/msg00624.html
+  * Added gstreamer0.10-fluendo-mp3 to recommends in libgnash0
+  * Upload sponsored by Petter Reinholdtsen.
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Sat, 12 May 2007 17:27:45 +0200
+
+gnash (0.7.2+cvs20070428.1515-2) experimental; urgency=low
+
+  * Added binary package: cygnal (media server)
+  * Upload sponsored by Petter Reinholdtsen.
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Sat, 28 Apr 2007 21:45:12 +0200
+
+gnash (0.7.2+cvs20070428.1515-1) unstable; urgency=low
+
+  * New Upstream Release. Downloaded from CVS.
+  * Added dependencies: libtool, libltdl3, libboost-date-time-dev,
+    libavcodec-dev, libavformat-dev
+  * Added dependencies for checking: libming-dev, libming-util, mtasc
+  * Removed binary package: klash (KDE-based standalone player)
+  * Added binary package: cygnal (media server)
+  * Added #include <cctype> to server/StringPredicates.h so that it
+    compiles with gcc 4.3. Patch: gcc4.3.patch (Closes: #417210)
+  * Added link to iceweasel plugins directory (Closes: #399920)
+  * Upload sponsored by Petter Reinholdtsen.
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Thu, 26 Apr 2007 10:29:52 +0200
+
+gnash (0.7.2-1) unstable; urgency=low
+
+  * New Alpha Release from Upstream:
+    + Polling main loop replaced with event driven framework for GTK.
+    + New GUI abstraction layer supporting GTK2, KDE, SDL, and a bare
+      framebuffer.
+    + Movies are parsed by a background thread, so they start playing
+      while still loading.
+    + Plugin supports web navigation and starts playing while the stream
+      is loading.
+    + New AntiGrain (AGG) 2D backend added for framebuffer devices without
+      OpenGL support.
+    + New Framebuffer GUI for devices without X11.
+    + Sound now works using ffmpeg, Gstreamer, or libMad.
+    + Supports cross configuration and cross compiling for embedded targets.
+    + A whole slew of minor bugs that kept various movies from playing.
+
+  * Upload sponsored by Petter Reinholdtsen.
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Sat, 18 Nov 2006 11:57:04 +0000
+
+gnash (0.7.1+cvs20061014.1744-1) unstable; urgency=low
+
+  * New Upstream Release. Downloaded from CVS.
+  * New soundhandler for gnash. It uses SDL (not SDL_mixer) for
+    soundhandling, uses ffmpeg or libmad for mp3 decoding and replaces
+    the old SDL_mixer based soundhandler. Changed --enable-sound=sdl in
+    configure.
+  * Changed Firefox plugin directory from /usr/lib/mozilla-firefox/plugins/
+    to /usr/lib/firefox/plugins/
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Sat, 14 Oct 2006 17:45:57 +0000
+
+gnash (0.7.1+cvs20061006.1521-1) unstable; urgency=low
+
+  * New Upstream Release. Downloaded from CVS.
+  * Added usr/lib/kde3/libklashpart.la to konqueror-plugin-gnash so that
+    Konqueror can detect the plugin. Thanks to J.Rinas <jrinas@gmx.de>.
+    Closes: #384477. Closes: #389445.
+  * Added --without-gcc-arch to ./configure in debian/rules so that the
+    build script don't pass options like "-march=prescot" to gcc even if
+    the CPU of the build system supports those. Thanks to Timo Juhani
+    Lindfors <timo.lindfors@iki.fi>. Closes: #390919
+  * Added libboost-dev and libboost-thread-dev to Build-Depends.
+  * Added cmdline.patch to solve problem of cmdline parser failure
+    with "a=b.swf". Thanks to Robert Millan <rmh@aybabtu.com>.
+    Closes: #383770
+  * Removed patches: amf.patch getopt.patch
+  * Leaving the CVS dirs in package. They might be useful for updating the
+    source tree for testing stuff. Closes: #390283
+  * Added make check to debian/rules, even though the build won't stop if
+    failures are found.
+  * Beautify debian/rules so that output can be more easily analyzed.
+
+  * Upload sponsored by Petter Reinholdtsen.
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Fri,  6 Oct 2006 17:22:59 +0200
+
+gnash (0.7.1+cvs20060924.1330-1) unstable; urgency=low
+
+  * New Upstream Release. Downloaded from CVS.
+  * Modified building system for using quilt.
+  * Added gnash dependency to mozilla-plugin-gnash. Closes: #389141
+  * Added libfltk1.1-dev as a build dependency.
+  * Modified desktop files, they had a wrong program name. Closes: #384628
+  * Added copyright notice for Bitstream Vera Fonts to debian/copyright
+
+  * Upload sponsored by Petter Reinholdtsen.
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Sun, 24 Sep 2006 15:31:43 +0200
+
+gnash (0.7.1+cvs20060920.2136-1) unstable; urgency=low
+
+  * New Upstream Release. Downloaded from CVS.
+  * Added build dependency: libcurl3-gnutls-dev | libcurl3-openssl-dev
+  * Temporarily removed the -dev package until the API + ABI are more stable
+  * Temporarily added a versioned dependency on libgnash0
+  * Make package bin-NMU-able by using ${binary:Version} and Build-Depend on
+    dpkg-dev (>= 1.13.19)
+
+  * Upload sponsored by Petter Reinholdtsen.
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Wed, 20 Sep 2006 21:37:43 +0000
+
+gnash (0.7.1+cvs20060820.2237-1) experimental; urgency=low
+
+  * New Upstream Release. Downloaded from CVS.
+  * Added icon and .desktop file shortcut.
+  * Build-Depend on libxul-dev instead of mozilla-dev.
+  * Made minor modifications to the code to make it compile.
+  * Updated Standards-Version to 3.7.2 (no changes needed).
+  * Upstream confirms that the code that kills the processes has
+    been rewritten.  Closes: #374996
+
+  * Upload sponsored by Petter Reinholdtsen.
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Mon, 21 Aug 2006 00:38:53 +0200
+
+gnash (0.7.1-1) experimental; urgency=low
+
+  * Initial release. Closes: #347352
+
+  * Upload sponsored by Petter Reinholdtsen.
+
+ -- Miriam Ruiz <little_miry@yahoo.es>  Sun,  7 May 2006 00:54:46 +0000

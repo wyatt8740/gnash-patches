@@ -1,0 +1,14 @@
+Document: gnashref
+Title: Gnash Reference Manual
+Author: Rob Savoye <rob@openmedianow.org>
+Abstract: This manual is primarily focused on Gnash technical details
+Section: Video
+
+Format: HTML
+Index: /usr/share/doc/gnash-common/gnashref.html
+Files: /usr/share/doc/gnash-common/gnashref.html
+ /usr/share/doc/gnash-common/images/rtmp.png
+
+Format: Info
+Index: /usr/share/info/gnash_ref.info.gz
+Files: /usr/share/info/gnash_ref.info.gz

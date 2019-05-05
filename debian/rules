@@ -1,0 +1,167 @@
+#!/usr/bin/make -f
+#export DH_VERBOSE=1
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+export DEB_CFLAGS_MAINT_APPEND  = -Wall -Werror-implicit-function-declaration
+export DEB_CXXFLAGS_MAINT_APPEND  = -Wall
+export DEB_LDFLAGS_MAINT_APPEND = -Wl,--no-add-needed
+
+DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+DEB_BUILD_ARCH      ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
+
+MAIN_VERSION = $(shell dpkg-parsechangelog|sed -n '/^Version/{s/Version: \(.*\)/\1/p}')
+BUILD_VERSION = $(shell echo $(MAIN_VERSION)|sed -n 's/\([0-9.]*\)[-+~].*/\1/p')
+
+INFILES   := $(wildcard debian/*.desktop.in)
+OUTFILES  := $(INFILES:.desktop.in=.desktop)
+MANPTOFIX := $(addprefix debian/tmp/usr/share/man/man1/, $(notdir $(basename $(wildcard doc/C/preformatted/*.1.in))))
+OBJDIR    := $(CURDIR)/tmp.build
+
+ifneq (,$(filter $(DEB_BUILD_ARCH),powerpc powerpcspe mips mipsel))
+export DEB_LDFLAGS_MAINT_APPEND += -latomic
+endif
+
+%.desktop: %.desktop.in
+	intltool-merge -d debian/po $< $@
+
+%:
+	dh $@ --builddirectory=$(OBJDIR) --with python2
+
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+       export MAKEFLAGS = -j$(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+endif
+
+CONFIGURE_FLAGS = \
+		--host=$(DEB_HOST_GNU_TYPE) \
+		--build=$(DEB_BUILD_GNU_TYPE) \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		--enable-testsuite \
+		--without-swfdec-testsuite \
+		--disable-dependency-tracking \
+		--disable-rpath \
+		--enable-cygnal \
+		--enable-python \
+		--enable-media=ffmpeg \
+		--enable-gui=gtk,qt4,dump \
+		--enable-renderer=agg,cairo \
+		--enable-docbook \
+		--enable-extensions=fileio,lirc,mysql \
+		--with-npapi-plugindir=/usr/lib/gnash \
+		--with-plugins-install=system \
+		--enable-shared=yes \
+		--without-gconf \
+		--without-ming
+
+ifneq (,$(filter hurd-%,$(DEB_BUILD_ARCH)))
+	CONFIGURE_FLAGS += --disable-jemalloc --enable-sound=none
+endif
+
+ifeq ($(shell dpkg-vendor --derives-from Ubuntu && echo yes),yes)
+	ALTLINK=/usr/lib/mozilla/plugins/flashplugin-alternative.so
+	ALTNAME=mozilla-flashplugin
+else
+	ALTLINK=/usr/lib/mozilla/plugins/flash-mozilla.so
+	ALTNAME=flash-mozilla.so
+endif
+INFILES := $(wildcard debian/browser-plugin-gnash.*.in)
+GENERATED := $(INFILES:.in=)
+
+$(GENERATED):
+	sed -e "s#@ALTLINK@#$(ALTLINK)#" -e "s#@ALTNAME@#$(ALTNAME)#" $@.in > $@
+
+override_dh_auto_configure:
+	./autogen.sh
+	mkdir -p $(OBJDIR)
+	@echo CFLAGS=$(CFLAGS)
+	@echo CPPFLAGS=$(CPPFLAGS)
+	@echo CXXFLAGS=$(CXXFLAGS)
+	@echo LDFLAGS=$(LDFLAGS)
+	cd $(OBJDIR) && ../configure $(CONFIGURE_FLAGS)
+	-cp revno.h $(OBJDIR)
+
+override_dh_auto_build: $(OUTFILES)
+	$(MAKE) -C $(OBJDIR) VERSION="$(BUILD_VERSION)"
+ifeq (,$(filter noapidoc,$(DEB_BUILD_OPTIONS)))
+	$(MAKE) -C $(OBJDIR) apidoc
+else
+	mkdir -p $(OBJDIR)/doc/apidoc
+endif
+	cd debian && for i in *.sng; do sng "$$i"; done
+
+override_dh_auto_test:
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+	-$(MAKE) -C $(OBJDIR) check
+	-$(MAKE) -C $(OBJDIR) anal MODE=verbose
+endif
+
+override_dh_installchangelogs:
+	dh_installchangelogs NEWS
+
+override_dh_auto_install: $(GENERATED)
+	$(MAKE) -C $(OBJDIR) install DESTDIR=$(CURDIR)/debian/tmp
+	$(MAKE) -C $(OBJDIR) install-plugins DESTDIR=$(CURDIR)/debian/tmp
+
+	# dh_buildinfo output only in gnash-common
+	dh_buildinfo -pgnash-common
+
+	dh_lintian
+
+	sed -i -e '/^Icon/s/klash/gnash/' -e '$$aNoDisplay=true' \
+		debian/tmp/usr/share/applications/*.desktop
+
+	printf "\n == LIST OF FILES =============================================== \n\n"
+	cd $(CURDIR)/debian/tmp && find
+	printf "\n -------------------------------------- End of LIST OF FILES ---- \n\n"
+
+ifeq (,$(filter hurd-%,$(DEB_BUILD_ARCH)))
+	install -d debian/gnash-common/usr/lib/gnash
+	install debian/tmp/usr/lib/gnash/libgnashsound-*.so debian/gnash-common/usr/lib/gnash
+	install -d debian/gnash-dev/usr/lib/gnash
+	install debian/tmp/usr/lib/gnash/libgnashsound.so debian/gnash-dev/usr/lib/gnash
+endif
+
+	# make info docs load rtmp.png installed under /usr/share/doc/gnash-common
+	sed -i 's/images\/rtmp.png/\/usr\/share\/doc\/gnash-common\/images\/rtmp.png/' \
+		debian/tmp/usr/share/info/gnash_ref.info
+
+override_dh_strip:
+	dh_strip --dbg-package=gnash-dbg
+
+override_dh_gencontrol:
+	dh_gencontrol -Nswfdec-gnome
+	# add epoch to swfdec-gnome for transition
+	dh_gencontrol -pswfdec-gnome -- -v1:$(MAIN_VERSION)
+
+override_dh_makeshlibs:
+	dh_makeshlibs -n
+
+override_dh_auto_clean:
+	rm -f config.guess config.sub configure ltmain.sh gnashconfig.h.in
+	rm -f debian/gnash.png $(OUTFILES) compile
+	rm -rf autom4te.cache libltdl $(OBJDIR) 
+	rm -f aclocal.m4 macros/argz.m4 macros/libtool.m4 macros/lt*.m4
+	rm -f $(GENERATED)
+	find . -name Makefile.in -delete
+	dh_clean
+
+update-po:
+	ls $(INFILES) | sed 's#^#../#' >debian/po/POTFILES.in
+	cd debian/po && intltool-update -g debian --pot && \
+		for i in *.po; do intltool-update -g debian --dist $${i%.po}; done
+	rm -f debian/po/POTFILES.in
+
+VER = $(BUILD_VERSION)~git$(shell date -u '+%Y%m%d')
+TMPDIR = gnash-$(VER)
+get-orig-source:
+	@echo Git cloning gnash $(VER)...
+	git clone --depth 1 git://git.savannah.gnu.org/gnash.git $(TMPDIR)
+	@echo Generating revno.h...
+	@cd $(TMPDIR); \
+	echo "#define BRANCH_REVNO \"`git rev-list HEAD|wc -l`\"" > revno.h; \
+	echo "#define BRANCH_NICK \"`git branch|grep '^\*'|cut -d' ' -f 2`\"" >> revno.h; \
+	echo "#define COMMIT_ID \"`git rev-parse --short HEAD`\"" >> revno.h
+	@echo Generating tarball...
+	cd $(TMPDIR) && tar --exclude .git -Jcf ../../gnash_$(VER).orig.tar.xz .
+	rm -rf $(TMPDIR) && dch -v $(VER)-1 "Git snapshot."

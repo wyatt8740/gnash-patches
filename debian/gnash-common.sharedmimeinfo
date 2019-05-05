@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+	<mime-type type="application/x-shockwave-flash">
+		<comment>Shockwave Flash file</comment>
+		<comment xml:lang="es">Archivo de Shockwave Flash</comment>
+		<glob pattern="*.swf"/>
+		<icon name="gnash"/>
+	</mime-type>
+	<mime-type type="application/futuresplash">
+		<comment>FutureSplash Flash file</comment>
+		<comment xml:lang="es">Archivo de FutureSplash Flash</comment>
+		<glob pattern="*.spl"/>
+		<icon name="gnash"/>
+	</mime-type>
+</mime-info>

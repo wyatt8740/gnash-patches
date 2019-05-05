@@ -1,0 +1,27 @@
+Description: Replace xdg-open with sensible-browser.
+Author: Gabriele Giacone <1o5g4r8o@gmail.com>
+
+--- a/libbase/gnashrc.in
++++ b/libbase/gnashrc.in
+@@ -175,7 +175,7 @@
+ # NOTE that the NPAPI plugin provides an host request FD
+ # to send url opening requests to.
+ #
+-# Default: xdg-open '%u'
++# Default: sensible-browser '%u'
+ #
+ #set urlOpenerFormat lynx '%u'
+ 
+diff --git a/libbase/rc.cpp b/libbase/rc.cpp
+index ef79d6e..2326810 100644
+--- a/libbase/rc.cpp
++++ b/libbase/rc.cpp
+@@ -75,7 +75,7 @@ RcInitFile::RcInitFile()
+     _debugger(false),
+     _verbosity(-1),
+     // will be reset to something else if __OS2__x is defined:
+-    _urlOpenerFormat("xdg-open '%u'"),
++    _urlOpenerFormat("sensible-browser '%u'"),
+     _flashVersionString(
+         DEFAULT_FLASH_PLATFORM_ID" "\
+         DEFAULT_FLASH_MAJOR_VERSION","\

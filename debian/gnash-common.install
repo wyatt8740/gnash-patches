@@ -1,0 +1,11 @@
+debian/gnash.png usr/share/pixmaps/
+debian/gnash.xpm usr/share/pixmaps/
+usr/bin/gnash
+usr/bin/dump-gnash
+usr/lib/gnash/libgnashbase-*.so
+usr/lib/gnash/libgnashcore-*.so
+usr/lib/gnash/libgnashdevice-*.so
+usr/lib/gnash/libgnashmedia-*.so
+usr/lib/gnash/libgnashrender-*.so
+usr/share/gnash
+usr/share/locale

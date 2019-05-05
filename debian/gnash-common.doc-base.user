@@ -1,0 +1,15 @@
+Document: gnashuser
+Title: Gnash User Manual
+Author: Rob Savoye <rob@openmedianow.org>
+Abstract: This manual is primarily focused on users interested in how to get
+ Gnash installed from a package, and basic usage as a web browser plugin.
+ For more technical details, please refer to the Gnash Reference manual. 
+Section: Video
+
+Format: HTML
+Index: /usr/share/doc/gnash-common/gnashuser.html
+Files: /usr/share/doc/gnash-common/gnashuser.html
+
+Format: Info
+Index: /usr/share/info/gnash_user.info.gz
+Files: /usr/share/info/gnash_user.info.gz

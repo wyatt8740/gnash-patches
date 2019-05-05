@@ -1,0 +1,18 @@
+Gnash for Debian
+----------------
+
+Gnash supports the majority of AVM1 Flash opcodes (ActionScript 1.0 and 2.0,
+up to SWF version 8). AVM2 opcodes (ActionScript 3.0, SWF version 9 and above)
+won't be supported by gnash but you could try lightspark [0] and help
+developers to improve it.
+
+ [0] http://packages.debian.org/sid/lightspark
+
+To check AVM version, right click on the movie - File - Properties - Stage
+Properties - Root VM Version. If Root VM Version is "AVM1", movie should be
+played by gnash so if gnash doesn't play it correctly, file a bug [1]. If Root
+VM Version is "AVM2 (unsupported)", as said it is unsupported.
+
+ [1] http://www.debian.org/Bugs/Reporting
+
+ -- Gabriele Giacone <1o5g4r8o@gmail.com>  Thu, 09 Feb 2012 01:34:02 +0100

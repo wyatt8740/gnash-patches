@@ -1,0 +1,5 @@
+browser-plugin-gnash binary: package-contains-empty-directory usr/lib/mozilla/plugins/
+browser-plugin-gnash: hardening-no-fortify-functions usr/lib/gnash/libgnashplugin.so
+browser-plugin-gnash: unknown-field-in-control npp-applications
+browser-plugin-gnash: unknown-field-in-control npp-mimetype
+browser-plugin-gnash: unknown-field-in-control npp-name

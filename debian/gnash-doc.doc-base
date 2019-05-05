@@ -1,0 +1,9 @@
+Document: gnashapidoc
+Title: Gnash API Documentation
+Author: Rob Savoye <rob@openmedianow.org>
+Abstract: This manual is focused on Gnash API
+Section: Video
+
+Format: HTML
+Index: /usr/share/doc/gnash-doc/apidoc/html/index.html
+Files: /usr/share/doc/gnash-doc/apidoc/html/*.html

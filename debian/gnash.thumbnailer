@@ -1,0 +1,4 @@
+[Thumbnailer Entry]
+TryExec=/usr/bin/gnash-thumbnailer
+Exec=/usr/bin/gnash-thumbnailer %u %o %s
+MimeType=application/x-shockwave-flash;

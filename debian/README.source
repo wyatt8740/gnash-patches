@@ -1,0 +1,17 @@
+gnash for Debian
+----------------
+
+ SOURCELESS .SWF FILES
+
+ o Upstream tarball contains the following prebuilt sourceless SWF files.
+   They should be replaced with equivalent open-source files.
+
+   - desktop/gnash-splash.swf
+   - testsuite/movies.all/*.swf
+   - testsuite/media/*.swf
+   - testsuite/samples/*.swf
+
+ See
+  http://bugs.debian.org/736190
+  http://lintian.debian.org/tags/source-contains-prebuilt-flash-object.html
+

@@ -1,0 +1,4 @@
+# see bug #631078
+gnash-cygnal binary: hyphen-used-as-minus-sign
+#
+gnash-cygnal: hardening-no-fortify-functions usr/lib/gnash/libgnashamf-*.so

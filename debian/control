@@ -1,0 +1,413 @@
+Source: gnash
+Priority: optional
+Maintainer: Debian Flash Team <pkg-flash-devel@lists.alioth.debian.org>
+Uploaders: Miriam Ruiz <little_miry@yahoo.es>,
+           Alexander Sack <asac@jwsdot.com>,
+           Tim Retout <diocles@debian.org>
+Build-Depends: autoconf,
+               automake,
+               autotools-dev,
+               debhelper (>= 9),
+               dejagnu,
+               dh-buildinfo,
+               docbook,
+               docbook-xsl,
+               docbook2x,
+               doxygen,
+               dpkg-dev (>= 1.13.19),
+               intltool,
+               kdelibs5-dev,
+               libagg-dev,
+               libatk1.0-dev,
+               libavcodec-dev,
+               libavformat-dev,
+               libavresample-dev,
+               libboost-date-time-dev,
+               libboost-dev,
+               libboost-iostreams-dev,
+               libboost-program-options-dev,
+               libcurl4-gnutls-dev | libcurl3-gnutls-dev | libcurl4-openssl-dev | libcurl3-openssl-dev,
+               libgif-dev,
+               libgtk2.0-dev,
+               libjpeg-dev,
+               libjemalloc-dev [!hurd-i386],
+               libltdl-dev,
+               default-libmysqlclient-dev,
+               libpango1.0-dev | pango-dev,
+               libpng-dev,
+               libqt4-dev,
+               libsdl1.2-dev,
+               libspeex-dev,
+               libspeexdsp-dev,
+               libswscale-dev,
+               libtool,
+               libxmu-dev,
+               libxv-dev,
+               npapi-sdk-dev,
+               python-all-dev (>= 2.6.6-3~),
+               python-gtk2-dev,
+               qt4-qmake,
+               sng,
+               xsltproc,
+               csound [linux-any], haxe, mtasc, swfmill, swftools
+XS-Python-Version: current
+Standards-Version: 3.9.6
+Section: video
+Homepage: http://www.gnu.org/software/gnash/
+Vcs-Git: git://anonscm.debian.org/pkg-flash/gnash.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-flash/gnash.git
+
+Package: gnash-common
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Breaks: gnash-common-opengl (<< 0.8.8~)
+Provides: libgnash0, libklash0
+Replaces: libgnash0, libklash0
+Conflicts: libgnash0, libklash0
+Description: GNU Shockwave Flash (SWF) player - Common files/libraries
+ GNU Gnash is a free GPL'd SWF player. It runs as a standalone application
+ on either the desktop or embedded devices, or may be used as a plugin
+ for several popular browsers. It supports playing media from a disk or
+ streaming over a network connection.
+ .
+ GNU Gnash is based on GameSWF and supports most SWF v7 features and some
+ SWF v8 and v9. SWF v10 is not supported by GNU Gnash.
+ .
+ Included in the Gnash is an XML based messaging system, as specified in
+ the SWF specification. This lets a SWF animation communicate over a TCP/IP
+ socket, and parse the incoming XML message. This lets an animation be a remote
+ control for other devices or applications.
+
+Package: gnash
+Architecture: any
+Depends: gnash-common (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
+Breaks: gnash-opengl (<< 0.8.8~)
+Description: GNU Shockwave Flash (SWF) player
+ GNU Gnash is a free GPL'd SWF player. It runs as a standalone application
+ on either the desktop or embedded devices, or may be used as a plugin
+ for several popular browsers. It supports playing media from a disk or
+ streaming over a network connection.
+ .
+ GNU Gnash is based on GameSWF and supports most SWF v7 features and some
+ SWF v8 and v9. SWF v10 is not supported by GNU Gnash.
+ .
+ Included in the Gnash is an XML based messaging system, as specified in
+ the SWF specification. This lets a SWF animation communicate over a TCP/IP
+ socket, and parse the incoming XML message. This lets an animation be a remote
+ control for other devices or applications.
+ .
+ This package includes the standalone GTK+-based player that use AGG
+ as the rendering backend.
+
+Package: klash
+Architecture: any
+Depends: gnash-common (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
+Breaks: klash-opengl (<< 0.8.8~)
+Description: GNU Shockwave Flash (SWF) player - Standalone player for KDE
+ GNU Gnash is a free GPL'd SWF player. It runs as a standalone application
+ on either the desktop or embedded devices, or may be used as a plugin
+ for several popular browsers. It supports playing media from a disk or
+ streaming over a network connection.
+ .
+ GNU Gnash is based on GameSWF and supports most SWF v7 features and some
+ SWF v8 and v9. SWF v10 is not supported by GNU Gnash.
+ .
+ Included in the Gnash is an XML based messaging system, as specified in
+ the SWF specification. This lets a SWF animation communicate over a TCP/IP
+ socket, and parse the incoming XML message. This lets an animation be a remote
+ control for other devices or applications.
+ .
+ Klash is a free standalone SWF movie player for KDE that use AGG
+ as the rendering backend.
+
+Package: gnash-tools
+Architecture: any
+Depends: gnash-common (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
+Description: GNU Shockwave Flash (SWF) player - Command-line Tools
+ GNU Gnash is a free GPL'd SWF player. It runs as a standalone application
+ on either the desktop or embedded devices, or may be used as a plugin
+ for several popular browsers. It supports playing media from a disk or
+ streaming over a network connection.
+ .
+ GNU Gnash is based on GameSWF and supports most SWF v7 features and some
+ SWF v8 and v9. SWF v10 is not supported by GNU Gnash.
+ .
+ Included in the Gnash is an XML based messaging system, as specified in
+ the SWF specification. This lets a SWF animation communicate over a TCP/IP
+ socket, and parse the incoming XML message. This lets an animation be a remote
+ control for other devices or applications.
+ .
+ This package includes command-line utilities based in Gnash.
+
+Package: gnash-cygnal
+Architecture: any
+Depends: gnash-common (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
+Replaces: gnash-common (<< 0.8.10-1)
+Breaks: gnash-common (<< 0.8.10-1)
+Description: GNU Shockwave Flash (SWF) player - Media server
+ GNU Gnash is a free GPL'd SWF player. It runs as a standalone application
+ on either the desktop or embedded devices, or may be used as a plugin
+ for several popular browsers. It supports playing media from a disk or
+ streaming over a network connection.
+ .
+ GNU Gnash is based on GameSWF and supports most SWF v7 features and some
+ SWF v8 and v9. SWF v10 is not supported by GNU Gnash.
+ .
+ Included in the Gnash is an XML based messaging system, as specified in
+ the SWF specification. This lets a SWF animation communicate over a TCP/IP
+ socket, and parse the incoming XML message. This lets an animation be a remote
+ control for other devices or applications.
+ .
+ Cygnal is Gnash's media server.
+
+Package: browser-plugin-gnash
+Architecture: any
+Depends: gnash (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
+Breaks: mozilla-plugin-gnash (<< 0.8.8-4)
+Replaces: mozilla-plugin-gnash (<< 0.8.8-4)
+Provides: mozilla-plugin-gnash
+Suggests: browser-plugin-lightspark
+Xb-Npp-Applications: ec8030f7-c20a-464f-9b0e-13a3a9e97384,92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a,aa5ca914-c309-495d-91cf-3141bbb04115
+Xb-Npp-MimeType: application/x-shockwave-flash
+Xb-Npp-Name: Gnash SWF Player
+Description: GNU Shockwave Flash (SWF) player - Plugin for Mozilla and derivatives
+ GNU Gnash is a free GPL'd SWF player. It runs as a standalone application
+ on either the desktop or embedded devices, or may be used as a plugin
+ for several popular browsers. It supports playing media from a disk or
+ streaming over a network connection.
+ .
+ GNU Gnash is based on GameSWF and supports most SWF v7 features and some
+ SWF v8 and v9. SWF v10 is not supported by GNU Gnash.
+ .
+ Included in the Gnash is an XML based messaging system, as specified in
+ the SWF specification. This lets a SWF animation communicate over a TCP/IP
+ socket, and parse the incoming XML message. This lets an animation be a remote
+ control for other devices or applications.
+ .
+ This package includes the plugin for Firefox/Mozilla Web Browser. The plugin
+ works best with Firefox 1.0.4 or newer, and should work in any Mozilla based
+ browser.
+
+Package: konqueror-plugin-gnash
+Architecture: any
+Depends: klash (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
+Description: GNU Shockwave Flash (SWF) player - Plugin for Konqueror
+ GNU Gnash is a free GPL'd SWF player. It runs as a standalone application
+ on either the desktop or embedded devices, or may be used as a plugin
+ for several popular browsers. It supports playing media from a disk or
+ streaming over a network connection.
+ .
+ GNU Gnash is based on GameSWF and supports most SWF v7 features and some
+ SWF v8 and v9. SWF v10 is not supported by GNU Gnash.
+ .
+ Included in the Gnash is an XML based messaging system, as specified in
+ the SWF specification. This lets a SWF animation communicate over a TCP/IP
+ socket, and parse the incoming XML message. This lets an animation be a remote
+ control for other devices or applications.
+ .
+ This package includes the plugin for Konqueror.
+
+Package: python-gtk-gnash
+Section: python
+Architecture: any
+Depends: python-gtk2, ${misc:Depends}, ${python:Depends}, ${shlibs:Depends}
+Provides: ${python:Provides}
+Description: GNU Shockwave Flash (SWF) player - Python bindings
+ GNU Gnash is a free GPL'd SWF player. It runs as a standalone application
+ on either the desktop or embedded devices, or may be used as a plugin
+ for several popular browsers. It supports playing media from a disk or
+ streaming over a network connection.
+ .
+ GNU Gnash is based on GameSWF and supports most SWF v7 features and some
+ SWF v8 and v9. SWF v10 is not supported by GNU Gnash.
+ .
+ Included in the Gnash is an XML based messaging system, as specified in
+ the SWF specification. This lets a SWF animation communicate over a TCP/IP
+ socket, and parse the incoming XML message. This lets an animation be a remote
+ control for other devices or applications.
+ .
+ This package includes the Python bindings for gnash.
+
+Package: gnash-ext-fileio
+Architecture: any
+Depends: gnash-common (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
+Description: GNU Shockwave Flash (SWF) player - Fileio extension
+ GNU Gnash is a free GPL'd SWF player. It runs as a standalone application
+ on either the desktop or embedded devices, or may be used as a plugin
+ for several popular browsers. It supports playing media from a disk or
+ streaming over a network connection.
+ .
+ GNU Gnash is based on GameSWF and supports most SWF v7 features and some
+ SWF v8 and v9. SWF v10 is not supported by GNU Gnash.
+ .
+ Included in the Gnash is an XML based messaging system, as specified in
+ the SWF specification. This lets a SWF animation communicate over a TCP/IP
+ socket, and parse the incoming XML message. This lets an animation be a remote
+ control for other devices or applications.
+ .
+ This extension allows SWF files being played within Gnash to have direct access
+ to the file system. The API is similar to the C library one.
+
+Package: gnash-ext-mysql
+Architecture: any
+Depends: gnash-common (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
+Description: GNU Shockwave Flash (SWF) player - MySQL extension
+ GNU Gnash is a free GPL'd SWF player. It runs as a standalone application
+ on either the desktop or embedded devices, or may be used as a plugin
+ for several popular browsers. It supports playing media from a disk or
+ streaming over a network connection.
+ .
+ GNU Gnash is based on GameSWF and supports most SWF v7 features and some
+ SWF v8 and v9. SWF v10 is not supported by GNU Gnash.
+ .
+ Included in the Gnash is an XML based messaging system, as specified in
+ the SWF specification. This lets a SWF animation communicate over a TCP/IP
+ socket, and parse the incoming XML message. This lets an animation be a remote
+ control for other devices or applications.
+ .
+ This extension allows SWF files being played within Gnash to have direct access
+ to a MySQL database. The API is similar to the standard MySQL one.
+
+Package: gnash-ext-lirc
+Architecture: any
+Depends: gnash-common (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
+Description: GNU Shockwave Flash (SWF) player - LIRC extension
+ GNU Gnash is a free GPL'd SWF player. It runs as a standalone application
+ on either the desktop or embedded devices, or may be used as a plugin
+ for several popular browsers. It supports playing media from a disk or
+ streaming over a network connection.
+ .
+ GNU Gnash is based on GameSWF and supports most SWF v7 features and some
+ SWF v8 and v9. SWF v10 is not supported by GNU Gnash.
+ .
+ Included in the Gnash is an XML based messaging system, as specified in
+ the SWF specification. This lets a SWF animation communicate over a TCP/IP
+ socket, and parse the incoming XML message. This lets an animation be a remote
+ control for other devices or applications.
+ .
+ This extension allows SWF files being played within Gnash to have direct access
+ to a LIRC based remote control device. The API is similar to the standard
+ LIRC one.
+
+Package: gnash-dev
+Architecture: any
+Section: libdevel
+Depends: gnash-common (= ${binary:Version}), gnash-cygnal (= ${binary:Version}),
+ ${misc:Depends}, ${shlibs:Depends}
+Suggests: gnash-doc
+Description: GNU Shockwave Flash (SWF) player - Development files
+ GNU Gnash is a free GPL'd SWF player. It runs as a standalone application
+ on either the desktop or embedded devices, or may be used as a plugin
+ for several popular browsers. It supports playing media from a disk or
+ streaming over a network connection.
+ .
+ GNU Gnash is based on GameSWF and supports most SWF v7 features and some
+ SWF v8 and v9. SWF v10 is not supported by GNU Gnash.
+ .
+ Included in the Gnash is an XML based messaging system, as specified in
+ the SWF specification. This lets a SWF animation communicate over a TCP/IP
+ socket, and parse the incoming XML message. This lets an animation be a remote
+ control for other devices or applications.
+ .
+ This package contains the development headers.
+
+Package: gnash-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Depends: gnash-common (= ${binary:Version}), ${misc:Depends}
+Description: GNU Shockwave Flash (SWF) player - Debug symbols
+ GNU Gnash is a free GPL'd SWF player. It runs as a standalone application
+ on either the desktop or embedded devices, or may be used as a plugin
+ for several popular browsers. It supports playing media from a disk or
+ streaming over a network connection.
+ .
+ GNU Gnash is based on GameSWF and supports most SWF v7 features and some
+ SWF v8 and v9. SWF v10 is not supported by GNU Gnash.
+ .
+ Included in the Gnash is an XML based messaging system, as specified in
+ the SWF specification. This lets a SWF animation communicate over a TCP/IP
+ socket, and parse the incoming XML message. This lets an animation be a remote
+ control for other devices or applications.
+ .
+ This package includes debug symbols for Gnash.
+
+Package: gnash-doc
+Architecture: all
+Section: doc
+Depends: ${misc:Depends}
+Description: GNU Shockwave Flash (SWF) player - API documentation
+ GNU Gnash is a free GPL'd SWF player. It runs as a standalone application
+ on either the desktop or embedded devices, or may be used as a plugin
+ for several popular browsers. It supports playing media from a disk or
+ streaming over a network connection.
+ .
+ GNU Gnash is based on GameSWF and supports most SWF v7 features and some
+ SWF v8 and v9. SWF v10 is not supported by GNU Gnash.
+ .
+ Included in the Gnash is an XML based messaging system, as specified in
+ the SWF specification. This lets a SWF animation communicate over a TCP/IP
+ socket, and parse the incoming XML message. This lets an animation be a remote
+ control for other devices or applications.
+ .
+ This package contains the API documentation for Gnash.
+
+Package: gnash-common-opengl
+Priority: extra
+Section: oldlibs
+Architecture: all
+Depends: gnash-common (>= ${binary:Version}), ${misc:Depends}
+Description: dummy package for gnash-common-opengl removal
+ This package is a transitional package for gnash-common-opengl removal.
+ .
+ It can be safely removed when gnash-common is installed.
+
+Package: gnash-opengl
+Priority: extra
+Section: oldlibs
+Architecture: all
+Depends: gnash (>= ${binary:Version}), ${misc:Depends}
+Description: dummy package for gnash-opengl removal
+ This package is a transitional package for gnash-opengl removal.
+ .
+ It can be safely removed when Gnash is installed.
+
+Package: klash-opengl
+Priority: extra
+Section: oldlibs
+Architecture: all
+Depends: klash (>= ${binary:Version}), ${misc:Depends}
+Description: dummy package for klash-opengl removal
+ This package is a transitional package for klash-opengl removal.
+ .
+ It can be safely removed when klash is installed.
+
+Package: swfdec-mozilla
+Priority: extra
+Section: oldlibs
+Architecture: all
+Depends: browser-plugin-gnash (>= ${binary:Version})
+Description: dummy package for transition to browser-plugin-gnash
+ This package is a transitional package for upgrading to browser-plugin-gnash.
+ .
+ It can be safely removed when browser-plugin-gnash is installed.
+
+Package: swfdec-gnome
+Priority: extra
+Section: oldlibs
+Architecture: all
+Depends: gnash
+Description: dummy package for transition to Gnash
+ This package is a transitional package for upgrading to Gnash.
+ .
+ It can be safely removed when Gnash is installed.
+
+Package: mozilla-plugin-gnash
+Priority: extra
+Section: oldlibs
+Architecture: all
+Depends: browser-plugin-gnash, ${misc:Depends}
+Description: dummy package for renaming to browser-plugin-gnash
+ This package is a transitional package for renaming to browser-plugin-gnash.
+ .
+ It can be safely removed when browser-plugin-gnash is installed.

@@ -1,0 +1,8 @@
+usr/share/applications/gnash.desktop
+etc/gnashrc
+usr/bin/gtk-gnash
+usr/bin/gnash-gtk-launcher
+
+etc/gnashthumbnailrc
+usr/bin/gnash-thumbnailer
+debian/gnash.thumbnailer usr/share/thumbnailers/

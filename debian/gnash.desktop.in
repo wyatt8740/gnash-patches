@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+_Name=Gnash SWF Viewer
+GenericName=
+Comment=
+Icon=gnash
+Exec=gtk-gnash %U
+Terminal=false
+Categories=AudioVideo;Video;Player;GTK;
+MimeType=application/x-shockwave-flash;application/futuresplash;
+NoDisplay=true

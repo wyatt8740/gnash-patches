@@ -1,0 +1,4 @@
+# see bug #631078
+gnash-common binary: hyphen-used-as-minus-sign
+#
+gnash-common: hardening-no-fortify-functions usr/lib/gnash/libgnashcore*.so
