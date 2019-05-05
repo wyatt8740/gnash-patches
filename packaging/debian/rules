@@ -1,0 +1,298 @@
+#!/usr/bin/make -f
+# The template for this file was originally written by Joey Hess and
+# Craig Small. Then further work was done by Miriam Ruiz for Debian, and
+# Alexander Sack for Ubuntu.
+# Many more modifications were made by Rob Savoye for Gnash and Petter
+# Reinholdtsen for Debian Edu.
+
+# Uncomment this to turn on verbose mode.
+# export DH_VERBOSE=1
+
+# These are used for cross-compiling and for saving the configure script
+# from having to guess our platform (since we know it already)
+DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+
+SNAPSHOT_VERSION = $(shell head -n 1 debian/changelog | cut '-d ' -f 2 | sed 's/[()]//g')
+MAIN_VERSION = $(shell head -n 1 debian/changelog | cut '-d ' -f 2 | sed 's/[()]//g' | cut -d '.' -f 1-3)
+BUILD_VERSION = $(shell head -n 1 debian/changelog | cut '-d ' -f 2 | sed 's/[()]//g' | cut -d '.' -f 4)
+
+INFILES := $(wildcard debian/*.desktop.in)
+OUTFILES := $(INFILES:.desktop.in=.desktop)
+
+%.desktop: %.desktop.in
+	intltool-merge -d debian/po $< $@
+
+# Set defaults for the compiler and linker flags
+CFLAGS = -Wall -g -Werror-implicit-function-declaration
+
+# Look for the standard build options
+
+# Sometimes we want to build without optimization, usually only when
+# testing package building.
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -O0
+	CXXFLAGS += -O0
+else
+	CFLAGS += -O2
+	CXXFLAGS += -O2
+endif
+
+MAKEFLAGS = "CXXFLAGS=$CXXFLAGS"
+
+# Enable debugging in the package instead of using the debug package
+ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -g
+endif
+ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+	INSTALL_PROGRAM += -s
+endif
+
+# Do parallel builds, ie.. the -jN option to make
+ifneq (,$(findstring parallel=,$(DEB_BUILD_OPTIONS)))
+	NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+	MAKEFLAGS += -j$(NUMJOBS)
+endif
+
+DEB_DH_SHLIBDEPS_ARGS_ALL := -X* /usr/lib/gnash
+
+patch: patch-stamp
+patch-stamp:
+	dh_testdir
+	printf "\n == APPLYING PATCHES == \n\n"
+#	"we have no patches, we're the developers!"
+#	$(MAKE) -f /usr/share/quilt/quilt.make patch
+	printf "\n ---- End of APPLYING PATCHES ---- \n\n"
+	touch $@
+
+# CONFIGURE
+
+# Handle optional configurarions
+
+# These flags are the defaults Gnash uses when configuring, but we pass
+# them here explicitly because it makes it easier for non Gnash developers
+# to know what those defaults are.
+BUILD_FLAGS = --enable-jemalloc
+
+# this is where all the objects and executables go. We have to
+# redfine this, instead of just appending the path elements, as
+# make insists on putting a space between each element, which
+# produces a path that doens't work.
+BUILD_DIRECTORY = _build
+
+# Configure Gnash. We use a different set of options, as when building
+# packages, we want to enable everything that Gnash can do, like
+# python support, the SDK cygnal, etc... These are not enabled by
+# default to make it less complicated for end users building Gnash
+# from source.
+# for now, only build the qt4 support, as kde3 is being depreciated.
+CONFIGURE_FLAGS = \
+	--host=$(DEB_HOST_GNU_TYPE) \
+	--build=$(DEB_BUILD_GNU_TYPE) \
+	--prefix=/usr \
+	--sysconfdir=/etc \
+	--mandir=/usr/share/man \
+	--infodir=/usr/share/info \
+	--with-plugins-install=system \
+	--disable-dependency-tracking \
+	--disable-testsuite \
+	--disable-rpath \
+	--enable-cygnal \
+	--enable-docbook \
+	--enable-gui=gtk,qt4,fb,dump \
+	--enable-renderer=agg,cairo \
+	--enable-extensions=fileio,lirc,mysql \
+	$(BUILD_FLAGS)
+
+config: config-stamp
+config-stamp: patch-stamp
+	dh_testdir
+
+ifneq "$(wildcard /usr/share/misc/config.sub)" ""
+	cp -f /usr/share/misc/config.sub config.sub
+endif
+ifneq "$(wildcard /usr/share/misc/config.guess)" ""
+	cp -f /usr/share/misc/config.guess config.guess
+endif
+
+#	Only run autogen.sh if there isn't a configure script. When
+#	building packages from within a configured build directory. In
+#	a freshly checked out source tree from bzr, there is no
+#	configure script. When building from a source tarball as made
+#	by 'make dist', then all the configure scripts are already
+#	included.
+	if test ! -e configure; then \
+	  printf "\n == AUTOGEN == \n\n"; \
+	  $(CURDIR)/autogen.sh; \
+	  printf "\n ---- End of AUTOGEN ---- \n\n"; \
+	fi
+
+#	Make a sub-directory to build all the objects and executables in.
+	if test ! -d $(BUILD_DIRECTORY); then \
+	  mkdir $(BUILD_DIRECTORY); \
+	fi
+
+# 	Configure that build subdirectory.
+	printf "\n == CONFIGURE == \n\n"
+	cd $(BUILD_DIRECTORY) && $(CURDIR)/configure $(CONFIGURE_FLAGS);
+	printf "\n ---- End of CONFIGURE ---- \n\n"
+
+	touch $@
+
+# BUILD
+
+# We don't run make check, as the testsuite takes a long time to build
+# and run, and we just want a package. This of course requires the
+# package builder to run make check before building packages if the
+# state is unknown.
+build: build-stamp
+build-stamp: config-stamp $(OUTFILES)
+	dh_testdir
+
+	@printf "\n == MAKE == \n\n"
+	$(MAKE) -C $(BUILD_DIRECTORY) LDFLAGS="$(LDFLAGS)"
+	@printf "\n ---- End of MAKE ---- \n\n"
+	cp cygnal/libamf/README README.amf
+	cp cygnal/README README.cygnal
+#	@printf "\n == CHECK ==\n\n"
+#	$(MAKE) -C $(BUILD_DIRECTORY) check
+#	@printf "\n ---- End of CHECK ---- \n\n"
+
+	touch $@
+
+# CLEAN
+
+# Remove anything that could be left from a previous build. Basically
+# all temporary files or generated files. We also clean out the
+# manpages, as these are the preformatted ones from the tarball, so
+# they don't get rebuild by docbook unless we remove them.
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp
+	rm -f $(OUTFILES)
+	rm -f README.amf README.cygnal
+	if test -d debian/po; then \
+	  ls $(INFILES) | sed 's#^#../#' > debian/po/POTFILES.in; \
+	  cd debian/po && intltool-update -g debian --pot && \
+		for i in *.po; do intltool-update -g debian --dist $${i%.po}; done; \
+	  rm -f debian/po/POTFILES.in; \
+	fi
+	rm -fr $(BUILD_DIRECTORY)
+
+#	@printf "\n == CLEANING PATCHES ==\n\n"
+	@echo " we have no patches, we're the developers!"
+#	$(MAKE) -f /usr/share/quilt/quilt.make unpatch
+#	@printf "\n ---- End of CLEANING PATCHES ---- \n\n"
+
+	dh_clean 
+
+# INSTALL
+
+# Install gnash. This also builds the SDK, which isn't directly
+# supported by the gnash Makefiles. We also have to compress the two
+# man pages aliases, which don't get compressed as they're not part of
+# the standard make target. These get generated when building gnash.1,
+# and of course have no associated source file.
+install: build
+	dh_testdir
+	dh_testroot
+#	dh_clean -k 
+	dh_installdirs
+
+	@printf "\n == INSTALL ==\n\n"
+	$(MAKE) -C $(BUILD_DIRECTORY) install DESTDIR=$(CURDIR)/debian/tmp
+	$(MAKE) -C $(BUILD_DIRECTORY) install-plugins DESTDIR=$(CURDIR)/debian/tmp
+	@printf "\n ---- End of INSTALL ---- \n\n"
+
+	install -d $(CURDIR)/debian/tmp/usr/include/gnash/libbase/
+	cp libbase/*.h $(CURDIR)/debian/tmp/usr/include/gnash/libbase/
+	install -d $(CURDIR)/debian/tmp/usr/include/gnash/libnet/
+	cp libbase/*.h $(CURDIR)/debian/tmp/usr/include/gnash/libnet/
+	install -d $(CURDIR)/debian/tmp/usr/include/gnash/libamf/
+	cp cygnal/libamf/*.h $(CURDIR)/debian/tmp/usr/include/gnash/libamf/
+	install -d $(CURDIR)/debian/tmp/usr/include/gnash/libcore/
+	cp cygnal/libnet/*.h $(CURDIR)/debian/tmp/usr/include/gnash/libnet/
+	install -d $(CURDIR)/debian/tmp/usr/include/gnash/libcore/
+	cp libcore/*.h $(CURDIR)/debian/tmp/usr/include/gnash/libcore/
+	install -d $(CURDIR)/debian/tmp/usr/include/gnash/libmedia/
+	cp libmedia/*.h $(CURDIR)/debian/tmp/usr/include/gnash/libmedia/
+	install -d $(CURDIR)/debian/tmp/usr/include/gnash/librender/
+	cp librender/*.h $(CURDIR)/debian/tmp/usr/include/gnash/librender/
+	install -d $(CURDIR)/debian/tmp/usr/include/gnash/gui/
+	cp gui/*.h $(CURDIR)/debian/tmp/usr/include/gnash/gui/
+
+	install -d $(CURDIR)/debian/tmp/usr/share/pixmaps/
+	cp packaging/*.xpm $(CURDIR)/debian/tmp/usr/share/pixmaps/
+	install -d $(CURDIR)/debian/tmp/usr/share/applications/
+	cp debian/*.desktop $(CURDIR)/debian/tmp/usr/share/applications/
+	# for i in $(CURDIR)/debian/tmp/usr/share/man/man1/*.1; do \
+	#   gzip -f9 $$i; \
+	# done
+
+# CREATE PACKAGES
+
+# Build architecture-independent files here.
+binary-indep:
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs -XChangeLog
+	dh_installdocs
+	dh_installexamples
+	dh_install --sourcedir=$(CURDIR)/debian/tmp
+#	dh_installmenu
+#	dh_installmime
+	dh_installman
+	dh_desktop
+	dh_lintian
+	dh_link
+	dh_strip --dbg-package=gnash-dbg$(BUILD_DEBUG)
+	dh_compress
+	dh_fixperms
+	dh_makeshlibs
+	[ ! -e /usr/bin/dh_buildinfo ] || dh_buildinfo
+	dh_installdeb
+	export LD_LIBRARY_PATH="$(CURDIR)/debian/gnash-common-opengl/usr/lib/gnash:$$LD_LIBRARY_PATH" ; \
+		dh_shlibdeps -Lgnash-common-opengl \
+		-pgnash-common-opengl \
+		-- -Ldebian/shlibs-opengl.local $(shell dpkg-shlibdeps --help | sed -ne "s/.*\(--ignore-missing-info\).*/\1/p")
+	export LD_LIBRARY_PATH="$(CURDIR)/debian/gnash-common-opengl/usr/lib/gnash:$$LD_LIBRARY_PATH" ; \
+		dh_shlibdeps -Lgnash-common-opengl \
+		-pgnash-opengl -pklash-opengl \
+		-- -Ldebian/shlibs-opengl.local
+	export LD_LIBRARY_PATH="$(CURDIR)/debian/gnash-common/usr/lib/gnash:$$LD_LIBRARY_PATH" ; \
+		dh_shlibdeps -Lgnash-common \
+		-pgnash-common \
+		-- -Ldebian/shlibs-agg.local $(shell dpkg-shlibdeps --help | sed -ne "s/.*\(--ignore-missing-info\).*/\1/p")
+	export LD_LIBRARY_PATH="$(CURDIR)/debian/gnash-common/usr/lib/gnash:$$LD_LIBRARY_PATH" ; \
+		dh_shlibdeps -Lgnash-common \
+		-pgnash -pklash \
+		-- -Ldebian/shlibs-agg.local
+	export LD_LIBRARY_PATH="$(CURDIR)/debian/gnash-common/usr/lib/gnash:$$LD_LIBRARY_PATH" ; \
+		dh_shlibdeps -Lgnash-common \
+		-pmozilla-plugin-gnash -pkonqueror-plugin-gnash -pgnash-tools -pgnash-cygnal \
+		-- -Ldebian/shlibs-both.local
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+VERSION_DATE = $(shell /bin/date --utc +%0Y%0m%0d.%0k%0M)
+BRANCH_NICK   = `grep "NICK" $(CURDIR)/revno.h | cut -d '"' -f 2`
+BRANCH_REVNO  = `grep "REVNO" $(CURDIR)/revno.h | cut -d '"' -f 2`
+#VERSION_ID = 0.8.8+bzr.trunk$(VERSION_DATE)
+VERSION_ID = 0.8.8+git.$(BRANCH_NICK)$(BRANCH_REVNO)
+get-git-source:
+	echo Downloading gnash $(VERSION_ID) from git...
+	git clone git://git.sv.gnu.org/gnash.git
+#	cd gnash; rm -rf `find . -name .git`
+	tar cvfz "gnash_$(VERSION_ID).orig.tar.gz" gnash
+	mv gnash "gnash-$(VERSION_ID)"
+	cp debian "gnash-$(VERSION_ID)" -a
+	cd "gnash-$(VERSION_ID)"; dch -v "$(VERSION_ID)-1" "New Upstream Release. Downloaded from Git."
+
+binary: binary-indep binary-arch
+.PHONY: config build clean binary-indep binary-arch binary install get-git-source patch

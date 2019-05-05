@@ -1,0 +1,253 @@
+<sect2 id="logging">
+  <title>The Message Logging System</title>
+  
+  <para>
+    &app;'s common message logging system uses a <emphasis>printf()</emphasis>
+    style format. Despite the C-like appearance, however, &app;'s LogFile class
+    by default does not use <emphasis>printf()</emphasis> for formatting the
+    messages at all.
+  </para>
+  
+  <para>
+    All logging calls are converted using templated functions to use boost::format.
+    This uses a similar syntax to printf(), but additionally guarantees type-safety
+    and allows more advanced substition using positional identifiers besides the
+    traditional printf() type identifiers. The conversion templates mean that
+    the logging API remains exactly the same, regardless of which method is
+    used to format the log output.
+  </para>  
+
+  <para>
+    The templates for conversion are generated using Boost.Preprocessor. Currently,
+    they allow for a maximum of 16 arguments (more than enough for all current 
+    usage), but that can be expanded or reduced by changing 
+    <emphasis>#define ARG_NUMBER</emphasis> in <emphasis>libbase/log.h</emphasis>.
+  </para>  
+
+  <para>
+    If a filename is not specified before the log file is needed, a
+    default name of <emphasis>gnash-dbg.log</emphasis> is used. If Gnash is
+    started from the command line, the debug log will be created in
+    the current directory. When executing Gnash from a launcher under
+    <emphasis>GNOME</emphasis> or <emphasis>KDE</emphasis> the debug file goes in your
+    home directory, since that's considered the current directory. A file name
+    can be specified using either <emphasis>gnashrc</emphasis> or a 
+    call to the LogFile instance itself.
+  </para>
+
+  <sect3 id="api">
+    <title>Logging System API</title>
+
+    <para>
+        &app; provides 9 specialized logging calls, each using the <emphasis>printf()</emphasis>-style
+        call similar to this:
+        <programlisting>log_error(const char* fmt, ...)</programlisting>
+        The different
+        calls and their purposes are described below. The output to stdout and to disk
+        are always identical, although writing the log to disk can be separately disabled.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>log_error</term>
+	<listitem>
+	  <para>
+	    Display an error message if verbose output is enabled. This is
+	    always printed at a verbosity level of 1 or more.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>log_unimpl</term>
+	<listitem>
+	  <para>
+	    Displays a warning to the user about missing Gnash features.
+	    We expect all calls to this function to disappear over time, as we
+	    implement those features of Flash. This is
+	    always printed at a verbosity level of 1 or more.
+	  </para>
+	</listitem>
+      </varlistentry>
+      
+      <varlistentry>
+	<term>log_trace</term>
+	<listitem>
+	  <para>
+	    Used only for the output of the ActionScript <emphasis>trace()</emphasis>
+	     function. This is
+	    always printed at a verbosity level of 1 or more.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>log_debug</term>
+	<listitem>
+	  <para>
+	    Logs debug information. This is printed at a verbosity level of 2 or more.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>log_action</term>
+	<listitem>
+	  <para>
+	    Log action execution information. Wrap all calls to this
+	    function (and other related statements) into an
+	    IF_VERBOSE_ACTION macro, so to allow completely removing
+	    all the overhead at compile time and reduce it at
+	    runtime. This is printed at a verbosity level of 1 or more
+	    only if action logging is enabled.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>log_parse</term>
+	<listitem>
+	  <para>
+	    Log SWF parsing  Wrap all calls to this function (and
+	    other related statements) into an IF_VERBOSE_PARSE macro,
+	    so to allow completely removing all the overhead at
+	    compile time and reduce it at runtime. This is printed at a
+	    verbosity level of 1 or more
+	    only if parser logging is enabled.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>log_swferror</term>
+	<listitem>
+	  <para>
+	    This indicates an error in how the binary SWF file was
+	    constructed, i.e.probably a bug in the tools used to build
+	    the SWF file. Wrap all calls to this function (and other
+	    related statements) into an IF_VERBOSE_MALFORMED_SWF
+	    macro, so to allow completely removing all the overhead at
+	    compile time and reduce it at runtime. This is printed at a
+	    verbosity level of 1 or more
+	    only if malformed SWF logging is enabled.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>log_aserror</term>
+	<listitem>
+	  <para>
+	    This indicates an erroneous actionscript request such as
+	    an incorrect number of arguments or an invalid argument.
+	    Wrap all calls to this function (and other
+	    related statements) into an IF_VERBOSE_ASCODING_ERRORS
+	    macro, so to allow completely removing all the overhead at
+	    compile time and reduce it at runtime. 
+	    This is printed at a
+	    verbosity level of 1 or more
+	    only if AS coding error logging is enabled.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>log_abc</term>
+	<listitem>
+	<para>
+		Extremely verbose logging related to AVM2/ABC execution.
+		This is printed at verbosity level 3.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+      
+  </sect3>
+
+    <sect3 id="logfileinstance">
+    <title>The LogFile Instance</title>
+
+    <para>
+      This is the main API for initializing and manipulating the logging output.
+      By default, the log will be written to <emphasis>gnash-dbg.log</emphasis>
+      file whenever a verbose option is
+      supplied.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>getDefaultInstance()</term>
+	<listitem>
+	  <para>
+	    This allows the construction of a LogFile on the first call, so
+	    ensuring that it the logfile is always initialised before use.
+	    It is the only way to access a LogFile instance. The logfile
+	    itself is never opened until it is needed.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>setLogFilename(const std::string&amp; filename)</term>
+	<listitem>
+	  <para>
+	    Use this to set a different name for the disk-based log file.
+	    This setting can be overridden by a directive in gnashrc. If the
+	    log file is already open, a call to setLogFilename() will close it;
+	    a file with the new name will be opened when it is next needed.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>closeLog()</term>
+	<listitem>
+	  <para>
+	    Close a debug log. The disk file remains.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>removeLog()</term>
+	<listitem>
+	  <para>
+	    Delete the debug log file from disk.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>setVerbosity()</term>
+	<listitem>
+	  <para>
+	    Increment the verbosity level.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>setVerbosity(int level)</term>
+	<listitem>
+	  <para>
+	    Set the verbosity level to a specified level.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>setStamp(bool flag)</term>
+	<listitem>
+	  <para>
+	    If <emphasis>flag</emphasis> is <emphasis>true</emphasis>, then print a
+	    timestamp prefixed to every output line. If
+	    <emphasis>flag</emphasis> is <emphasis>false</emphasis>, then don't print
+	    a timestamp.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>setWriteDisk(bool flag)</term>
+	<listitem>
+	  <para>
+	    If <emphasis>flag</emphasis> is <emphasis>true</emphasis>, then create the
+	    disk file. If <emphasis>flag</emphasis> is <emphasis>false</emphasis>,
+	    then don't create the disk file.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect3>
+
+</sect2>

@@ -1,0 +1,297 @@
+<chapter id="build">
+  <title>Installing and Configuring Gnash</title>
+  
+  <para>
+    There are two ways of installing Gnash:
+<!--     <link linkend="packagemanager">using a package manager</link> -->
+    using a package manager, or <link linkend="gettingsource">installing from source</link>.
+  </para>
+  
+  <sect1 id="requirements">
+    <title>Requirements</title>
+    
+    <para>
+      Before downloading and installing Gnash, check that your
+      hardware and software meet the following requirements.
+    </para>
+    
+    <sect2 id="hardware">
+      <title>Hardware Requirements</title>
+      
+      <para>
+	One of the goals of Gnash is to make it portable enough to
+	install on small devices.  As a result, the hardware
+	requirements are minimal. Gnash has even run on an ARM9 at 200
+	MHz with 32 MB of RAM! (It ran without video support in this
+	case.) While firm minimums have not been established, Gnash
+	has been shown to run successfully with the following:
+      </para>
+      
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    336 MHz processor
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    128 MB RAM
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Gnash will run on anything from a raw frame
+	    buffer up to an OpenGL-supporting graphics card.
+	  </para>
+	</listitem>
+      </itemizedlist>
+      
+      <para>
+	The following table provides a list of the Operating System/CPU
+	combinations on which Gnash has been shown to run. 
+      </para>
+      
+      <table id="tb-os-cpu">
+	<title>Build Matrix</title>
+	<tgroup cols='2' align='left' colsep='1' rowsep='1'>
+	  <thead>
+	    <row>
+	      <entry>Operating System</entry>
+	      <entry>Processor</entry>
+	    </row>
+	  </thead>
+	  <tbody>
+	    <row>
+	      <entry>OpenBSD, FreeBSD, NetBSD</entry>
+	      <entry>Alpha AXP, AMD64, i386, Itanium, PC-98, PowerPC, SPARC64 
+	      </entry>
+	    </row>
+	    <row>
+	      <entry>Debian</entry>
+	      <entry>Alpha AXP, AMD64, ARM, hppa, i386, Itanium, MIPS,
+	      PowerPC, IBM zSeries (s390), SPARC  
+	      </entry>
+	    </row>
+	    <row>
+	      <entry>Fedora</entry>
+	      <entry>x86-32, x86-64, Geode GX, Geode LX
+	      </entry>
+	    </row>
+	    <row>
+	      <entry>Gentoo</entry>
+	      <entry>AMD64, PowerPC, SPARC, x86 
+	      </entry>
+	    </row>
+	    <row>
+	      <entry>Maemo 2.1</entry>
+	      <entry>i385, ARMv5t</entry>
+	    </row>
+	    <row>
+	      <entry>Scratchbox</entry>
+	      <entry>i386, ARMv5t</entry>
+	    </row>
+	    <row>
+	      <entry>Access Linux Platform
+	      </entry>
+	      <entry>i386, ARMv5t</entry>
+	    </row>
+	    <row>
+	      <entry>Mandriva
+	      </entry>
+	      <entry>i386, x86-64, MIPS</entry>
+	    </row>
+	    <row>
+	      <entry>Open Embedded, OpenMoko
+	      </entry>
+	      <entry>ARM
+	      </entry>
+	    </row>
+	    <row>
+	      <entry>YellowDog Linux 6
+	      </entry>
+	      <entry>PowerPC, PS3
+	      </entry>
+	    </row>
+	    <row>
+	      <entry>OpenSuSE 10 
+	      </entry>
+	      <entry>i586, x86-64 
+	      </entry>
+	    </row>
+	    <row>
+	      <entry>Red Hat Enterprise, CentOS
+	      </entry>
+	      <entry>x86-32, x86-64 
+	      </entry>
+	    </row>
+	    <row>
+	      <entry>Ubuntu 
+	      </entry>
+	      <entry>x86-64, x86-32, PowerPC, UltraSPARC 
+	      </entry>
+	    </row>
+	    <row>
+	      <entry>Haiku</entry>
+	      <entry>i386</entry>
+	    </row>
+	    <row>
+	      <entry>Syllable</entry>
+	      <entry>i386</entry>
+	    </row>
+	    <row>
+	      <entry>Irix 6.5 
+	      </entry>
+	      <entry>MIPS R10K 
+	      </entry>
+	    </row>
+	    <row>
+	      <entry>Darwin (MacOS X)
+	      </entry>
+	      <entry>PowerPC and x86-32 
+	      </entry>
+	    </row>
+	    <row>
+	      <entry>Windows XP, Windows Vista</entry>
+	      <entry>x86-32</entry>
+	    </row>
+	  </tbody>
+	</tgroup>
+      </table>
+      
+    </sect2>
+    
+    <sect2 id="software">
+      <title>Software Requirements</title>
+      
+      <para>
+	The &appversion; release of Gnash has been designed to run on
+	UNIX/Linux variants, and has been run on most of the free ones.
+	However, Gnash has successfully run on Windows, Darwin (Mac OS X),
+	Irix, Solaris, BeOs, OS/2, and Haiku.  Gnash has also run on the
+	following 64-bit systems: PowerPC, Itanium, UltraSparc, and AMD64.
+	For now, it is important to be sure that the following code, testing,
+	and documentation dependencies are met before installing Gnash.  If
+	you will be downloading Gnash with a package manager, these
+	dependencies may be solved by the package manager.  Otherwise, you
+	must first verify that each of these dependencies are installed on the
+	target system.
+      </para>
+            
+    </sect2>
+    
+  </sect1>
+  
+    <sect1 id="downloading">
+      <title>Downloading Gnash</title>
+      
+      <para>
+	There are two ways to download Gnash: using a package manager or by
+	downloading the source code and building it on your system. If
+	possible, it is advisable to use a package manager to download Gnash,
+	as it will resolve dependencies for you.  However, if you want the
+	very latest features, or a Gnash package is not available for your
+	operating system, it is better to download the source code and build
+	Gnash locally. 
+      </para>
+      
+<!--       <sect2 id="packagemanager"> -->
+<!-- 	&pkgmanager; -->
+<!--       </sect2> -->
+      
+      <sect2 id="gettingsource">
+	<title>Getting the Source</title>
+	
+	<para>
+	  Gnash is available as a <link linkend="sourcereleases">release
+	  tarball</link>, a <link linkend="sourcerepo">development 
+	  checkout</link>, or a <link linkend="sourcesnapshot">development
+	  snapshot</link>.
+	</para>
+	
+	<sect3 id="sourcereleases">
+	  <title>Releases</title>
+	  
+	  <para>
+	    The source can be acquired from a
+	    <ulink type="http" 
+		   url="http://www.gnu.org/prep/ftp.html">GNU FTP
+	    Mirror</ulink>.  The release version is intended to be
+	    stable, and is probably your best choice if the release took
+	    place recently.  If you need features or fixes which were
+	    introduced after the release, consider a 
+	    <link linkend="sourcerepo">CVS checkout</link> or the
+	    <link linkend="sourcesnapshot">daily snapshot</link>.
+	  </para>
+	  <para>
+	    To download, select a mirror near you, then choose the
+	    <filename>gnash</filename> directory.
+	  </para>
+	</sect3>
+	
+	<sect3 id="sourcesnapshot">
+	  <title>Snapshot</title>
+	  
+	  <para>
+	    The daily development snapshot can be downloaded from
+	    <ulink url="http://www.gnashdev.org/dev_snapshots/"
+		   type="http">http://www.gnashdev.org/dev_snapshots/</ulink>.
+	    This is the best option if you need changes which were introduced
+	    after the <link linkend="sourcereleases">last release</link> of
+	    Gnash, but are unable to <link linkend="sourcerepo">download
+	    directly from the repository.</link>
+	  </para>
+	</sect3>
+	<sect3 id="sourcerepo">
+	  <title>Repository</title>
+	  
+	  <para>
+	    The latest development sources are available via
+	    anonymous CVS.  This is recommended
+	    if you need features or bug fixes which were introduced after
+	    the <link linkend="sourcereleases">last release</link>.  Look at
+	    the <link linkend="sourcesnapshot">daily snapshot</link> if you
+	    experience difficulty accessing the repository.
+	  </para>
+	  <para>
+	    To download via anonymous CVS, first set the
+	    environment variable <command>CVS_RSH</command> to
+	    <command>ssh</command>, then check out the source code.
+	    The example below uses the GNU Bourne-Again shell (bash): 
+	  </para>
+	  
+	  <screen>
+	    export CVS_RSH="ssh"
+	    cvs -z3 -d:pserver:anonymous@cvs.sv.gnu.org:/sources/gnash co gnash
+	  </screen>
+	  
+	  <para>
+	    It is also possible to browse the repository
+	    <ulink url="http://cvs.savannah.gnu.org/viewcvs/gnash/?root=gnash"
+		   type="http" /> on the web.
+	  </para>
+	</sect3>	
+	
+      </sect2>
+
+      <sect2 id="getcodecs">
+	<title>Getting Codec Support</title>
+
+	<para>
+	  Gnash requires codec support to handle audio and video
+	  correctly. Some platforms like Ubuntu or Fedora under the
+	  GNOME desktop will automatically notify the user that the
+	  proper codecs aren't installed, and pop up a dialog box to
+	  let the user download the codecs Gnash needs to make site
+	  like YouTube work correctly. If you have installed Gnash on
+	  any other platform, and video doesn't work, it's highly
+	  likely you need to install the proper codecs. For most
+	  platforms, this is the Gstreamer-ffmpeg plugin, available
+	  from your distributions repository.
+	</para>
+	
+      </sect2>
+
+    </sect1>
+        
+</chapter>
+

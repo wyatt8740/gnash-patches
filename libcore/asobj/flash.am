@@ -1,0 +1,131 @@
+## Process this file with automake to generate Makefile.in
+# 
+#   Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012
+#   Free Software Foundation, Inc.
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+VPATH += $(srcdir)/asobj/
+
+# The built sources get filled in by each subdirectory's .am
+# Makefile fragment. These are the geerated headers that contain
+# the array of function pointers to each _init() function in each
+# class. The header file is generated at build time.
+BUILT_SOURCES =
+
+libgnashasobjs_la_SOURCES = \
+	asobj/ASConversions.cpp \
+	asobj/AsBroadcaster.cpp \
+	asobj/Array_as.cpp \
+	asobj/Boolean_as.cpp \
+	asobj/Color_as.cpp \
+	asobj/Date_as.cpp \
+	asobj/Error_as.cpp \
+	asobj/Function_as.cpp \
+	asobj/Global_as.cpp \
+	asobj/LoadVars_as.cpp \
+	asobj/Math_as.cpp \
+	asobj/Number_as.cpp \
+	asobj/PlayHead.cpp \
+	asobj/Selection_as.cpp \
+	asobj/MovieClipLoader.cpp\
+	asobj/String_as.cpp \
+	asobj/LoadableObject.cpp \
+	asobj/MovieClip_as.cpp \
+	asobj/Stage_as.cpp \
+	asobj/Accessibility_as.cpp \
+	asobj/Sound_as.cpp \
+	asobj/Video_as.cpp \
+	asobj/Microphone_as.cpp \
+	asobj/Camera_as.cpp \
+	asobj/LocalConnection_as.cpp \
+	asobj/NetConnection_as.cpp \
+	asobj/NetStream_as.cpp \
+	asobj/SharedObject_as.cpp \
+	asobj/XMLSocket_as.cpp \
+	asobj/XML_as.cpp \
+	asobj/XMLNode_as.cpp \
+	asobj/System_as.cpp \
+	asobj/Mouse_as.cpp \
+	asobj/ContextMenu_as.cpp \
+	asobj/ContextMenuItem_as.cpp \
+	asobj/Key_as.cpp \
+	asobj/TextField_as.cpp \
+	asobj/TextFormat_as.cpp \
+	asobj/TextSnapshot_as.cpp \
+	asobj/Object.cpp
+
+inst_HEADERS = \
+	asobj/ASConversions.h \
+	asobj/AsBroadcaster.h \
+	asobj/Boolean_as.h \
+	asobj/Color_as.h	\
+	asobj/Date_as.h \
+	asobj/Error_as.h	\
+	asobj/Function_as.h \
+	asobj/Math_as.h	\
+	asobj/Global_as.h\
+	asobj/LoadVars_as.h \
+	asobj/MovieClipLoader.h \
+	asobj/Number_as.h \
+	asobj/PlayHead.h \
+	asobj/Selection_as.h \
+	asobj/String_as.h \
+	asobj/LoadableObject.h \
+	asobj/MovieClip_as.h \
+	asobj/Stage_as.h \
+	asobj/Accessibility_as.h \
+	asobj/Sound_as.h \
+	asobj/Video_as.h \
+	asobj/Microphone_as.h \
+	asobj/Camera_as.h \
+	asobj/LocalConnection_as.h \
+	asobj/NetConnection_as.h \
+	asobj/NetStream_as.h \
+	asobj/SharedObject_as.h \
+	asobj/XMLSocket_as.h \
+	asobj/XML_as.h \
+	asobj/XMLNode_as.h \
+	asobj/System_as.h \
+	asobj/Mouse_as.h \
+	asobj/ContextMenu_as.h \
+	asobj/ContextMenuItem_as.h \
+	asobj/TextField_as.h \
+	asobj/TextFormat_as.h \
+	asobj/TextSnapshot_as.h \
+	asobj/Object.h
+
+EXTENSIONS_API += \
+	asobj/Array_as.h \
+	asobj/Key_as.h \
+	$(NULL)
+
+# These makefile fragments build the ActionScript library for
+# Gnash, and supports both AS2 as well as AS3, so we always
+# want to build.
+include $(srcdir)/asobj/flash/display/display.am
+include $(srcdir)/asobj/flash/external/external.am
+include $(srcdir)/asobj/flash/filters/filters.am
+include $(srcdir)/asobj/flash/geom/geom.am
+include $(srcdir)/asobj/flash/net/net.am
+include $(srcdir)/asobj/flash/text/text.am
+
+libgnashasobjs_la_SOURCES += \
+	asobj/flash/flash_pkg.cpp \
+	$(NULL)
+
+noinst_HEADERS += \
+	asobj/flash/flash_pkg.h \
+	$(NULL)
+

@@ -1,0 +1,120 @@
+# 
+# Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010,
+#               2011 Free Software Foundation, Inc.
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+# 
+
+NOW := $(shell date "+%Y%m%d")
+
+# The branch nickname and revision number must be set before including
+# the other Makefile fragments used for package building, as they use
+# these values.
+BRANCH_REVNO  = "`if test -f revno.h; then grep "REVNO" revno.h | cut -d '"' -f 2; fi`"
+BRANCH_NICK   = "`if test -f revno.h; then grep "NICK" revno.h | cut -d '"' -f 2; fi`"
+
+# this is used for Debian style naming conventions
+NEXT_RELEASE = 0.8.11
+#SNAPSHOT_VERSION := 0.8.11
+SNAPSHOT_VERSION = $(NEXT_RELEASE)~git.$(BRANCH_NICK)$(BRANCH_REVNO)
+
+# these is the directories where the snapshot gets built. Sources are
+# in the top level, the build goes in a _build subdirectory
+SNAPSHOT_DIR = gnash-$(SNAPSHOT_VERSION)
+SNAPSHOT_BUILD = $(SNAPSHOT_DIR)/_build
+SNAPSHOT_NAME = $(SNAPSHOT_DIR)
+
+# this is the name of the actual tarball
+SNAPSHOT_TAR = gnash-$(SNAPSHOT_VERSION).tar.gz
+# this is the temporary directory used for DESTDIR
+SNAPSHOT_TMP = /tmp/$(SNAPSHOT_DIR)
+
+#
+# build a binary snapshot from of Gnash for systems we don't have
+# packaging support for.
+#
+
+# Do the entire process to build a binary tarball
+snapshot: snapshot-src snapshot-configure snapshot-build snapshot-install snapshot-bundle
+
+# start by creating the source tree using the distdir target,
+# which builds a source tree only using what's in the DIST variables
+# from Automake. This uses the default version for Gnash. which is
+# 'master'. Then it gets renamed from the default version from 'master'
+# to a branch-revno stamped version instead of master.
+snapshot-src: revno.h distdir
+
+snapshot-configure:
+	-@now=`date "+%Y%m%d"`; \
+	pkgname="gnash-$(BRANCH_NICK)-${BRANCH_REVNO}"; \
+	snapshot_dir=$(SNAPSHOT_DIR); \
+	snapshot_build="$(SNAPSHOT_BUILD)"; \
+	if test ! -d $(snapshot_build); then \
+	  $(MKINSTALLDIRS) $${snapshot_build}; \
+	fi; \
+	if test -d /usr/local/mozilla-firefox/plugins; then \
+          plugindir=/usr/local/mozilla-firefox/plugins; \
+	else \
+	  plugindir=/usr/lib/mozilla/plugins; \
+        fi; \
+	cd $${snapshot_build}; ../configure \
+	$(SNAPSHOT_CONFIGURE_FLAGS) \
+	  --disable-dependency-tracking\
+	  --disable-rpath \
+	  --prefix=/usr \
+	  --mandir=/usr/share/man \
+	  --infodir=/usr/share/info \
+	  --with-plugindir=$${plugindir} \
+	  --disable-static \
+	  --enable-shared
+#	  --with-extensions=all 
+#	  --enable-gui=all 
+
+snapshot-build: force
+	$(MAKE) $(AM_MAKEFLAGS) -C $(SNAPSHOT_BUILD)
+	$(MAKE) $(AM_MAKEFLAGS) -C $(SNAPSHOT_BUILD)/doc/C info man html
+
+# Install a package. Afterwards we link to the prebuilt man pages incase
+# DocBook and DocBook2X aren't installed on this machine.
+snapshot-install: force
+	$(MAKE) $(AM_MAKEFLAGS) -C $(SNAPSHOT_BUILD) install DESTDIR=$(SNAPSHOT_TMP)
+
+# We only want to bundle an installed gnash, so all the linker paths are
+# correct
+snapshot-bundle: 
+	snapshot_tar="$(SNAPSHOT_TMP)-$(host_cpu)-$(host_os).tar.gz"; \
+	if test ! -d $${snapshot_tmp}; then \
+	  $(mkinstalldirs) $${snapshot_tmp}; \
+	fi; \
+	rm -f $${snapshot_dest}/usr/lib/*.la; \
+	cp @srcdir@/COPYING $${snapshot_tmp}; \
+	cp @srcdir@/config.guess $${snapshot_tmp}; \
+	cp @srcdir@/packaging/install-gnash.sh $${snapshot_tmp}; \
+	cp -rp $${snapshot_dest}/usr/bin $${snapshot_tmp}; \
+	cp -rp $${snapshot_dest}/usr/lib $${snapshot_tmp}; \
+	cp -rp $${snapshot_dest}/usr/share $${snapshot_tmp}; \
+	cp -rp $${snapshot_dest}/usr/lib/mozilla/plugins $${snapshot_tmp}; \
+	cp -rp $${snapshot_dest}/usr/lib/kde3 $${snapshot_tmp}; \
+	strip $${snapshot_tmp}/bin/*-gnash; \
+	strip $${snapshot_tmp}/bin/gprocessor; \
+	strip $${snapshot_tmp}/bin/dumpshm; \
+	strip $${snapshot_tmp}/bin/flvdumper; \
+	strip $${snapshot_tmp}/bin/rtmpget; \
+	tar zcvCf /tmp $${snapshot_tar} $(SNAPSHOT_NAME)
+
+snapshot-clean:
+	-@rm -fr snapshot-* $(SNAPSHOT_BUILD) $(SNAPSHOT_TMP) gnash*$(VERSION)*.ipk
+
+.PHONY : snapshot snapshot-build snapshot-install snapshot-clean snapshot-src snapshot-configure
+

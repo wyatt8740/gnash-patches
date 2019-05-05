@@ -1,0 +1,145 @@
+*** Please *** read this in it's entirety before making any changes to
+the code in this directory!
+===========================
+
+All of the information in this document has been figured out through
+reverse engineering, so it's entirely possible there are some minor
+misconceptions about concepts. These explanations are based on many
+months of staring at hex dumps of files, memory segments, and network
+traffic. Many thanks to the volunteers that use the proprietary player
+for allowing their data to be captured, and their disk drives
+examined.
+
+AMF is the lowest level representation of an SWF data type. Up until
+swf version 8, the format is refered to as AMF0, and is widely used on
+swf files for the SharedObject and LocalConnection ActionScript
+classes, as well as for remoting and RTMP based streaming.
+
+As of swf version 9, the a new version was created called AMF3, since
+it only works with the new ActionScript 3 classes. The main reason for
+this is performance. For example, AMF0 has only a single data type for
+numbers, which is a double (8 bytes). AMF3 introduced a new integer
+data type, which also supports a simplified packing scheme where if
+the first bit is set, the only 3 bytes, instead of the usual 4 for an
+integer is read.
+
+Currently the AMF implementation in Gnash only supports AMF0. Although
+there are bits of AMF3 implemented for the various constants used for
+handling AMF objects, none of the code is currently using it until we
+actually see some AMF3 based swf files out in the wild. Most of the
+time AMF0 is used by swf version 9 anyway, and uses s special data
+type to switch to AMF3 for that particular piece of data.
+
+Another big difference is that AMF3 has more optimizations, supporting
+a simple caching scheme where after an object has been sent, it can be
+referred to by an index number. Where AMF0 had multiple types for the
+various commonly used ActionScript classes, AMF3 instead as a single
+object type, which can be defined to be an existing or custom
+class. Other optimizations include removing the AMF0 Boolean data
+type, which was 3 bytes ling by a single byte which is either true or
+false.
+
+The usage of AMF has two main types of usage, one is a simple encoding
+of basic data types, like string and number. The other usage is used
+for the properties of ActionScript class objects. A basic AMF object
+has a 3 byte header field. The first byte is the type, followed by 2
+bytes to hold the length. A property uses the same format to hold 
+the data, but is preceeded by the name of the property, which is
+preceeded by two bytes that contsain the length of the name.
+
+As an AMF object doesn't do much but hold data, a header is used to
+signify the number of objects, file size, etc... The SharedObject and
+LocalConnection ActionScript classes have different headers, as
+SharedObjects store AMF objects in a disk based file, while
+LocalConnection stores AMF objects in a shared memory segment.
+
+The basic lowdown on the classes are as follows. The Buffer class is
+used to hold all data. We specifically don't use a std::vector because
+this class is so heavily used. We want to avoid memory fragmentation,
+which often happens when using classes from libstdc++. This class also
+has special methods for handling the data types we use, so this class
+would need to exist anyway. In it's simplest form, this is merely an
+array of unsigned bytes with a length.
+
+As a raw buffer is pretty useless for higher level processing, the
+Element class is used to represent an AMF object. After a buffer is
+read, it's data is extracted into a series of Elements. An Element
+still uses the Buffer class to hold the data, but often this is a much
+smaller buffer than the one used to read data. Most Elements are
+simply a numeric value or string, but Elements can also hold a higher
+level ActionScript class, including all of it's properties. The main
+internal difference is that the properties of an ActionScript class
+have a name, which is the name of the property, in addition to the
+data. Only an Element of the data type *OBJECT* can have properties.
+Properties of an object are stored as an array of more Elements, each
+one representing a single AMF data type. Note that when allocated, the
+memory in the Buffer points to is *not* memset() to 0. All Buffers are
+the exact size they need to be. Setting the memory to zero is nice for
+debugging in GBD, as you get nice clean hex dumps that way, but
+imagine the performance hit if every single time a Buffer is
+allocated, each bytes must be set to zero. If you want to set a
+Buffer's data to zero for debugging, use the Buffer::clear() method,
+and don't forget to remove it later so it doesn't become a subtle
+performance problem.
+
+The AMF class is used to encode and decode data between Buffers and
+Elements. When encoding, all the methods are static, as no data needs
+to be retained between usages of the data. Note that all the
+AMF::encode*() methods allocate a Buffer, which then later needs to be
+freed after usage. Once again, smart pointers, while useful are
+avoided because of the memory fragmentation issue for heavily used
+code. While this sort of defeats the purpose of both C++ and object
+oriented programming, that's life when working with high-performance,
+data-driven code. All decoding is handled by the non static
+AMF::extract*{} methods. These are not static as they must retain the
+current amount of data that has been parsed so subsequent decoding
+starts in the right place.
+
+The the only difference between the two higher level classes SOL and
+LcShm, are where the data is stored (disk or memory), and the
+appropriate headers for the data.
+
+LocalConnection, on unix based systems uses the older SYSV style
+shared memory segments. These are always the same size, 64528
+bytes. There are two sections in the shared memory segment. One I call
+"Listeners", not to be confused with ActionScript object Listeners,
+although the concept is similar. LocalConnection is used as a
+bi-directional way to transfer AMF objects between swf movies, instead
+of using a network connection. When a swf movie attachs to the
+LovalConnection shared memory segment, it registers itself by writing
+it's name into the Listener section. 
+
+This registration step turns out to be optional, as it is possible to
+send and receive data by polling for changes. This is of course a huge
+security problem, as it allows any client to secretly monitor or inject
+the communication between multiple swf files in an untraceable
+way. Some web sites, YouTube in particular, exploit this feature by
+never registering themselves as a Listener, so beware.
+
+
+-------
+Note to developers. Please be very careful making any changes to this
+code without seriously understanding how the code works. Byte
+manipulation is very easy to screw up, minor changes can often cause
+major problems. Anyone making changes here should run the libamf.all
+test cases to make sure they haven't introduced breakage.
+
+As a further note, valgrind gets confused with type casting sometimes,
+displaying errors where there are none. As all data is stored as
+unsigned bytes, to extract numeric values like the length often cause
+valgrind to assume there are errors with word alignment. Eliminating
+valgrind errors is a good thing though, so sometimes we have to jump
+through hoops to keep it quite. Often this requires playing silly
+games with local variables and multiple type casts. This makes the
+code a bit convoluted at times, but that's life if you want solid code.
+
+As this code does much allocation and deleting of memory blocks. After
+any changes make sure there are no memory leaks. This can be done with
+valgrind (eliminating the stupid valgrind errors makes it obvious).
+Optionally, the Memory class in libbase/gmemory.h contains supported
+for a valgrind like API that is under programmer control. Look at the
+test cases in libamf.all for usage examples. Memory::analyze() will do
+the same thing as valgrind to check to make sure all allocated memory
+is properly deleted when the program exits. To use the Memory class,
+you have to configure with --with-statistics=all or
+--with-statistics=mem.

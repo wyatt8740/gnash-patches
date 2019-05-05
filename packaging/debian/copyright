@@ -1,0 +1,175 @@
+/usr/share/common-licenses/GFDL-1.2
+
+This package was debianized by Miriam Ruiz <little_miry@yahoo.es> on
+Sun,  7 May 2006 00:54:46 +0000.
+
+It was downloaded from ftp://ftp.gnu.org/pub/gnu/gnash/
+
+Copyright (C) 2005, 2006, 2009, 2010 Free Software Foundation, Inc.
+
+Main Author: Rob Savoye <rob@senecass.com>
+
+Authors of Gameswf, which was the original code base for Gnash:
+        Thatcher Ulrich <tu@tulrich.com>
+        Mike Shaver
+        Thierry Berger-Perrin
+        Ignacio Castaño
+        Willem Kokke
+        Vitaly Alexeev
+        Alexander Streit
+
+License:
+
+   This package is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This package is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+On Debian systems, the complete text of the GNU General
+Public License can be found in '/usr/share/common-licenses/GPL-3'.
+
+
+
+Other licenses:
+
+** Server:
+
+   Linking Gnash statically or dynamically with other modules is making
+   a combined work based on Gnash. Thus, the terms and conditions of
+   the GNU General Public License cover the whole combination.
+   
+   In addition, as a special exception, the copyright holders of Gnash give
+   you permission to combine Gnash with free software programs or
+   libraries that are released under the GNU LGPL and/or with Mozilla, 
+   so long as the linking with Mozilla, or any variant of Mozilla, is
+   through its standard plug-in interface. You may copy and distribute
+   such a system following the terms of the GNU GPL for Gnash and the
+   licenses of the other code concerned, provided that you include the
+   source code of that other code when and as the GNU GPL requires
+   distribution of source code. 
+   
+   Note that people who make modified versions of Gnash are not obligated
+   to grant this special exception for their modified versions; it is
+   their choice whether to do so.  The GNU General Public License gives
+   permission to release a modified version without this exception; this
+   exception also makes it possible to release a modified version which
+   carries forward this exception.
+
+** plugin/mozilla-sdk/include/npruntime.h:
+
+   Copyright © 2004, Apple Computer, Inc. and The Mozilla Foundation. 
+   All rights reserved.
+   
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that the following conditions are
+   met:
+   
+   1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+   3. Neither the names of Apple Computer, Inc. ("Apple") or The Mozilla
+   Foundation ("Mozilla") nor the names of their contributors may be used
+   to endorse or promote products derived from this software without
+   specific prior written permission.
+   
+   THIS SOFTWARE IS PROVIDED BY APPLE, MOZILLA AND THEIR CONTRIBUTORS "AS
+   IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+   TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+   PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE, MOZILLA OR
+   THEIR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+   TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+** Parts of plugin/mozilla-sdk/include/prerror.h:
+
+   Copyright (C) 1987, 1988 Student Information Processing Board of the
+   Massachusetts Institute of Technology.
+
+   Permission to use, copy, modify, and distribute this software and its
+   documentation for any purpose and without fee is hereby granted, provided
+   that the above copyright notice appear in all copies and that both that
+   copyright notice and this permission notice appear in supporting
+   documentation, and that the names of M.I.T. and the M.I.T. S.I.P.B. not be
+   used in advertising or publicity pertaining to distribution of the software
+   without specific, written prior permission.  M.I.T. and the M.I.T. S.I.P.B.
+   make no representations about the suitability of this software for any
+   purpose.  It is provided "as is" without express or implied warranty.
+
+
+
+** Documentation (It is not included in binary packages, but it is in source)
+
+Please refer to /usr/share/common-licenses/GFDL-1.2 for the complete GFDL license.
+
+** testsuite/media/Bitstream Vera Sans.fdb
+
+Font Definition Block (fdb) for embedding in SWF. Taken from http://ming.sf.net.
+
+Bitstream Vera Fonts Copyright:
+
+The fonts have a generous copyright, allowing derivative works (as
+long as "Bitstream" or "Vera" are not in the names), and full
+redistribution (so long as they are not *sold* by themselves). They
+can be be bundled, redistributed and sold with any software.
+
+The fonts are distributed under the following copyright:
+
+Copyright (c) 2003 by Bitstream, Inc. All Rights Reserved. Bitstream
+Vera is a trademark of Bitstream, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the fonts accompanying this license ("Fonts") and associated
+documentation files (the "Font Software"), to reproduce and distribute
+the Font Software, including without limitation the rights to use,
+copy, merge, publish, distribute, and/or sell copies of the Font
+Software, and to permit persons to whom the Font Software is furnished
+to do so, subject to the following conditions:
+
+The above copyright and trademark notices and this permission notice
+shall be included in all copies of one or more of the Font Software
+typefaces.
+
+The Font Software may be modified, altered, or added to, and in
+particular the designs of glyphs or characters in the Fonts may be
+modified and additional glyphs or characters may be added to the
+Fonts, only if the fonts are renamed to names not containing either
+the words "Bitstream" or the word "Vera".
+
+This License becomes null and void to the extent applicable to Fonts
+or Font Software that has been modified and is distributed under the
+"Bitstream Vera" names.
+
+The Font Software may be sold as part of a larger software package but
+no copy of one or more of the Font Software typefaces may be sold by
+itself.
+
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL
+BITSTREAM OR THE GNOME FOUNDATION BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL,
+OR CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+OTHERWISE, ARISING FROM, OUT OF THE USE OR INABILITY TO USE THE FONT
+SOFTWARE OR FROM OTHER DEALINGS IN THE FONT SOFTWARE.
+
+Except as contained in this notice, the names of Gnome, the Gnome
+Foundation, and Bitstream Inc., shall not be used in advertising or
+otherwise to promote the sale, use or other dealings in this Font
+Software without prior written authorization from the Gnome Foundation
+or Bitstream Inc., respectively. For further information, contact:
+fonts at gnome dot org.

@@ -1,0 +1,276 @@
+<sect1 id="configfeatures">
+  <title>Features</title>
+  
+  <para>
+    Some switches can be used during configuration to enable or disable
+    features of &app;. Some of the most important configuration options
+    are:
+  </para>
+  
+  <itemizedlist mark="opencircle">
+    <listitem>
+      <para>
+	<option>--enable-gui</option> lets you specify your GUI of choice.
+	The default option is GTK.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+	<option>--enable-renderer</option> allows a renderer to be
+	chosen.  The default renderer is AGG.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+	<option>--enable-media</option> permits a media handler to be
+	selected.  The default is auto.
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    A complete list of available features follows.
+  </para>
+  
+  <table id="tb-config-features">
+    <title>Configuration Options - Features</title>
+    <tgroup cols='2' align='left' colsep='1' rowsep='1'>
+      <thead>
+	<row>
+	  <entry>Option</entry>
+	  <entry>Function</entry>
+	</row>
+      </thead>
+      <tbody>
+	<row>
+	  <entry><option>--enable-debugger</option></entry>
+	  <entry>Enable support for the Flash debugger. The debugger is
+	  mainly of interest to Flash developers, and is still under development.</entry>
+	</row>
+	<row>
+	  <entry><option>--enable-lirc</option></entry>
+	  <entry>
+	    Enable support for the LIRC remote control protocol.
+	  </entry>
+	</row>
+
+	<row>
+	  <entry><option>--enable-cygnal</option></entry>
+	  <entry>
+	    Build the Cygnal streaming media server.
+	  </entry>
+	</row>
+
+	<row>
+	  <entry><option>--disable-menus</option></entry>
+	  <entry>
+	    Disable building all the menus for the GUI. THis is used
+	    by mobile devices without as much screen space.
+	  </entry>
+	</row>
+
+	<row>
+	  <entry> <option>--enable-docbook</option></entry>
+	  <entry>  Enable the generation of HTML, INFO, and MAN
+	  versions of the documentation from the Docbook XML. You will
+	  then be able to use <command>make html</command>,
+	  <command>make info</command>, and <command>make
+	  man</command> commands. By default, man,info and html pages
+	  are generated.</entry>
+	</row>
+
+	<row>
+	  <entry>
+	    <programlisting>
+--enable-gui=&lt;gui&gt;[,&lt;gui&gt;]...
+
+      gui can be: aos4
+		  aqua
+		  dump
+		  fb
+		  fltk
+		  gtk
+		  haiku
+		  qt3
+		  qt4
+		  sdl
+	    </programlisting>
+	  </entry>
+	  <entry><para>Select the Graphic User Interface to build.</para>
+	  <variablelist>
+	    <varlistentry>
+	      <term>GTK</term>
+	      <listitem>
+		<para>
+		  The GTK+ toolkit, which is the default GUI.
+		  Said to interwork particularly well with firefox.
+		</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term>SDL</term>
+	      <listitem>
+		<para>
+		  Simple DirectMedia Layer, a simple and portable GUI.
+		  Its sound facilities are used when --enable-media=ffmpeg
+		  regardless of whether it is also in charge of the GUI.
+		</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term>QT</term>
+	      <listitem>
+		<para>
+		  An interface adapted to the KDE Desktop Environment.
+		  This must be selected when building the Konqueror plugin
+		  "klash". Furthermore, the only renderer that currently
+		  works with KDE is opengl.
+		</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term>FLTK</term>
+	      <listitem>
+		<para>
+		  Fast Light ToolKit, low on resource usage.
+		  Since all builds using fltk are now broken, we declare it
+		  "for developers".
+		</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term>FB</term>
+	      <listitem>
+		<para>
+		  The Linux Frame Buffer, also known as /dev/fb0.
+		  AGG is the only renderer that can currently be used
+		  with the framebuffer GUI.
+		</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	  </entry>
+	</row>
+	<row>
+	  <entry>
+	    <programlisting>
+--enable-media=&lt;handler&gt;[,&lt;handler&gt;]...
+
+      handler can be: ffmpeg
+		      gst
+		      none
+	    </programlisting>
+	  </entry>
+	  <entry>
+	  <para>
+	    Select the specified media decoders.
+	    Both ffmpeg and gst use SDL sound engine.
+	  </para>
+	  <para>
+	    If option is not given and required dependencies are
+	    present, it will build both ffmpeg and gst media
+	    handlers. Runtime default will be the first in
+	    alphabetical order i.e. ffmpeg.
+	    See <option>MediaHandler</option> gnashrc option.
+	  </para></entry>
+	</row>
+	<row>
+	  <entry>
+	    <para><option>--disable-npapi</option></para>
+	    <para><option>--enable-npapi</option></para>
+	  </entry>
+	  <entry>Force disable/enable building the NPAPI plugin.
+	  By default the Mozilla plugin is built if the GTK gui 
+	  is selected.  Specify the 
+	  <option>--with-npapi-plugindir=</option> option to specify where the
+	  plugin should be installed.
+	  </entry>
+	</row>
+	<row>
+	  <entry>
+	    <para><option>--disable-kparts</option></para>
+	    <para><option>--enable-kparts</option></para>
+	  </entry>
+	  <entry>Force disable/enable building the KPARTS plugin. By default the
+	  KDE plugin is built if the kde gui is selected. 
+	  Specify the <option>--with-kde-plugindir=</option> and
+	  <option>--with-kde-servicesdir=</option> options (or more generally
+	  the <option>--with-kde-pluginprefix=</option> one) to specify where the
+	  plugin should be installed. The default installation dir is extracted
+	  from kde-config.
+	  </entry>
+	</row>
+	<row>
+	  <entry>
+	    <option>--disable-plugins</option>
+	  </entry>
+	  <entry>Disable build of both kparts and npapi plugins</entry>
+	</row>
+	<row>
+	  <entry>
+	    <programlisting>
+--enable-renderer=&lt;renderer&gt;[,&lt;renderer&gt;]...
+
+      renderer can be: agg
+		       cairo
+		       opengl
+	    </programlisting>
+	  </entry>
+	  <entry>Enable support for a graphics backend. Currently
+	  only <option>opengl</option> and
+	  <option>agg</option> work sufficiently. Use OpenGL
+	  when you have hardware accelerated graphics. Use AGG
+	  when you do not have hardware accelerated
+	  graphics or when you are building for a wide audience.
+          Typically most desktop machines have OpenGL
+	  support, and most embedded systems do not. AGG is the
+	  default when building Gnash, although the speed of OpenGL's
+	  rendering is currently superior to AGG.</entry>
+	</row>
+	<row>
+	  <entry><option>--enable-sdk-install</option>
+	  </entry>
+	  <entry>Enable installing the libraries and headers as an SDK.
+	  </entry>
+	</row>
+	<row>
+	  <entry><option>--disable-shared</option>
+	  </entry>
+	  <entry>Enable installing the shared libraries and headers.
+	  Note that the extensions mechanism may not work if shared
+	  libraries are disabled.</entry>
+	</row>
+	<row>
+	  <entry><option>--enable-strict</option>
+	  </entry>
+	  <entry>Turn verbose GCC compiler warnings. By default only
+	  <option>-Wall</option> is used with GCC.</entry>
+	</row>
+	<row>
+	  <entry><option>--enable-fps-debug</option>
+	  </entry>
+	  <entry>Enable FPS debugging code. When this feature is compiled in you can use the -f switch of &app;
+	  to have FPS printed at regular intervals.</entry>
+	</row>
+	<row>
+	  <entry><option>--enable-write</option></entry>
+	  <entry>Makes the Mozilla plugin write the currently playing SWF movie to <filename>/tmp</filename>.
+	  </entry>
+	</row>
+	<row>
+	  <entry><option>--disable-sa-launcher</option></entry>
+	  <entry>Drops the NPAPI plugin support for writing a standalone executable launcher script for the currently playing SWF movie to <filename>/tmp</filename>. Note that you'll still need to add a 'writelauncher' string to your GNASH_OPTIONS environment variable for the script to be created, even if the compile-time support is enabled.
+	  </entry>
+	</row>
+	<row>
+	  <entry><option>--disable-mit-shm</option>
+	  </entry>
+	  <entry>Disable support for the MIT-SHM X extensions.
+	  Currently support is only available using GTK gui and AGG renderer.
+	  Keeping it enabled is not a problem as it will not be used if not
+	  available in the current X session.
+	  </entry>
+	</row>
+      </tbody>
+    </tgroup>
+  </table>
+</sect1>

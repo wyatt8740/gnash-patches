@@ -1,0 +1,56 @@
+# 
+#   Copyright (C) 2007, 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+# 
+
+#
+# Build the FLTK gui
+#
+if BUILD_FLTK_GUI
+bin_PROGRAMS += fltk-gnash
+fltk_gnash_CPPFLAGS = -DGUI_FLTK -DGUI_CONFIG=\"FLTK\" \
+	$(AM_CPPFLAGS) $(FLTK2_CFLAGS)
+fltk_gnash_SOURCES = $(GUI_SRCS) fltk/gui_fltk.cpp
+fltk_gnash_LDFLAGS = -export-dynamic 
+if WIN32
+  fltk_gnash_LDFLAGS += -no-undefined
+endif
+#fltk_gnash_DEPENDENCIES = .configline
+fltk_gnash_LDADD = \
+	$(GNASH_LIBS) \
+    $(X!!_LIBS) \
+	$(AM_LDFLAGS)
+# if BUILD_OGL_RENDERER
+#	fltk_gnash_CPPFLAGS += $(OPENGL_CFLAGS)
+# 	fltk_gnash_LDADD += $(top_builddir)/librender/libgnashrender.la
+#	$(SDL_LIBS) $(OPENGL_LIBS)
+# 	fltk_gnash_SOURCES += fltk/fltk_glue_ogl.cpp fltk/fltk_glue_ogl.h \
+# 	 	fltk/fltk.cpp fltk/fltksup.h 
+# endif
+if BUILD_AGG_RENDERER
+fltk_gnash_CPPFLAGS += $(AGG_CFLAGS)
+fltk_gnash_LDADD += \
+	$(top_builddir)/librender/libgnashrender.la \
+	$(FLTK2_LIBS) $(AGG_LIBS) $(XFT_LIBS) $(X11_LIBS)
+if WIN32
+  fltk_gnash_LDADD += $(top_builddir)/libcore/libgnashcore.la
+endif
+fltk_gnash_SOURCES += fltk/fltk_glue_agg.cpp fltk/fltk_glue_agg.h \
+	 	fltk/fltk.cpp fltk/fltksup.h 
+endif
+if WIN32
+  fltk_gnash_LDADD += -lgdi32 -lole32 -luuid -lws2_32 -lmsimg32
+endif
+endif

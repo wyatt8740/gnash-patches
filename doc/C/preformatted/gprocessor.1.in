@@ -1,0 +1,46 @@
+.\" -*- coding: us-ascii -*-
+.if \n(.g .ds T< \\FC
+.if \n(.g .ds T> \\F[\n[.fam]]
+.de URL
+\\$2 \(la\\$1\(ra\\$3
+..
+.if \n(.g .mso www.tmac
+.TH gprocessor 1 "17 January 2012" "" ""
+.SH NAME
+gprocessor \- Gnash SWF Processor
+.SH Synopsis
+.nf
+
+gprocessor (options)... (file)...
+.fi
+.SH DESCRIPTION
+Gprocessor is a debugging tool for SWF files, a companion to
+Gnash. It is most often used for debugging and running testcases,
+as it is equivalant to running Gnash with no graphic
+output. This tool is primarily used by Gnash developers, or anyone
+who wishes to run the Gnash test cases.
+.TP 
+-h
+Print usage info.
+.TP 
+-w
+Write a .gsc file with preprocessed info, for each input file.
+.TP 
+-vp
+Be verbose about movie parsing.
+.TP 
+-va
+Be verbose about ActionScript.
+.TP 
+-d [ms]
+Milliseconds delay between advances (0 by default). If '-1'
+the delay will be computed from the FPS.
+.TP 
+-f [frames]
+Allow the given number of frame advancements. If 0, keep advancing
+until some other stop condition is encountered (default).
+.TP 
+-r [times]
+Allow the given number of complete runs. If 0, keep looping
+indefinitely. Default is 1 (end as soon as the
+last frame is reached).

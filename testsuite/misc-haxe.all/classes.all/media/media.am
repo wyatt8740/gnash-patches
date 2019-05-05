@@ -1,0 +1,60 @@
+## Process this file with automake to generate Makefile.in
+# 
+#   Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010.
+#   2011 Free Software Foundation, Inc.
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+MEDIAdir = $(srcdir)/media
+
+#AM_CPPFLAGS += -I$(MEDIAdir)
+
+MEDIA_TESTS_V9 = 
+MEDIA_TESTS_V6 = 
+
+MEDIA_TESTS_V6 += media/Camera_as.swf
+
+MEDIA_TESTS_V9 += media/ID3Info_as.swf
+
+MEDIA_TESTS_V6 += media/Microphone_as.swf
+
+MEDIA_TESTS_V9 += media/SoundChannel_as.swf
+
+MEDIA_TESTS_V9 += media/SoundLoaderContext_as.swf
+
+MEDIA_TESTS_V9 += media/SoundMixer_as.swf
+
+MEDIA_TESTS_V9 += media/SoundTransform_as.swf
+
+if BUILD_LIBSOUND
+MEDIA_TESTS_V6 += media/Sound_as.swf
+endif
+
+MEDIA_TESTS_V6 += media/Video_as.swf
+
+check_SCRIPTS += $(MEDIA_TESTS_V6) $(MEDIA_TESTS_V9)
+HAXE_FLAGS += -cp $(MEDIAdir)
+
+EXTRA_DIST += media/Camera_as.hx \
+	media/ID3Info_as.hx \
+	media/Microphone_as.hx \
+	media/SoundChannel_as.hx \
+	media/SoundLoaderContext_as.hx \
+	media/SoundMixer_as.hx \
+	media/SoundTransform_as.hx \
+	media/Video_as.hx
+
+if BUILD_LIBSOUND
+EXTRA_DIST += media/Sound_as.hx
+endif

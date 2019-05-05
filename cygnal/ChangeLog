@@ -1,0 +1,138 @@
+2008-04-01  Rob Savoye  <rob@ripple.welcomehome.org>
+
+	* cygnal.cpp: Ports now have a _PORT appended.
+
+2008-03-28  Rob Savoye  <rob@ripple.welcomehome.org>
+
+	* testsuite/cygnal.all/Makefile.am: Remove testcases moved to
+	gnash/testsuite/libnet.all.
+	* testsuite/cygnal.all/test_buffer.cpp,test_cque.cpp,test_handler.cpp,
+	test_http.cpp: Moved to gnash/testsuite/libnet.all.
+
+	* Makefile.am: Don't build libcygnal anymore, it's been made
+	gnash/libnet, so it's code can be shared with Gnash for the client
+	side of all protocols.
+	* cygnal.cpp: Add -n option to turn on network debugging. Remove
+	unused code. Move rtmp handler to libnet/rtmp.cpp.
+
+
+2008-03-25  Rob Savoye  <rob@ute.welcomehome.org>
+
+	* buffer.{h,cpp}: Use more fime grained ifdef for statistics
+	collecting. 
+	* cque.{h,cpp}: Collect que statistics. 
+	* cygnal.cpp: Use a map instead of a list for the list of
+	handlers. Add admin thread for port 1111. Add connection manager
+	thread, one for each port.
+	* handler.cpp: Tweak how connections get closed. Make sure all
+	threads die in the proper order.
+	* handler.h: Add enum for admin commands.
+	* http.cpp: Return a bool instead of a string from
+	waitForGetRequest(). Cleanup after ourselves and die when the I/O
+	threads go away.
+	* netstats.h: Add comment on statistics API. Rename ifdefs of swf
+	versions.
+	* statistics.cpp: Add more codecs to the enum.
+	
+2008-03-21  Rob Savoye  <rob@ripple.welcomehome.org>
+
+	* testsuite/cygnal.all/test_http.cpp: Fix so it compiles
+	again. The API changed to use Network::byte_t instead of uint8_t.
+	* http.{h,cpp}: Return std::string &, not just a reference.
+
+2008-03-20  Rob Savoye  <rob@ripple.welcomehome.org>
+
+	* http.{h.cpp}: Add support for RTMPT, which is an extension to
+	HTTP 1.0. Parse the RTMPT commands from the header.
+
+	* http.{h,cpp}: Add support for more header fields, Accept-Range,
+	Last-Modified, Keep-Alive. Use "\r\n" instead of endl for header
+	fileds, as the two byte sequence is required by HTTP.
+
+2008-03-19  Rob Savoye  <rob@ripple.welcomehome.org>
+
+	* buffer.{h,cpp}: Add support for optional performance testing
+	statistics 
+	* cque.cpp: Set the returned buffer to zero if the mutex has an
+	error.
+	* cygnal.cpp: Run forever, restarting connections after the
+	disconnect.
+	* handler.cpp: Trap mutex errors.
+	* http.cpp: Tweak the handling of persistent connections.  Add
+	statistics gathering.
+	
+	* buffer.cpp, cque.cpp: Turn off overly verbose debug now that
+	cygnal works again.
+	* handler.cpp: Rearrange when the Handler gets created. Start the
+	process thread before the I/O threads to avoid timing problems if
+	there is data in the network buffer when starting.
+	* handler.h: Add a die method for threads so we know when we're
+	done.
+	* http.cpp: Turn off overly verbose debug now that cygnal works
+	again. Read the file specified in the GET request and stick it in
+	the output que.
+
+2008-03-18  Rob Savoye  <rob@ripple.welcomehome.org>
+
+	* buffer.{h,cpp}: Add a few ::copy methods to put data into a
+	buffer easily.
+	* cque.{h,cpp}: Add an optional name to make debugging messages
+	clearer.
+	* handler.cpp: Add names to the ques. Cleanup typo that blocked on
+	the wrong mutex.
+	* http.cpp: Fix the output messages.
+	
+	* http.cpp: Use Network::byte_t instead of boost_uint8_t. Use a
+	Buffer too.
+
+2008-03-17  Rob Savoye  <rob@ripple.welcomehome.org>
+
+	* alloc.cpp: Don't use thrrad safe wrappers for now.
+	* buffer.cpp: Move BUFFERSIZE to network.h. Use Network::byte_t
+	instead of boost_uint8_t directly.
+	* buffer.h: Use Network::byte_t	instead of boost_uint8_t
+	directly.
+	* cque.{h,cpp}: Add remove and merge methods for manipuating
+	buffers in the que. Add support for using boost condition
+	variables as triggers for I/O in the que.
+	* cygnal.cpp: Use new Handler and Buffer classes instead of the
+	old threads. Move http_handler to http.cpp.
+	* handler.{h,cpp}: Add output thread handler. Use Network::byte_t
+	instead of boost_uint8_t directly.
+	* http.cpp: Use Network::byte_t instead of boost_uint8_t
+	directly. Use const std::string & instead of const char *. Add
+	http_handler from cygnal.cpp.
+	* testsuite/cygnal.all/test_cque.cpp: Add tests for new remove and
+	mege methods.
+
+2008-03-16  Rob Savoye  <rob@ripple.welcomehome.org>
+
+	* handler.{h,cpp}: More queuing support to CQue.
+	* testsuite/cygnal.all/test_handler.cpp: Fix test case for new
+	queuing style.
+	* cque.{h,cpp}: New files for base queuing class, moved out of
+	Handler when I noticed there was code duplication for the queues.
+	* testsuite/cygnal.all/test_cque.cpp: New test case for CQue base
+	class.
+	* testsuite/cygnal.all/Makefile.am: Build the new CQue testcase.
+	* Makefile.am: Add cque.* to libcygnal.
+
+2008-03-15  Rob Savoye  <rob@ripple.welcomehome.org>
+
+	* buffer.{h,cpp}: Low level class to hold blocks of memory for
+	message queues.
+	* testsuite/cygnal.all/test_buffer.cpp: Test case for the Buffer class.
+	* handler.{h,cpp}: Higher level handler for all incoming network
+	connections.
+	* testsuite/cygnal.all/test_handler.cpp: Test case for the Handler class.
+
+2008-03-14  Rob Savoye  <rob@ripple.welcomehome.org>
+
+	* buffer.{h, cpp}: New class for low-level buffer allocation.
+	* testsuite/cygnal.all/test_buffer.cpp: Test case for low level
+	buffer class.
+	* handler.{h, cpp}: New class for handling network connections.
+	* testsuite/cygnal.all/test_buffer.cpp: Test case for handler class.
+
+2009-09-05 Markus Gothe
+	* cygnal.cpp: Added a #ifdef ENABLE_NLS.

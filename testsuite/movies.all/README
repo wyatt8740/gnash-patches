@@ -1,0 +1,82 @@
+= [gravity-embedded.swf] =
+
+== Origin == 
+
+Self-made by Udo Giacomozzi, Gnash developer
+
+== Description ==
+
+Uses MovieClipLoader class to load 'gravity.swf' in the same
+directory this movie is loaded from. Provides two buttons
+to increase or reduce size of the loaded movie, printing
+current size in a textfield underneath them.
+
+= [gravity.swf] =
+
+== Origin == 
+
+Self-made by Udo Giacomozzi, Gnash developer
+
+== Description ==
+
+A yellow smile with red contour and black eyes and mouth bouncing.
+Everytime the ball bounces, the string 'bounced!' is traced.
+
+= [vnc2swf.swf] =
+
+== Origin == 
+
+Contributed by Guido Ostkamp
+
+== Description ==
+
+vnc2swf run
+
+= [yapc2006.swf] =
+
+== Origin == 
+
+The original slide presentation as created by Helen Cook and Ann Barcomb.
+Rights to the slides and the filmed speech were given to the Perl
+Foundation, which offers the material under GPL2 or the Artistic
+License (user's choice).  The movie was exported from Keynote into
+this format by a third party.
+
+All images except for the closing image where taken at the conference 
+for use in this presentation.
+
+Contributed by Ann Barcomb.
+
+== Description ==
+
+This movie was created as a lightning talk for YAPC::NA 2006.  It depicts 
+several key members of the Perl community as criminals who were sentenced 
+to spend time in the SSV dorm rooms (the conference accomodation), which 
+resembled a prison.
+
+As it was designed as a slide presentation, the movie consists of still 
+images with text and a few appearance effects.
+
+= [zoomhenge.swf] =
+
+== Origin == 
+
+Contributed by Russ Taber of RT Ideas, 1952 Cleveland Ave SW,
+Wyoming, MI 49509-1455.  The request was made by Greg Trounson.
+
+== Description ==
+
+...
+
+= [tic_tac2.swf] =
+
+== Origin ==
+
+Contributed by Sergio Costas <raster@rastersoft.com>.
+See http://savannah.gnu.org/bugs/?20684
+
+== Description ==
+
+Tests Sound.position against a playing embedded event sound.
+Regressed in 6b478714a7264187cce8bd6d24c458ed94441843
+(see https://savannah.gnu.org/bugs/?33091)

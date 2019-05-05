@@ -1,0 +1,189 @@
+## Process this file with automake to generate Makefile.in
+# 
+#   Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010,
+#   2011 Free Software Foundation, Inc.
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+EVENTSdir = $(srcdir)/events
+
+EVENTS_TESTS_V9 = 
+EVENTS_TESTS =
+
+EVENTS_TESTS_V9 += events/ActivityEvent_as.swf
+
+EVENTS_TESTS_V9 += events/AsyncErrorEvent_as.swf
+
+#this is air only
+#if BUILD_BROWSERINVOKEEVENT_AS3
+#EVENTS_TESTS += events/BrowserInvokeEvent_as.swf
+#endif
+
+EVENTS_TESTS_V9 += events/ContextMenuEvent_as.swf
+
+#this is air only
+#if BUILD_DRMAUTHENTICATEEVENT_AS3
+#EVENTS_TESTS += events/DRMAuthenticateEvent_as.swf
+#endif
+
+#this is air only
+#if BUILD_DRMERROREVENT_AS3
+#EVENTS_TESTS += events/DRMErrorEvent_as.swf
+#endif
+
+#this is air only
+#if BUILD_DRMSTATUSEVENT_AS3
+#EVENTS_TESTS += events/DRMStatusEvent_as.swf
+#endif
+
+EVENTS_TESTS_V9 += events/DataEvent_as.swf
+
+EVENTS_TESTS_V9 += events/ErrorEvent_as.swf
+
+EVENTS_TESTS_V9 += events/EventDispatcher_as.swf
+
+EVENTS_TESTS_V9 += events/EventPhase_as.swf
+
+EVENTS_TESTS_V9 += events/Event_as.swf
+
+#AIR ONLY
+#if BUILD_FILELISTEVENT_AS3
+#EVENTS_TESTS += events/FileListEvent_as.swf
+#endif
+
+EVENTS_TESTS_V9 += events/FocusEvent_as.swf
+
+EVENTS_TESTS_V9 += events/FullScreenEvent_as.swf
+
+#AIR ONLY
+#if BUILD_HTMLUNCAUGHTSCRIPTEXCEPTIONEVENT_AS3
+#EVENTS_TESTS += events/HTMLUncaughtScriptExceptionEvent_as.swf
+#endif
+
+EVENTS_TESTS_V9 += events/HTTPStatusEvent_as.swf
+
+#THIS IS AN INTERFACE
+#if BUILD_IEVENTDISPATCHER_AS3
+#EVENTS_TESTS_V9 += events/IEventDispatcher_as.swf
+#endif
+
+EVENTS_TESTS_V9 += events/IMEEvent_as.swf
+
+EVENTS_TESTS += events/IOErrorEvent_as.swf
+
+#not implemented in haxe
+#if BUILD_INVOKEEVENT_AS3
+#EVENTS_TESTS += events/InvokeEvent_as.swf
+#endif
+
+EVENTS_TESTS_V9 += events/KeyboardEvent_as.swf
+
+EVENTS_TESTS_V9 += events/MouseEvent_as.swf
+
+#AIR ONLY
+#if BUILD_NATIVEDRAGEVENT_AS3
+#EVENTS_TESTS += events/NativeDragEvent_as.swf
+#endif
+
+#AIR ONLY
+#if BUILD_NATIVEWINDOWBOUNDSEVENT_AS3
+#EVENTS_TESTS += events/NativeWindowBoundsEvent_as.swf
+#endif
+
+#AIR ONLY
+#if BUILD_NATIVEWINDOWDISPLAYSTATEEVENT_AS3
+#EVENTS_TESTS += events/NativeWindowDisplayStateEvent_as.swf
+#endif
+
+EVENTS_TESTS_V9 += events/NetStatusEvent_as.swf
+
+#AIR ONLY
+#if BUILD_OUTPUTPROGRESSEVENT_AS3
+#EVENTS_TESTS += events/OutputProgressEvent_as.swf
+#endif
+
+EVENTS_TESTS_V9 += events/ProgressEvent_as.swf
+
+#AIR ONLY
+#if BUILD_SQLERROREVENT_AS3
+#EVENTS_TESTS += events/SQLErrorEvent_as.swf
+#endif
+
+#AIR ONLY
+#if BUILD_SQLEVENT_AS3
+#EVENTS_TESTS += events/SQLEvent_as.swf
+#endif
+
+#AIR ONLY
+#if BUILD_SQLUPDATEEVENT_AS3
+#EVENTS_TESTS += events/SQLUpdateEvent_as.swf
+#endif
+
+#AIR ONLY
+#if BUILD_SCREENMOUSEEVENT_AS3
+#EVENTS_TESTS += events/ScreenMouseEvent_as.swf
+#endif
+
+
+EVENTS_TESTS_V9 += events/SecurityErrorEvent_as.swf
+
+EVENTS_TESTS_V9 += events/StatusEvent_as.swf
+
+EVENTS_TESTS_V9 += events/SyncEvent_as.swf
+
+EVENTS_TESTS_V9 += events/TextEvent_as.swf
+
+EVENTS_TESTS_V9 += events/TimerEvent_as.swf
+
+check_SCRIPTS += $(EVENTS_TESTS_V9)
+HAXE_FLAGS += -cp $(EVENTSdir)
+
+EXTRA_DIST += events/ActivityEvent_as.hx \
+	events/AsyncErrorEvent_as.hx \
+	events/BrowserInvokeEvent_as.hx \
+	events/ContextMenuEvent_as.hx \
+	events/DRMAuthenticateEvent_as.hx \
+	events/DRMErrorEvent_as.hx \
+	events/DRMStatusEvent_as.hx \
+	events/DataEvent_as.hx \
+	events/ErrorEvent_as.hx \
+	events/EventDispatcher_as.hx \
+	events/EventPhase_as.hx \
+	events/Event_as.hx \
+	events/FileListEvent_as.hx \
+	events/FocusEvent_as.hx \
+	events/FullScreenEvent_as.hx \
+	events/HTMLUncaughtScriptExceptionEvent_as.hx \
+	events/HTTPStatusEvent_as.hx \
+	events/IEventDispatcher_as.hx \
+	events/IMEEvent_as.hx \
+	events/IOErrorEvent_as.hx \
+	events/InvokeEvent_as.hx \
+	events/KeyboardEvent_as.hx \
+	events/MouseEvent_as.hx \
+	events/NativeDragEvent_as.hx \
+	events/NativeWindowBoundsEvent_as.hx \
+	events/NativeWindowDisplayStateEvent_as.hx \
+	events/NetStatusEvent_as.hx \
+	events/OutputProgressEvent_as.hx \
+	events/ProgressEvent_as.hx \
+	events/SQLErrorEvent_as.hx \
+	events/SQLEvent_as.hx \
+	events/SQLUpdateEvent_as.hx \
+	events/ScreenMouseEvent_as.hx \
+	events/SecurityErrorEvent_as.hx \
+	events/StatusEvent_as.hx \
+	events/SyncEvent_as.hx \
+	events/TextEvent_as.hx \
+	events/TimerEvent_as.hx

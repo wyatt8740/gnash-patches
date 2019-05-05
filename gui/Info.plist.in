@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>Gnash</string>
+	<key>CFBundleGetInfoString</key>
+	<string>@VERSION@, Copyright (C) 2007-2010 Free Software Foundation, Inc.</string>
+	<key>CFBundleDisplayName</key>
+	<string>Gnash</string>
+	<key>CFBundleIconFile</key>
+	<string>GnashG.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.gnu.Gnash</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>swf</string>
+				<string>SWF</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>GnashG.icns</string>
+			<key>CFBundleTypeMIMETypes</key>
+			<array>
+				<string>application/x-shockwave-flash</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Adobe Flash File</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>@VERSION@</string>
+	<key>CFBundleName</key>
+	<string>Gnash</string>
+	<key>CFBundleShortVersionString</key>
+	<string>@VERSION@</string>
+	<key>LSRequiresCarbon</key>
+	<true/>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright (C) 2007-2010 Free Software Foundation, Inc.</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.4.0</string>
+	<key>LSUIPresentationMode</key>
+	<integer>0</integer>
+	<key>SUFeedURL</key>
+	<string>http://www.gnashdev.org/update.xml</string>
+</dict>
+</plist>

@@ -1,0 +1,56 @@
+## Process this file with automake to generate Makefile.in
+# 
+#   Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010,
+#   2011 Free Software Foundation, Inc.
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+
+SYSTEMdir = $(srcdir)/system
+
+SYSTEM_TESTS_V9 = 
+SYSTEM_TESTS_V8 = 
+SYSTEM_TESTS_V6 = 
+
+SYSTEM_TESTS_V9 += system/ApplicationDomain_as.swf
+
+SYSTEM_TESTS_V9 += system/Capabilities_as.swf
+
+SYSTEM_TESTS_V9 += system/IMEConversionMode_as.swf
+
+SYSTEM_TESTS_V9 += system/IME_as.swf
+
+SYSTEM_TESTS_V9 += system/LoaderContext_as.swf
+
+SYSTEM_TESTS_V9 += system/SecurityDomain_as.swf
+
+SYSTEM_TESTS_V9 += system/SecurityPanel_as.swf
+
+SYSTEM_TESTS_V8 += system/Security_as.swf
+
+SYSTEM_TESTS_V6 += system/System_as.swf
+
+check_SCRIPTS += $(SYSTEM_TESTS_V9) $(SYSTEM_TESTS_V8) $(SYSTEM_TESTS_V6)
+HAXE_FLAGS += -cp $(SYSTEMdir)
+
+EXTRA_DIST += \
+	system/ApplicationDomain_as.hx \
+	system/Capabilities_as.hx \
+	system/IMEConversionMode_as.hx \
+	system/IME_as.hx \
+	system/LoaderContext_as.hx \
+	system/SecurityDomain_as.hx \
+	system/SecurityPanel_as.hx \
+	system/Security_as.hx \
+	system/System_as.hx

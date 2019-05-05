@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=Gnash SWF Viewer for KDE
+Name[fi]=Gnash-SWF-katselin (KDE)
+GenericName=
+Comment=
+Icon=/usr/share/pixmaps/klash.xpm
+Exec=/usr/bin/qt4-gnash
+Terminal=false
+Categories=Application;AudioVideo;KDE;

@@ -1,0 +1,94 @@
+# 
+#   Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011. 2012
+#   Free Software Foundation, Inc.
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+# 
+
+RPMBUILD_DIR = $(abs_top_builddir)/rpmbuild
+RPMMACROS = $(abs_top_builddir)/.rpmmacros
+RPMSPEC = $(abs_top_builddir)/gnash.spec
+RPMBUILD_FLAGS = --macros=/usr/lib/rpm/macros:$(RPMMACROS) # --clean --rmsource --rmspec
+
+gnash.spec spec: $(srcdir)/packaging/redhat/gnash.spec
+	mkdir -p $(RPMBUILD_DIR); \
+	echo "%_topdir $(RPMBUILD_DIR)" > $(RPMMACROS); \
+	snapshot_version=$(SNAPSHOT_VERSION); \
+	snapshot_release=`echo $${snapshot_version}|grep "~"|sed 's/.*~\(.*\)/0.1.\1/'`; \
+	snapshot_version=`echo $${snapshot_version}|cut -d"~" -f1`; \
+	if [ "$${snapshot_release}" = "" ];then snapshot_release=1;fi; \
+	distro=`lsb_release -is`; \
+	echo "Editing the version in the spec file to be $${snapshot_version} $${snapshot_release} for Distribution $${distro}..."; \
+	sed -e "s/Version.*/Version:	$${snapshot_version}/" \
+	    -e "s/Release.*/Release:	$${snapshot_release}/" \
+	    -e "s/Distribution:.*/Distribution:   $${distro}/" $(srcdir)/packaging/redhat/gnash.spec > $(RPMSPEC)
+
+
+# Build an Redhat/Fedora .rpm package
+# We do this by using the source snapshot that we know is 'distclean'.
+# After copying the source tarball to where rpmbuild expects it,
+# we can then build the binary package.
+# older versions of Fedora used /usr/src/redhat/{SOURCES, BUILD} for
+# everything, but the newer version appears to use one's home directory
+# instead, so now you don't have to be root to build rpm packages.
+
+# Do the entire process to build an RPM package
+rpm: distdir spec setup-rpm rpm-gnash
+
+# build everything in one pass using rpmbuild. This was using
+# --sign gnash.spec, but it didn't work for the automated builds.
+rpm-gnash: 
+	rpmbuild -ba $(RPMBUILD_FLAGS) $(RPMSPEC)
+
+# configure the build directory, which we do by executing only the %prep stage,
+# which doesn't actually run configure
+rpm-configure: 
+	rpmbuild -bp $(RPMBUILD_FLAGS) $(RPMSPEC)
+
+# compile the build, which we do by executing only the %build stage, which
+# runs configure as the first step.
+rpm-build:
+	rpmbuild -bc --short-circuit $(RPMBUILD_FLAGS) $(RPMSPEC)
+
+# install the build, which we do by executing only the %install stage, which
+# also builds the actual rpms
+rpm-install: 
+	rpmbuild -bi --short-circuit $(RPMBUILD_FLAGS) $(RPMSPEC)
+
+# After distdir is done, all we have is an empty subdirectory
+# populated from the *_DIST variables used by Automake. RPM and Deb
+# naming conventions are similar, but just different enough that the
+# source directory and tarball names are subtely different, namely
+# Debian uses a '~' character in their version names, which rpmbuild
+# doesn't like, so for an RPM we convert it to a '_' instead. Then we
+# have to rename the subdirectory to match the new version of the
+# snapshot, and edit the configure* files to have the proper version
+# name.
+# Unlike creating a deb, which build their own source tarball, rpm
+# requires we do it ourselves, and copy it to $HOME/rpmbuild/SOURCES
+# before rpmbuild will work.
+setup-rpm: 
+	snapshot_version=$(SNAPSHOT_VERSION); \
+	snapshot_dir="gnash-`echo $${snapshot_version}|cut -d"~" -f1`"; \
+	if test -d gnash-$(PACKAGE_VERSION); then \
+	  mv gnash-$(PACKAGE_VERSION) $${snapshot_dir}; \
+	fi; \
+	tar zcf $${snapshot_dir}.tar.gz \
+	  --exclude=$${snapshot_dir}/autom4te.cache \
+	  --exclude=$${snapshot_dir}/configure.ac.orig \
+	  --exclude=$${snapshot_dir}/configure.orig $${snapshot_dir}; \
+	mkdir -p $(RPMBUILD_DIR)/SOURCES; \
+	cp $${snapshot_dir}.tar.gz $(RPMBUILD_DIR)/SOURCES
+
+.PHONY : rpm distdir redhat spec rpm-configure rpm-install rpm-build setup-rpm

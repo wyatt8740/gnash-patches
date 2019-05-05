@@ -1,0 +1,72 @@
+## Process this file with automake to generate Makefile.in
+# 
+#   Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010,
+#   2011 Free Software Foundation, Inc.
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+DATAdir = $(srcdir)/data
+
+DATA_TESTS_V9 = 
+
+# if BUILD_ENCRYPTEDLOCALSTORE_AS3
+# DATA_TESTS += data/EncryptedLocalStore_as.swf
+# endif
+
+DATA_TESTS_V9 += data/SQLCollationType_as.swf
+
+DATA_TESTS_V9 += data/SQLColumnNameStyle_as.swf
+
+DATA_TESTS_V9 += data/SQLColumnSchema_as.swf
+
+DATA_TESTS_V9 += data/SQLConnection_as.swf
+
+DATA_TESTS_V9 += data/SQLIndexSchema_as.swf
+
+DATA_TESTS_V9 += data/SQLMode_as.swf
+
+DATA_TESTS_V9 += data/SQLResult_as.swf
+
+DATA_TESTS_V9 += data/SQLSchemaResult_as.swf
+
+DATA_TESTS_V9 += data/SQLSchema_as.swf
+
+DATA_TESTS_V9 += data/SQLStatement_as.swf
+
+DATA_TESTS_V9 += data/SQLTableSchema_as.swf
+
+DATA_TESTS_V9 += data/SQLTransactionLockType_as.swf
+
+DATA_TESTS_V9 += data/SQLTriggerSchema_as.swf
+
+DATA_TESTS_V9 += data/SQLViewSchema_as.swf
+
+check_SCRIPTS += $(DATA_TESTS_V9)
+HAXE_FLAGS += -cp $(DATAdir)
+
+EXTRA_DIST += data/EncryptedLocalStore_as.hx \
+	data/SQLCollationType_as.hx \
+	data/SQLColumnNameStyle_as.hx \
+	data/SQLColumnSchema_as.hx \
+	data/SQLConnection_as.hx \
+	data/SQLIndexSchema_as.hx \
+	data/SQLMode_as.hx \
+	data/SQLResult_as.hx \
+	data/SQLSchemaResult_as.hx \
+	data/SQLSchema_as.hx \
+	data/SQLStatement_as.hx \
+	data/SQLTableSchema_as.hx \
+	data/SQLTransactionLockType_as.hx \
+	data/SQLTriggerSchema_as.hx \
+	data/SQLViewSchema_as.hx

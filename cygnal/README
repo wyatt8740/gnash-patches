@@ -1,0 +1,191 @@
+This will enventually hold the code for a Flash compatible
+streaming media server. Most of this file is oriented towards the
+Adobe Communication server's features, as these will determine a
+rough feature set for Cygnal. Some of the limitations commented on in
+these notes should be consider a place where Cygnal can do better.
+
+General Communication Server features:
+-------------------------------------
+
+The most common way of streaming Flash movies is using progressive
+streaming. Progressive streams don't allow seeking within the data
+once it is playing. The only control is "play" and
+"pause". Progressive streaming doesn't even require a Media server, it
+can be done with any web server, which doesn't do any special
+handling. This is often reffered to as RTMP over HTTP, but there isn't
+any RTMP protocol used within the client-server communication. The
+protocol is purely HTTP using GET and POST directives.
+
+A Flash media server has several abilities other than just sending a
+file stream to the player. Using the RTMP protocol, it is possible to
+dynamically seek within the stream. This puts the control of the movie
+on the server side instead of the client side. This is called dynamic
+streaming.  Along with seeking, dynamic streaming also supports
+capturing a stream, which allows one to send a data stream to the
+server, where it can be stored, and then later replayed.
+
+The server collects statistics on the mumber of connections, the
+bandwidth consumed, which files are streamed, the frame rate,
+etc... This data can be used to tune the performance of the server
+when running. Some statistics modify the stream while it is playing,
+and the other are for load balancing on larger installations, like a
+cluster.
+
+The server can also transcode between codecs. The Adobe server
+can only convert MPEG4. Since the Cygnal server is using Gstreamer, it can
+convert between any supported codec. Along with this, by using the
+statistics collected for each data transfer, the server can also
+change the resolution of the movie to adjust to varying network
+connectivity issues. Transcoding will allow a media stream to be read
+by the server, and the codec and network protocol changed dynamically
+to FLV.
+
+Along with progressive and dynamic streaming support, Cygnal also
+supports multicasting. This way a single source, often a 'real-time"
+one, like a sports game, can be viewed by multiple clients without
+duplicating the data. This source can't be seeked, so it functions
+like a variation on progressive streaming.
+
+There are several utility functions builtin to the servers as well for
+navigation purposes. The main one is used to generate thumbnails or a
+short preview of a movie automatically, without having to do this as
+part of another operation. This features can also be used to merge
+clips from multiple movies.  Each clip is played for the specified
+amount of time, and then the next clip is played starting and stopping
+at the specificied times, and so on until all the clips are played.
+
+If there are multiple camera angles support in the movie being played,
+it can switch between them.
+
+This is a list of features extracted from the O'Reilly book on the
+Adobe Media server. While not all of these are probably worth
+implementing in Cgynal, the list is interesting.
+
+* Seeking in downloading movies only works for the cached part that
+has already been transferred. Seek to the undownloaded part of a
+stream are forbidden.
+* Video and Audio can be uploaded into a safe sandbox area for later
+downloading.
+* Current Flash Communication server supports only server side
+ActionSript 1, the newer one supports Server side ActionScript 2.
+* Server can directly connect streams between clients.
+* Only supports point to point connections, multicasting isn't
+supported.
+* All server side extensions are written in ActionScript.
+* Can upload and store Shared AMF Objects.
+* The software license limits the number of permitted connections.
+* Tracks statistics on online users.
+* Needs seperate copies of media, to handle different bandwidth
+network connections.
+* Only dynamically transcodes from mpeg4.
+* Audio and data have the highest priority, video packets are thrown
+away to stay synchronized.
+
+Cygnal Internals:
+----------------
+
+Since all data streams need no knowledge of other streams, each
+incoming connection will get a new thread to handle it. If the CPU
+load of the machine is above a set value, then the server will stop
+making new connections.
+
+3rd party load balancing software will be used to redirect more
+incoming requests to the next available machine.
+
+Each server will maintain it's own statistics, as well as support an
+optional remote logging ability. A cache of statistics will be kept in
+memory to enable faster processing of things like the bitrate that
+require some historical data to make a calculation.
+
+
+Sources:
+--------
+cygnal.cpp:		The main routine that gets everything going.
+http.cpp, http.h:	Simple server-side HTTP protocol support.
+alloc.cpp		Memory allocator for multi-threaded
+			applications, redefines new and delete.
+stream.cpp, stream.h:	Streaming support. This also allows one to
+			upload a file..
+statistics.cpp, statistics.h:	Collect statistics on bandwidth,
+			connections, memory, and CPU load. 
+
+# transcode.cpp, transcode.h:	Convert between codecs using Gstreamer.
+# flash.cpp, flash.h:	SharedObject support using AMF.
+
+
+cpus	     4
+threads per cpu 1
+spawn limit 4
+
+
+connection_handler - start a server waiting for incoming
+    connections. This blocks waiting for new client requests. When a
+    client connects, a dispatch_handler is created.
+
+A new dispatch_handler is created for each incoming connection up to
+    the 'spawn_limit'. After the spawn_limit is reached, future
+    connections get added to the data each dispatch thread is waiting
+    for. Each dispatch_handler has a network connection.
+
+dispatch_handler - waits on a set of file descriptors, returning a set
+    of file descriptors with activity. When it sees activity, the
+    event handler for the appropriate protocol is called, but no data
+    is read.
+
+http_handler - gets invoked when there is data ready to be
+   processed. It is invoked directly by the dispatch handler when
+   there is data to be read. This controls all I/O for this file
+   descriptor.
+
+rtmp_handler - ditto.
+
+../../../rtmp-logs/red5-rtmpstream-test.log
+connect #3
+ping    #2
+_result #3
+createStream #3	-> streamid #2
+_result #3	-> streamid #2, #1
+_play   #8
+ping    #2
+onStatus #4	<- reset
+onStatus #4	<- play
+deleteStream #3
+
+.Reset 12 bytes
+.Play  8 bytes
+
+
+../../../rtmp-logs/ngrep-flowplayer-seek.log
+connect #3
+ping    #2
+_result #3
+createStream #3	-> streamid #3
+_result #3	-> streamid #d
+_play   #8
+ping    #2
+onStatus #4	<- reset -> streamid #1
+onStatus #5	<- play -> streamid #1
+onStatus #5	<- data start
+onMetaData #5	<- flv file
+
+.Reset 12 bytes
+.Play  8 bytes
+
+-----------------------------------------------------------
+The main process also handles communication with other Cygnal instances.
+
+Invoke and SharedObjects are sent to the cgi-bin. SharedObjects are
+send to all the clients connected for that sandbox by the main process.
+The main process has a map of the other server processes (usually cgi-bins)
+and multimedia streams.
+
+Video/Audio Streams are routed by the main process, and never go to the
+cgi-bin. All multimedia streams should have the abilty to add a filter
+before reading or writing the raw data.
+
+Output to clients just reads a file descriptor, and sends it. Doesn't matter
+if it's network or diskfile. File streaming should work like the cgi-bins,
+where it has to parse the NetStream and FCSSubscribe messages.
+
+Should add a pass-through mode, where messages can be routed to another machine
+and port, like Red5 for their server side applications.

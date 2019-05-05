@@ -1,0 +1,3 @@
+usr/include/gnash
+#usr/lib/gnash/lib*.a
+usr/*/pkgconfig/*

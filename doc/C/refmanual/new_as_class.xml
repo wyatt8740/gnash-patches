@@ -1,0 +1,120 @@
+<chapter id="newclass">
+  <title>Adding New ActionScript Classes</title>
+  
+  <para>
+      An ActionScript 2.0 class refers to two different kinds of objects:
+      a genuine class that can be used to construct instances of that class,
+      and a simple singleton object. Examples of the simple object classes
+      are Mouse and Stage. This chapter is mainly concerned with genuine
+      classes.
+  </para>
+  <para>
+      A genuine ActionScript 2.0 class comprises a constructor function
+      and a prototype object. Classes may have native type information,
+      but most do not.
+  </para>
+
+
+  <sect1 id="prototype">
+    <title>Prototype</title>
+    
+    <para>
+      In ActionScript, a prototype is an object that contains
+      all the methods that an instantiated object will inherit.
+    </para>
+    <para>
+        In Gnash, the prototype of an ActionScript class, like all other
+        objects, is implemented as an <emphasis>as_object</emphasis>.
+        When the class is initialized, the class interface - its 
+        inheritable properties - are attached to the prototype as_object.
+        The following example demonstrates how methods can be attached:
+      <programlisting>
+        void
+        attachBooleanInterface(as_object&amp; o)
+        {
+            Global_as&amp; gl = getGlobal(o);
+            o.init_member("toString", gl.createFunction(boolean_tostring));
+            o.init_member("valueOf", gl.createFunction(boolean_valueof));
+        }
+      </programlisting>
+    </para>
+    <para>
+      Classes may also have static properties. These are functions or
+      data members attached directly to the class. They do not require
+      an instance of the class to be used. These are attached in exactly
+      the same way, but attached to the class (that is, the constructor
+      function), not the prototype object.
+    </para>
+  </sect1>
+
+  <sect1 id="constructor">
+    <title>Constructor</title>
+    <para>
+        A constructor function is an ActionScript callback function that
+        is called when an instance of a class is created. The "this" object
+        during the call is a new object.
+    </para>
+    <para>
+        Constructor functions may do tasks such as attaching properties or
+        type information to the new object. They may also do absolutely
+        nothing. Anything attached to the object during the constructor
+        call is an "own property" of the new object, not an inherited property.
+    </para>
+    <para>
+        The following examples are valid constructors. A constructor should never return anything
+        other than as_value() (an undefined value). Exceptions to this rule are the
+        basic types String, Boolean, and Number. These have constructor functions that can
+        also be called as conversion functions. They have a special implementation that
+        behaves differently depending on the calling context.
+    </para>
+    <programlisting>
+        as_value
+        movieclip_ctor(const fn_call&amp; fn)
+        {
+        }
+        
+        as_value
+        class_ctor(const fn_call&amp; fn)
+        {
+            as_object* this_ptr = ensure&lt;ValidThis&gt;(fn);
+
+            if (fn.nargs) {
+                string_table&amp; st = getStringTable(fn);
+                this_ptr->set_member(st.find("property"), fn.arg(0));
+            }
+            return as_value();
+        }
+    </programlisting>
+    <para>
+        Native typing is added using a Relay subclass. This only applies to a small number of
+        classes. The native typing is added during the constructor function using the
+        as_object::setRelay() function. All Relay types must inherit from the Relay base class.
+    </para>
+    <para>
+        Native typing can be accessed in ActionScript callback functions using the
+        ensure&lt;&gt; function template:
+    </para>
+      <programlisting>
+          as_value
+          boolean_toString(const fn_call&amp; fn)
+          {
+              // This ensures that the function can only be called as a
+              // member function of a genuine Boolean_as object.
+              Boolean_as* b = ensure&lt;IsNativeType&lt;Boolean_as&gt; &gt;(fn);
+
+              return as_value(b.value());
+          }
+      </programlisting>
+</sect1>
+
+<sect1 id="properties">
+    <para>
+        There are three kinds of property: simple data members, functions, and getter-setters.
+        All three kinds may be inherited. Getter-setters are attached using the
+        init_property() function. Functions and data members using the init_member() function.
+    </para>
+</sect1>
+
+
+</chapter>
+

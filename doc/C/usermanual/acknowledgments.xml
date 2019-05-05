@@ -1,0 +1,67 @@
+  <sect1 id="Acknowledgments">
+    <title>Acknowledgments</title>
+    
+    <para>
+      The first version of this guide was written by Rob Savoye.  If not for
+      his tireless efforts, this book - and this project - would never have
+      come this far. 
+    </para>
+    
+    <para>
+      John Steinhart has also been supportive of the project from the
+      beginning. I have shamelessly plagiarized one of his early
+      announcement emails in the early part of this chapter. 
+    </para>
+    
+    <para>
+      Ann Barcomb was instrumental in taking this guide from the 0.3.0 to
+      the 0.4.0 version, incorporating the many changes that came with &app;
+      version 0.8.0. 
+    </para>
+    
+    <para>
+      &app; is based on the public domain program
+      <application>GameSWF</application>, a graphics library
+      for games that contains the heart of a SWF interpreter.  In December
+      2005, &app; was forked from <application>GameSWF</application> and
+      repackaged in the GNU project style, and a major recoding started.
+    </para>
+
+    <para>
+      &app; makes use of jemalloc, which is copyrighted by Jason Evans
+      &lt;jasone@FreeBSD.org&gt;.  The terms of the license follow:
+    </para>
+
+<para>
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+  1. Redistributions of source code must retain the above copyright
+     notice(s), this list of conditions and the following disclaimer as
+     the first lines of this file unmodified other than the possible
+     addition of one or more copyright notices.
+  2. Redistributions in binary form must reproduce the above copyright
+     notice(s), this list of conditions and the following disclaimer in
+     the documentation and/or other materials provided with the
+     distribution.
+    </para>
+ 
+    <para>
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER(S) ``AS IS'' AND ANY
+  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+  PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDER(S) BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    </para>
+  
+    <para>
+      Finally, thanks to all of the &app; developers I haven't mentioned for
+      all their hard work, and for answering my unending questions. 
+    </para>
+  </sect1>

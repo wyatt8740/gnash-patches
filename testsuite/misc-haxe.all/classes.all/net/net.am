@@ -1,0 +1,101 @@
+## Process this file with automake to generate Makefile.in
+# 
+#   Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010,
+#   2011 Free Software Foundation, Inc.
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+NETdir = $(srcdir)/net
+
+#AM_CPPFLAGS += -I$(NETdir)
+
+NET_TESTS_V6 = 
+NET_TESTS_V7 =
+NET_TESTS_V8 =
+NET_TESTS_V9 =
+
+NET_TESTS_V9 += net/FileFilter_as.swf
+
+NET_TESTS_V8 += net/FileReferenceList_as.swf
+
+NET_TESTS_V8 += net/FileReference_as.swf
+
+NET_TESTS_V9 += net/IDynamicPropertyOutput_as.swf
+
+NET_TESTS_V9 += net/IDynamicPropertyWriter_as.swf
+
+if HAVE_SEMGET
+NET_TESTS_V6 += net/LocalConnection_as.swf
+endif
+
+NET_TESTS_V7 += net/NetConnection_as.swf
+
+NET_TESTS_V7 += net/NetStream_as.swf
+
+NET_TESTS_V9 += net/ObjectEncoding_as.swf
+
+NET_TESTS_V9 += net/Responder_as.swf
+
+NET_TESTS_V9 += net/SharedObjectFlushStatus_as.swf
+
+NET_TESTS_V6 += net/SharedObject_as.swf
+
+NET_TESTS_V9 += net/Socket_as.swf
+
+NET_TESTS_V9 += net/URLLoaderDataFormat_as.swf
+
+NET_TESTS_V9 += net/URLLoader_as.swf
+
+# AIR only
+# if BUILD_URLREQUESTDEFAULTS_AS3
+# NET_TESTS += net/URLRequestDefaults_as.swf
+# endif
+
+NET_TESTS_V9 += net/URLRequestHeader_as.swf
+
+NET_TESTS_V9 += net/URLRequestMethod_as.swf
+
+NET_TESTS_V9 += net/URLRequest_as.swf
+
+NET_TESTS_V9 += net/URLStream_as.swf
+
+NET_TESTS_V9 += net/URLVariables_as.swf
+
+NET_TESTS_V6 += net/XMLSocket_as.swf
+
+check_SCRIPTS += $(NET_TESTS_V6) $(NET_TESTS_V7) $(NET_TESTS_V8) $(NET_TESTS_V9)
+HAXE_FLAGS += -cp $(NETdir)
+
+EXTRA_DIST += net/FileFilter_as.hx \
+	net/FileReferenceList_as.hx \
+	net/FileReference_as.hx \
+	net/IDynamicPropertyOutput_as.hx \
+	net/IDynamicPropertyWriter_as.hx \
+	net/LocalConnection_as.hx \
+	net/NetConnection_as.hx \
+	net/NetStream_as.hx \
+	net/ObjectEncoding_as.hx \
+	net/Responder_as.hx \
+	net/SharedObjectFlushStatus_as.hx \
+	net/SharedObject_as.hx \
+	net/Socket_as.hx \
+	net/URLLoaderDataFormat_as.hx \
+	net/URLLoader_as.hx \
+	net/URLRequestDefaults_as.hx \
+	net/URLRequestHeader_as.hx \
+	net/URLRequestMethod_as.hx \
+	net/URLRequest_as.hx \
+	net/URLStream_as.hx \
+	net/URLVariables_as.hx \
+	net/XMLSocket_as.hx

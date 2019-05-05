@@ -1,0 +1,116 @@
+	This directory contains "media" files, that is files for use
+	by either Ming to embed in SWFs or to test gnash loading capabilities.
+	Any filename beginning at the left margin goes into the source
+	distribution
+
+README
+
+	This file.
+
+Bitstream-Vera-Sans.fdb
+Bitstream-Vera-Sans.COPYRIGHT
+
+	Font Definition Block (fdb) for embedding in SWF.
+	Taken from http://ming.sf.net.
+
+default.orc
+
+	Csound default orchestra file
+
+gnash.xml
+
+	An example XML file.
+
+majorscale.sco
+
+	Csound score file for a major scale execution
+
+brokenchord.sco
+
+	Csound score file for testing event sounds (bwy productions)
+
+brokenchord.wav
+
+	Produced with csound from default.orc and brokenchord.sco
+
+green.jpg
+green.swf
+
+	171x171 image with 5 concentric squares filled with tones of green,
+	from outer to inner (steps of 20 pixels):
+	0x00ff00, 0x008800, 0x004400, 0x002200, 0x000000.
+	The SWF embeds the .jpg.
+
+red.swf
+red.jpg
+
+	171x171 image with 5 concentric squares filled with tones of red,
+	from outer to inner (steps of 20 pixels):
+	0xff0000, 0x880000, 0x440000, 0x220000, 0x000000.
+	The SWF embeds the .jpg.
+
+blue.swf
+blu.jpg
+
+	171x171 image with 5 concentric squares filled with tones of blue,
+	from outer to inner (steps of 20 pixels):
+	0x0000ff, 0x000088, 0x000044, 0x000022, 0x000000.
+	The SWF embeds the .jpg.
+
+sound1.wav
+
+	(tick, tick)
+	Sample Size    : 16-bits
+	Sample Encoding: signed (2's complement)
+	Channels       : 1
+	Sample Rate    : 8000
+
+sound1.mp3
+
+	(bip bip)
+	Sample Size    : 16-bits
+	Sample Encoding: MPEG audio (layer I, II or III)
+	Channels       : 1
+	Sample Rate    : 22050
+    No ID3 data.
+
+stereo8.mp3
+
+    TODO
+
+click.mp3
+
+	Sample Size    : 16-bits
+	Sample Encoding: MPEG audio (layer I, II or III)
+	Channels       : 2
+	Sample Rate    : 44100
+
+Note: this contains 2 sets of ID3 data: one set written by audacity, and one
+set added using mp3info. The pp uses the set added by mp3info. If it encounters
+only data written by audacity, the onID3 function is called, but the id3 object
+contains no data.
+
+
+square.flv
+
+	H263 video in an FLV
+	It's a red square moving horizontally (left to right)
+	over a yellow background.
+
+square.ogg
+
+	Theora video version of square.flv.
+
+vars.txt
+vars2.txt
+
+	Text files containing variable assignments.
+
+audio_timewarp.flv
+
+	A cut-down version of a stream downloaded from StreamTheWorld
+	radio for bug report http://savannah.gnu.org/bugs/?26687
+	The characteristic of this FLV is that two consecutive
+	audio frames have a timestamp difference of over an hour.
+	Gnash used to wait the whole time before proceeding, which
+	was wrong.

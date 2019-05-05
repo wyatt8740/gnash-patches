@@ -1,0 +1,122 @@
+# Display a splash screen when starting
+set splashScreen on
+
+# Only access remote content from our local domain
+set localdomain on
+
+# Only access content from our local host
+set localhost on
+
+# These sites are OK
+set whitelist www.doonesbury.com www.cnn.com www.9news.com
+
+# The delay between timer interupts
+set delay 50
+
+# The default verbosity level
+set verbosity 1
+
+# Print debug info about the ActionScript classes as they are processed
+set actionDump off
+
+# Print debug info about how Gnash is parsing the file
+set parserDump off
+
+# The full path to the debug log
+set debuglog /tmp/gnash-dbg.log
+
+# Version string to pass to ActionScript
+set flashVersionString GSH 9,0,99,0
+
+# Enable the debugger
+set debugger off
+
+# Write a debug log to disk
+set writelog on
+
+# Don't use sound (actually this is a test for case-insensitiveness)
+set Sound off
+
+# Don't use plugin sound (actually this is a test for case-insensitiveness)
+set pluginSoUND off
+
+# Enable extensions
+set enableExtensions on
+
+# Start the gui in STOP mode
+set startStopped on
+
+# Allow unverified SSL connections
+set insecureSSL on
+
+# Timeout in seconds for stream download
+# The download will timeout after the given seconds
+# of inactivity. Every activity resets the timer
+#
+set streamsTimeout 1.5
+
+# Don't access content from these sites
+# A blacklist or whitelist should be the last line in the file,
+# since these are the only values that can cause problems due to
+# the parser looping too many times.
+set blacklist www.doubleclick.com www.ebay.com
+
+# Allow access to the /tmp/p1 directory
+set localSandboxPath /tmp/p1
+
+# Use the following command format to open urls
+set urlOpenerFormat lynx %u
+
+# Set SOLSafeDir to /tmp/SharedObjects
+set SOLSafeDir /tmp/SharedObjects
+
+# Set read-only SharedObjects
+set SOLReadOnly true
+
+# Don't use XVideo
+set XVideo false
+
+# Lock-set quality to low
+set quality 0
+
+# Set default webcam to the videotestsrc
+set webcamDevice 0
+
+# These settings are for security of Local connections.
+# Disable using LocalConnection
+set LocalConnection on
+
+# This is the shared memory key for your system
+set LCShmKey 3711621821
+
+#
+# SSL settings. These are the default values currently used.
+#
+
+# Set the default CA file name
+set RootCert testrootcert.pem
+
+#
+# Set the default client certificate currently used,
+set CertFile testclient.pem
+
+# Set the default directory used for certificates
+set CertDir /test/etc/pki/tls/
+
+# Stage.showMenu ignore behavior
+set ignoreShowMenu false
+
+# Use default renderer (there's a space at the end, don't drop it)
+set Renderer 
+
+# Use default media handler (there's a space at the end, don't drop it)
+set MediaHandler 
+
+# Override scripts timeout (how to test the defaults?!)
+set scriptsTimeout 15
+
+# Override scripts recursion limit (how to test the defaults?!)
+set scriptsRecursionLimit 256
+
+# Override scripts limit locking (how to test the defaults?!)
+set lockScriptLimits false

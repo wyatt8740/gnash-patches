@@ -1,0 +1,184 @@
+## Process this file with automake to generate Makefile.in
+# 
+#   Copyright (C) 2009, 2010, 2011 Free Software Foundation, Inc.
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+DISPLAYdir = $(srcdir)/display
+
+#AM_CPPFLAGS += 
+
+DISPLAY_TESTS_V9 = 
+DISPLAY_TESTS_V8 = 
+DISPLAY_TESTS_V6 =
+
+# if BUILD_AVM1MOVIE_AS3
+# DISPLAY_TESTS_V9 += display/AVM1Movie_as.swf
+# endif
+
+# if BUILD_ACTIONSCRIPTVERSION_AS3
+# DISPLAY_TESTS_V9 += display/ActionScriptVersion_as.swf
+# endif
+
+# if BUILD_BITMAPDATACHANNEL_AS3
+# DISPLAY_TESTS_V9 += display/BitmapDataChannel_as.swf
+# endif
+
+DISPLAY_TESTS_V8 += display/BitmapData_as.swf
+
+DISPLAY_TESTS_V9 += display/Bitmap_as.swf
+
+DISPLAY_TESTS_V9 += display/BlendMode_as.swf
+
+DISPLAY_TESTS_V9 += display/CapsStyle_as.swf
+
+DISPLAY_TESTS_V9 += display/DisplayObjectContainer_as.swf
+
+DISPLAY_TESTS_V9 += display/DisplayObject_as.swf
+
+# this class is AIR only
+# if BUILD_FOCUSDIRECTION_AS3
+# DISPLAY_TESTS += display/FocusDirection_as.swf
+# endif
+
+DISPLAY_TESTS_V9 += display/FrameLabel_as.swf
+
+DISPLAY_TESTS_V9 += display/GradientType_as.swf
+
+DISPLAY_TESTS_V9 += display/Graphics_as.swf
+
+# FIXME: this in an interface, not a class
+# if BUILD_IBITMAPDRAWABLE_AS3
+# DISPLAY_TESTS += display/IBitmapDrawable_as.swf
+# endif
+
+DISPLAY_TESTS_V9 += display/InteractiveObject_as.swf
+
+DISPLAY_TESTS_V9 += display/InterpolationMethod_as.swf
+
+DISPLAY_TESTS_V9 += display/JointStyle_as.swf
+
+DISPLAY_TESTS_V9 += display/LineScaleMode_as.swf
+
+DISPLAY_TESTS_V9 += display/LoaderInfo_as.swf
+
+DISPLAY_TESTS_V9 += display/Loader_as.swf
+
+DISPLAY_TESTS_V9 += display/MorphShape_as.swf
+
+DISPLAY_TESTS_V6 += display/MovieClip_as.swf
+
+# These Native* classes are AIR only
+# if BUILD_NATIVEMENUITEM_AS3
+# DISPLAY_TESTS += display/NativeMenuItem_as.swf
+# endif
+
+# if BUILD_NATIVEMENU_AS3
+# DISPLAY_TESTS += display/NativeMenu_as.swf
+# endif
+
+# if BUILD_NATIVEWINDOWDISPLAYSTATE_AS3
+# DISPLAY_TESTS += display/NativeWindowDisplayState_as.swf
+# endif
+
+# if BUILD_NATIVEWINDOWINITOPTIONS_AS3
+# DISPLAY_TESTS += display/NativeWindowInitOptions_as.swf
+# endif
+
+# if BUILD_NATIVEWINDOWRESIZE_AS3
+# DISPLAY_TESTS += display/NativeWindowResize_as.swf
+# endif
+
+# if BUILD_NATIVEWINDOWTYPE_AS3
+# DISPLAY_TESTS += display/NativeWindowType_as.swf
+# endif
+
+# if BUILD_NATIVEWINDOW_AS3
+# DISPLAY_TESTS += display/NativeWindow_as.swf
+# endif
+
+DISPLAY_TESTS_V9 += display/PixelSnapping_as.swf
+
+DISPLAY_TESTS_V9 += display/SWFVersion_as.swf
+
+DISPLAY_TESTS_V9 += display/Scene_as.swf
+
+# This class is AIR only
+# if BUILD_SCREEN_AS3
+# DISPLAY_TESTS += display/Screen_as.swf
+# endif
+
+DISPLAY_TESTS_V9 += display/Shape_as.swf
+
+DISPLAY_TESTS_V9 += display/SimpleButton_as.swf
+
+DISPLAY_TESTS_V9 += display/SpreadMethod_as.swf
+
+DISPLAY_TESTS_V9 += display/Sprite_as.swf
+
+DISPLAY_TESTS_V9 += display/StageAlign_as.swf
+
+DISPLAY_TESTS_V9 += display/StageDisplayState_as.swf
+
+DISPLAY_TESTS_V9 += display/StageQuality_as.swf
+
+DISPLAY_TESTS_V9 += display/StageScaleMode_as.swf
+
+DISPLAY_TESTS_V6 += display/Stage_as.swf
+
+check_SCRIPTS += $(DISPLAY_TESTS_V6) $(DISPLAY_TESTS_V8) $(DISPLAY_TESTS_V9)
+HAXE_FLAGS += -cp $(DISPLAYdir)
+
+EXTRA_DIST += display/AVM1Movie_as.hx \
+	display/ActionScriptVersion_as.hx \
+	display/BitmapDataChannel_as.hx \
+	display/BitmapData_as.hx \
+	display/Bitmap_as.hx \
+	display/BlendMode_as.hx \
+	display/CapsStyle_as.hx \
+	display/DisplayObjectContainer_as.hx \
+	display/DisplayObject_as.hx \
+	display/FocusDirection_as.hx \
+	display/FrameLabel_as.hx \
+	display/GradientType_as.hx \
+	display/Graphics_as.hx \
+	display/IBitmapDrawable_as.hx \
+	display/InteractiveObject_as.hx \
+	display/InterpolationMethod_as.hx \
+	display/JointStyle_as.hx \
+	display/LineScaleMode_as.hx \
+	display/LoaderInfo_as.hx \
+	display/Loader_as.hx \
+	display/MorphShape_as.hx \
+	display/MovieClip_as.hx \
+	display/NativeMenuItem_as.hx \
+	display/NativeMenu_as.hx \
+	display/NativeWindowDisplayState_as.hx \
+	display/NativeWindowInitOptions_as.hx \
+	display/NativeWindowResize_as.hx \
+	display/NativeWindowType_as.hx \
+	display/NativeWindow_as.hx \
+	display/PixelSnapping_as.hx \
+	display/SWFVersion_as.hx \
+	display/Scene_as.hx \
+	display/Screen_as.hx \
+	display/Shape_as.hx \
+	display/SimpleButton_as.hx \
+	display/SpreadMethod_as.hx \
+	display/Sprite_as.hx \
+	display/StageAlign_as.hx \
+	display/StageDisplayState_as.hx \
+	display/StageQuality_as.hx \
+	display/StageScaleMode_as.hx \
+	display/Stage_as.hx

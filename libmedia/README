@@ -1,0 +1,10 @@
+This directory contains the MediaHandler subsystem,
+see doc/DESIGN for more info.
+
+Interfaces and common implementations are in this dir,
+modules in subdirs.
+
+Available modules for MediaHandler are gst and ffmpeg,
+in their own directories.
+
+--strk(Sat Nov  8 20:04:41 CET 2008)

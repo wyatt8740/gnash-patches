@@ -1,0 +1,36 @@
+Draft design diagram for Gnash
+------------------------------
+$Id: DESIGN,v 1.6 2008/06/03 16:30:33 strk Exp $
+
+
+    (speakers,file)
+          ^
+          |
+    [sound_handler] <--------{A}
+                              |
+                              |
+               (inputs) --> [core] <---{C}---> [MediaHandler]
+                              |
+                              |
+            [Renderer] <-----{B}
+                 |
+                 v
+           (screen,file) 
+
+
+Components 
+----------
+
+           [core] -- Gnash core lib (swf parser, VM, builtin objects)
+  [sound_handler] -- Sound mixer, can be modular (only SDL currently available)
+       [Renderer] -- Renderer, can be modular (available: agg/ogl/cairo)
+   [MediaHandler] -- Factory for media parsers and decoders, can be modular (agailable: gst/ffmpeg)
+
+Component connectors 
+--------------------
+
+ {A} --- [core] to [sound_handler] connector 
+
+ {B} --- [core] to [Renderer] connector 
+
+ {C} --- [core] to [MediaHandler] connector 

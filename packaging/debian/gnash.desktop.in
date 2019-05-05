@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=Gnash SWF Viewer
+Name[fi]=Gnash-SWF-katselin
+GenericName=
+Comment=
+Icon=gnash
+Exec=gnash %U
+Terminal=false
+Categories=AudioVideo;Video;Player;GTK;
+MimeType=application/x-shockwave-flash;application/futuresplash;
+NoDisplay=true

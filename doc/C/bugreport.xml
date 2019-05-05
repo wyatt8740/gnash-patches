@@ -1,0 +1,125 @@
+<chapter id="bugreport">
+  <title>Reporting Bugs</title>
+  
+  <para>
+    The Gnash project relies on the community of Gnash users to test
+    the player.  Feedback is critical to any successful project.  Not
+    only does it let us know that people use Gnash, but it helps us  
+    understand the community's needs. Gnash uses a bug tracker on
+    <ulink url="http://savannah.gnu.org" /> to manage these reports.
+  </para>
+  
+  <para>
+    When filing a report, please follow the guidelines below. The better
+    your bug report is, the easier it will be for the developers to
+    address the issue. Bug reports without enough information will
+    be asked to provide this information anyway. Adding
+    critical details, like the Operating System you are on, its
+    version, and any relevant error messages from Gnash that you get.
+  </para>
+
+  <sect1 id="bugstep_package">
+    <title>Get a Fresh Binary Package</title>
+    <para>
+      For starters, it's a good idea to obtain a copy of the latest
+      snapshot. Although Gnash is primarily released as source, the
+      Gnash build infrastructure allows the automated building of
+      binary packages. Often the version of Gnash as packaged by a
+      GNU/Linux or BSD distribution is based on the last official
+      release, which could be months out of date. It helps us, if
+      this is the case, for you to try a newer packaged build of Gnash. 
+    </para>
+
+    <para>
+      You can get a fresh binary package of Gnash, as well as recent 
+      source packages from
+      <ulink type="http"
+	     url="http://www.getgnash.org/packages/">
+	http://www.getgnash.org/packages
+      </ulink>. 
+    </para>    
+  </sect1>
+
+  <sect1 id="bugstep_search">
+    <title>Determine if the bug was previously reported</title>
+    <para>
+      Search the <ulink type="https"
+      url="https://savannah.gnu.org/bugs/?group=gnash">Gnash
+      bug tracker</ulink> to see if the bug has already been identified.
+    </para>
+    <para>
+      If the issue has already been reported, you should not file
+      a bug report.  However, you may add some additional information
+      to the ticket if you feel that it will be beneficial to the
+      developers.  For instance, if someone reported a memory issue
+      on Ubuntu GNU/Linux, and you noticed the same problem on OpenBSD,
+      your stacktrace would be useful.  Conversely, adding a "me too"
+      note to a feature request is not helpful.
+    </para>
+  </sect1>
+
+  <sect1 id="bugstep_guidelines">
+    <title>Review the bug writing guidelines</title>
+    <para>
+      A good bug report should be precise, explicit, and discrete.
+      This means that there should be just one bug per ticket, and
+      that a ticket should contain the following information:
+    </para>
+    <itemizedlist mark="opencircle">
+      <listitem>
+	<para>
+	  An overview of the problem;
+	</para>
+      </listitem> 
+      <listitem>
+	<para>
+	  Instructions on how to replicate the bug;
+	</para>
+      </listitem> 
+      <listitem>
+	<para>
+	  A description of what happened when you performed the steps
+	  to replicate the bug, and what you expected to happen;
+	</para>
+      </listitem> 
+      <listitem>
+	<para>
+	  Your system information: operating system name and version, as
+	  well as the versions of major development dependencies;
+	</para>
+      </listitem> 
+      <listitem>
+	<para>
+	  The release number or checkout timestamp for the version of Gnash
+	  where you observe the problem;
+	</para>
+      </listitem> 
+      <listitem>
+	<para>
+	  The file <filename>config.log</filename>, which should be
+	  attached as a file;
+	</para>
+      </listitem> 
+      <listitem>
+	<para>
+	  A descriptive title.
+	</para>
+      </listitem> 
+    </itemizedlist>
+    <para>
+      Include any additional information that you feel might be useful
+      to the developers.
+    </para>
+  </sect1>
+  
+  <sect1 id="bugstep_file">
+    <title>Filing a bug report</title>
+    <para>
+      After following the steps described above, you can file a bug report at 
+      <ulink type="https"
+	     url="https://savannah.gnu.org/bugs/?group=gnash" />.
+    </para>
+  </sect1>
+  
+</chapter>
+    

@@ -1,0 +1,52 @@
+## Process this file with automake to generate Makefile.in
+# 
+#   Copyright (C) 2009, 2010, 2011 Free Software Foundation, Inc.
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+UTILSdir = $(srcdir)/utils
+
+UTILS_TESTS_V9 =
+UTILS_TESTS_V6 =
+
+UTILS_TESTS_V9 += utils/ByteArray_as.swf
+
+UTILS_TESTS_V9 += utils/CompressionAlgorithm_as.swf
+
+UTILS_TESTS_V9 += utils/Dictionary_as.swf
+
+UTILS_TESTS_V9 += utils/Endian_as.swf
+
+UTILS_TESTS_V9 += utils/IDataInput_as.swf
+
+UTILS_TESTS_V9 += utils/IDataOutput_as.swf
+
+UTILS_TESTS_V9 += utils/IExternalizable_as.swf
+
+UTILS_TESTS_V9 += utils/Proxy_as.swf
+
+UTILS_TESTS_V9 += utils/Timer_as.swf
+
+check_SCRIPTS += $(UTILS_TESTS_V9) $(UTILS_TESTS_V6)
+HAXE_FLAGS += -cp $(UTILSdir)
+
+EXTRA_DIST += utils/ByteArray_as.hx \
+	utils/CompressionAlgorithm_as.hx \
+	utils/Dictionary_as.hx \
+	utils/Endian_as.hx \
+	utils/IDataInput_as.hx \
+	utils/IDataOutput_as.hx \
+	utils/IExternalizable_as.hx \
+	utils/Proxy_as.hx \
+	utils/Timer_as.hx

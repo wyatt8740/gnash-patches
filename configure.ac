@@ -1,0 +1,4347 @@
+dnl  
+dnl  Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014
+dnl  Free Software Foundation, Inc.
+dnl  
+dnl  This program is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU General Public License as published by
+dnl  the Free Software Foundation; either version 3 of the License, or
+dnl  (at your option) any later version.
+dnl  
+dnl  This program is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl  GNU General Public License for more details.
+dnl  You should have received a copy of the GNU General Public License
+dnl  along with this program; if not, write to the Free Software
+dnl  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+dnl  
+
+AC_PREREQ(2.59c)
+AC_INIT(gnash, 0.8.11dev)
+AC_CONFIG_SRCDIR([libcore/as_object.h])
+AC_CONFIG_HEADERS([gnashconfig.h])
+AC_CONFIG_MACRO_DIR([macros])
+
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
+
+dnl --------------------------------------------------------
+dnl Figure out development tool stuff
+dnl --------------------------------------------------------
+
+AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX_11(noext, mandatory)
+AC_PROG_CC
+AM_PROG_CC_C_O
+AC_EXEEXT
+AC_PROG_INSTALL
+
+dnl Set the default values for Flash Version. These are converted into
+dnl various strings to make JavaScript or ActionScript detectors
+dnl recognize Gnash as a SWF Player.
+DEFAULT_FLASH_MAJOR_VERSION="10"
+DEFAULT_FLASH_MINOR_VERSION="1"
+DEFAULT_FLASH_REV_NUMBER="999"
+AC_SUBST(DEFAULT_FLASH_MAJOR_VERSION)
+AC_SUBST(DEFAULT_FLASH_MINOR_VERSION)
+AC_SUBST(DEFAULT_FLASH_REV_NUMBER)
+
+AC_DEFINE_UNQUOTED([DEFAULT_FLASH_MAJOR_VERSION], ["${DEFAULT_FLASH_MAJOR_VERSION}"], [Default Flash major version])
+AC_DEFINE_UNQUOTED([DEFAULT_FLASH_MINOR_VERSION], ["${DEFAULT_FLASH_MINOR_VERSION}"], [Default Flash minor version])
+AC_DEFINE_UNQUOTED([DEFAULT_FLASH_REV_NUMBER], ["${DEFAULT_FLASH_REV_NUMBER}"], [Default Flash revision number])
+
+dnl TODO: use host/build/target -- whatever is more appropriate
+case "${host}" in
+  *-apple-*)
+    DEFAULT_FLASH_PLATFORM_ID="MAC"
+    DEFAULT_FLASH_SYSTEM_OS="MacOS"
+    ;;
+  *-openbsd*)
+    DEFAULT_FLASH_PLATFORM_ID="BSD"
+    DEFAULT_FLASH_SYSTEM_OS="OpenBSD"
+    ;;
+  *-freebsd* | *-kfreebsd*)
+    DEFAULT_FLASH_PLATFORM_ID="BSD"
+    DEFAULT_FLASH_SYSTEM_OS="FreeBSD"
+    ;;
+  *-netbsd*)
+    DEFAULT_FLASH_PLATFORM_ID="BSD"
+    DEFAULT_FLASH_SYSTEM_OS="NetBSD"
+    ;;
+  *-android*)
+    DEFAULT_FLASH_PLATFORM_ID="AND"
+    DEFAULT_FLASH_SYSTEM_OS="Linux"
+    ;;
+  *-linux-gnu)
+    DEFAULT_FLASH_PLATFORM_ID="LNX"
+    DEFAULT_FLASH_SYSTEM_OS="GNU/Linux"
+    ;;
+  *-linux*)
+    DEFAULT_FLASH_PLATFORM_ID="LNX"
+    DEFAULT_FLASH_SYSTEM_OS="Linux"
+    ;;
+  *-cygwin* | *-mingw* | *-pw32*)
+    DEFAULT_FLASH_PLATFORM_ID="WIN"
+    DEFAULT_FLASH_SYSTEM_OS="Windows"
+    ;;
+  *-*solaris*)
+    DEFAULT_FLASH_PLATFORM_ID="SUN"
+    DEFAULT_FLASH_SYSTEM_OS="Solaris"
+    ;;
+  *-os2*)
+    DEFAULT_FLASH_PLATFORM_ID="OS2"
+    DEFAULT_FLASH_SYSTEM_OS="OS/2"
+    ;;
+  *-sco*)
+    DEFAULT_FLASH_PLATFORM_ID="SCO"
+    DEFAULT_FLASH_SYSTEM_OS="SCO/Unix"
+    ;;
+  *-irix*)
+    DEFAULT_FLASH_PLATFORM_ID="IRX"
+    DEFAULT_FLASH_SYSTEM_OS="IRIX"
+    ;;
+  *-hpux*)
+    DEFAULT_FLASH_PLATFORM_ID="HPX"
+    DEFAULT_FLASH_SYSTEM_OS="HPUX"
+    ;;    
+  *-amigaos*)
+    DEFAULT_FLASH_PLATFORM_ID="OS4"
+    DEFAULT_FLASH_SYSTEM_OS="AmigaOS4"
+    ;;    
+  *-haiku*)
+    DEFAULT_FLASH_PLATFORM_ID="HAIKU"
+    DEFAULT_FLASH_SYSTEM_OS="Haiku"
+    ;;    
+  *-gnu*)
+    DEFAULT_FLASH_PLATFORM_ID="GNU"
+    DEFAULT_FLASH_SYSTEM_OS="GNU/HURD"
+    ;;    
+  *)
+    DEFAULT_FLASH_PLATFORM_ID="UNK"
+    DEFAULT_FLASH_SYSTEM_OS="Unknown"
+    ;;
+esac
+
+AC_DEFINE_UNQUOTED([DEFAULT_FLASH_PLATFORM_ID], ["${DEFAULT_FLASH_PLATFORM_ID}"], [Default 3-letter platform identifier for version string])
+AC_DEFINE_UNQUOTED([DEFAULT_FLASH_SYSTEM_OS], ["${DEFAULT_FLASH_SYSTEM_OS}"], [Default value for System.capabilities.os])
+
+AC_SUBST(DEFAULT_FLASH_PLATFORM_ID)
+AC_SUBST(DEFAULT_FLASH_SYSTEM_OS)
+
+DEFAULT_STREAMS_TIMEOUT=60
+AC_SUBST(DEFAULT_STREAMS_TIMEOUT)
+AC_DEFINE_UNQUOTED([DEFAULT_STREAMS_TIMEOUT], [${DEFAULT_STREAMS_TIMEOUT}], [Default streams timeout in seconds])
+
+DEFAULT_SOL_SAFEDIR="~/.gnash/SharedObjects"
+AC_SUBST(DEFAULT_SOL_SAFEDIR)
+AC_DEFINE_UNQUOTED([DEFAULT_SOL_SAFEDIR], ["${DEFAULT_SOL_SAFEDIR}"], [Default SharedObject base directory])
+
+
+dnl Some things you can only do by looking at the platform name.
+case "${host}" in
+  powerpc-apple-darwin*)
+    AC_DEFINE([__powerpc64__], [1], [this is a 64 bit powerpc])
+    darwin=yes
+    AC_DEFINE([DARWIN_HOST], [1], [this is a Darwin platform])
+    ;;
+  *-apple-darwin*)
+    darwin=yes
+    AC_DEFINE([DARWIN_HOST], [1], [this is a Darwin platform])
+    ;;
+    dnl Unfortunately, all BSD distributions are not identical, so 
+    dnl as tacky as it is to look for the distribution name, we don't
+    dnl have much choice. The use of these should be avoid as much as possible.
+  *-openbsd*)
+    bsd=yes
+    openbsd=yes
+    AC_DEFINE([OPENBSD_HOST], [1], [this is an OpenBSD platform])
+    ;;
+  *-freebsd* | *-kfreebsd*)
+    bsd=yes
+    freebsd=yes
+    AC_DEFINE([FREEBSD_HOST], [1], [this is a FreeBSD platform])
+    ;;
+  *-netbsd*)
+    bsd=yes
+    netbsd=yes
+    AC_DEFINE([NETBSD_HOST], [1], [this is a NetBSD platform])
+    ;;
+  *-*solaris*)
+    solaris=yes
+    AC_DEFINE([SOLARIS_HOST], [1], [this is a Solaris platform])
+    ;;
+  *-android*)
+    android=yes
+    AC_DEFINE([ANDROID_HOST], [1], [this is an Android platform])
+    ;;
+  *-*linux*)
+    linux=yes
+    AC_DEFINE([LINUX_HOST], [1], [this is a Linux platform])
+    ;;
+  *-cygwin* | *-mingw* | *-pw32*)
+    windows=yes
+    AC_DEFINE([WIN32_HOST], [1], [this is a Win32 platform])
+    ;;
+  *64-*-*bsd*)
+    bsd_os=bsd 
+    AC_DEFINE([WORDSIZE], [64], [this is a 64 platform])
+    ;;
+  *-*amigaos*)
+    amigaos4=yes
+    AC_DEFINE([AMIGAOS4_HOST], [1], [this is an AmigaOS4 platform])
+    ;;
+  *-*haiku*)
+    haiku=yes
+    AC_DEFINE([HAIKU_HOST], [1], [this is a Haiku platform])
+    ;;
+  *-gnu*)
+    gnu=yes
+    AC_DEFINE([GNU_HOST], [1], [this is a GNU platform])
+    ;;
+  *-*wince)
+    wince=yes
+    AC_DEFINE([WINCE_HOST], [1], [this is a WINCE platform])
+    ;;
+  *-*winmo)
+    wince=yes
+    AC_DEFINE([WINCE_HOST], [1], [this is a WINCE platform])
+    AC_DEFINE([WINCE6_HOST], [1], [this is a WINCE6 platform])
+    ;;
+esac
+
+
+AM_CONDITIONAL(LINUX, test x$linux = xyes)
+AM_CONDITIONAL(WIN32, test x$windows = xyes)
+AM_CONDITIONAL(HAIKU, test x$haiku = xyes)
+AM_CONDITIONAL(AMIGAOS4, test x$amigaos4 = xyes)
+
+dnl Get build date for helping us debugging
+BUILDDATE="`date +%Y%m%d`"
+AC_SUBST(BUILDDATE)
+
+dnl These are required by automake
+AM_INIT_AUTOMAKE
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+AM_MAINTAINER_MODE
+AC_PROG_MAKE_SET
+
+AM_GNU_GETTEXT([external])
+AM_CONDITIONAL(HAS_GETTEXT, test x$ac_cv_path_XGETTEXT != x)
+
+dnl Many of the Gnash macros depend on gettext macros defining shlibext; recent
+dnl gettext however does not.
+if test x"${shlibext}" = x; then
+  if test x"${acl_cv_shlibext}" = x; then
+    echo "Gettext macros were supposed to define shared library extensions"
+    exit 1;
+  else
+    shlibext="${acl_cv_shlibext}"
+  fi
+fi
+
+dnl This is primarily used when compiling for a similar architecture,
+dnl like pentium->geode, which can use the same compiler, but have
+dnl different development libraries.
+
+AC_ARG_WITH(sysroot,
+  AC_HELP_STRING([--with-sysroot], [system root directory for cross compiling]),
+  with_top_level=${withval};
+  cross_compiling=yes)
+
+if test x"${cross_compiling}" = xyes; then
+  dnl Check if /usr isn't part of the specified path
+  if test -d ${with_top_level}/usr; then
+    with_top_level=${withval}/usr
+  else 
+    dnl Check if the specified path supplies /usr
+    if test -d ${with_top_level}/include; then
+      with_top_level=${withval}
+    else
+      AC_MSG_ERROR([Specified sysroot \"${with_top_level}/include\" doesn't exist!])
+    fi
+  fi
+fi
+
+dnl Android is a little different when using a standard cross toolchain,
+dnl so we have to configure especially for it for now. Usually it's
+dnl something like this:
+dnl
+dnl arm-linux-eabi-gcc -Wl,--dynamic-linker -Wl,/system/bin/linker
+dnl -nostdlib -Wl,-rpath -Wl,/system/lib -Wl,-rpath
+dnl -Wl,/opt/android-ndk-r3/build/platforms/android-5/arch-arm/usr/lib
+dnl -L/opt/android-ndk-r3/build/platforms/android-5/arch-arm/usr/lib
+dnl -lc -o hello
+dnl  /opt/android-ndk-r3/build/platforms/android-3/arch-arm/usr/lib/crtbegin_dynamic.o
+dnl Recent versions of G++ (I'm using 4.5 from source
+android_ndk=no
+AC_ARG_WITH([android],
+  AC_HELP_STRING([--with-android], [directory where android NDK is installed]),
+        android_ndk=${withval}
+        if test x"${withval}" != x; then
+          android_ndk=${withval}
+        fi
+)
+CROSS_CXXFLAGS=
+if test x"${android}" = xyes; then
+  CROSS_CXXFLAGS='-fexceptions -frtti -I${prefix}/include'
+  CROSS_LDFLAGS='-all-static -L${prefix}/lib'
+  if test x"${with_top_level}" = x; then
+    with_top_level=/usr/local/android-arm/sysroot/usr
+    cross_compiling=yes
+  fi
+  ANDROID_NDK=${android_ndk}
+  AC_DEFINE(ANDROID, [1], [This is an Android build])
+  CXXFLAGS="${CXXFLAGS} ${CROSS_CXXFLAGS}"
+else
+  CROSS_CXXFLAGS=
+  ANDROID_NDK=
+fi
+AC_SUBST(ANDROID_NDK)
+AM_CONDITIONAL(ANDROID, [ test x"${android}" = xyes ])
+AC_SUBST(CROSS_LDFLAGS)
+AC_SUBST(CROSS_CXXFLAGS)
+
+AC_C_BIGENDIAN
+AC_C_CONST
+AC_C_INLINE
+
+AC_PATH_PROG(DEJAGNU, runtest)
+
+dnl These options are for Cygnal, which collects optional statistics
+dnl on all the network traffic By default, we turn on statistics
+dnl collecting for the incoming and outgoing queues, since those are
+dnl required to be compatiable with FMS 3, and the ActionScript server
+dnl management API. buffers are the lowest level data storage, this
+dnl data is the time spent in the queue, and is primarily only used
+dnl for tuning the queueing API in Gnash. Memoryis the same, it's only
+dnl used by developers for tuning performance of memory allocations in
+dnl Gnash.
+buffers=no
+que=no
+memory=no
+cache=yes
+stat_proplookup=no
+AC_ARG_WITH(statistics,
+  AC_HELP_STRING([--with-statistics], [Specify which statistics features to enable]),
+  if test -n ${withval}; then
+    if test "x${withval}" != "xno"; then
+      extlist="${withval}"
+      withval=`echo ${withval} | tr '\054' ' ' `
+    else
+      extlist=""
+      withval=""
+    fi
+  fi
+  statistics_list=""
+  nstatistics=0
+  while test -n "${withval}" ; do
+    val=`echo ${withval} | cut -d ' ' -f 1`
+    [case "${val}" in
+      buffers)
+        buffers=yes
+        nstatistics=$((nstatistics+1))
+        ;;
+      que)
+        que=yes
+        nstatistics=$((nstatistics+1))
+        ;;
+      memory)
+        memory=yes
+        nstatistics=$((nstatistics+1))
+        ;;
+      cache)
+        cache=yes
+        nstatistics=$((nstatistics+1))
+        ;;
+      proplookup)
+        stat_proplookup=yes
+        nstatistics=$((nstatistics+1))
+        ;;
+      all|ALL)
+        buffers=yes
+        memory=yes
+        queu=yes
+        cache=yes
+        stat_proplookup=yes
+        nstatistics=5           dnl this must be incremented if you add anything
+        ;;
+      *) AC_MSG_ERROR([invalid statistics feature specified: ${withval} given (accept: buffers|que|memory|cache|proplookup|all)])
+        ;;
+      esac]
+    withval=`echo ${withval} | cut -d ' ' -f 2-6`
+    if test "x$val" = "x$withval"; then
+      break;
+    fi
+  done
+)
+if test x${buffers} = xyes; then
+  statistics_list="${statistics_list} buffers"
+  AC_DEFINE(USE_STATS_BUFFERS, [1], [Support statistics collecting for the queue buffers])
+  AC_MSG_WARN([This option will effect your performance])
+fi
+
+if test x${memory} = xyes; then
+  statistics_list="${statistics_list} memory"
+  AC_DEFINE(USE_STATS_MEMORY, [1], [Support statistics collecting for all memory profiling])
+  AC_MSG_WARN([This option will effect your performance])
+fi
+
+if test x${que} = xyes; then
+  statistics_list="${statistics_list} queues"
+  AC_DEFINE(USE_STATS_QUEUE, [1], [Support statistics collecting for the queues])
+fi
+
+if test x${cache} = xyes; then
+  statistics_list="${statistics_list} cache"
+  AC_DEFINE(USE_STATS_CACHE, [1], [Support statistics collecting for the cache])
+fi
+
+if test x${stat_proplookup} = xyes; then
+  statistics_list="${statistics_list} proplookup"
+  AC_DEFINE(GNASH_STATS_OBJECT_URI_NOCASE, [1], [Collecting and report stats about ObjectURI case lookups])
+  AC_DEFINE(GNASH_STATS_PROPERTY_LOOKUPS, [1], [Collecting and report stats about property lookups])
+  AC_DEFINE(GNASH_STATS_STRING_TABLE_NOCASE, [1], [Collecting and report stats about string_table::key case lookups])
+fi
+
+dnl this is just so Makefile can print the same list
+STATISTICS_LIST="$statistics_list"
+AC_SUBST(STATISTICS_LIST)
+
+#
+# These settings are compile time options for the security
+# setting for anything that lets gnash exchange data with
+# other applications. Currently this only supports Shared
+# Objects and Local Connections. Shared Objects are like
+# your web browsers cookies, and Local Connections use
+# shared memory to execute methods remotely, and to
+# exchange data.
+#
+# The default is to enable everything, and these can
+# also be controlled dynamically by the $HOME/.gnashrc
+# file.
+#
+solreadonly=no
+localconnection=yes
+
+AC_ARG_WITH(security,
+  AC_HELP_STRING([--with-security], [Specify which security features to enable]),
+  if test -n ${withval}; then
+    if test "x${withval}" != "xno"; then
+      extlist="${withval}"
+      withval=`echo ${withval} | tr '\054' ' ' `
+    else
+      extlist=""
+      withval=""
+    fi
+  fi
+  security_list=""
+  nsecurity=0
+  while test -n "${withval}" ; do
+    val=`echo ${withval} | cut -d ' ' -f 1`
+    [case "${val}" in
+      solreadonly)
+        solreadonly=yes
+        nsecurity=$((nsecurity+1))
+        ;;
+      lc)
+        localconnection=yes
+        nsecurity=$((nsecurity+1))
+        ;;
+      all|ALL)
+        solreadonly=yes
+        lc=yes
+        nsecurity=3
+        ;;
+      *) AC_MSG_ERROR([invalid security feature specified: ${withval} given (accept: solreadonly|lc)])
+        ;;
+      esac]
+    withval=`echo ${withval} | cut -d ' ' -f 2-6`
+    if test "x$val" = "x$withval"; then
+      break;
+    fi
+  done
+)
+
+if test x$localconnection = xyes; then
+  security_list="${security_list} localconnection"
+  AC_DEFINE(USE_LC, [1],
+                 [Support LocalConnection])
+  AC_MSG_NOTICE([This build supports LocalConnection])
+fi
+if test x$solreadonly = xyes; then
+  security_list="${security_list} solreadonly"
+  AC_DEFINE(USE_SOL_READONLY, [1],
+                 [Shared Objects are read-only])
+  AC_MSG_NOTICE([Shared Objects are read-only])
+fi
+SECURITY_LIST="$security_list"
+AC_SUBST(SECURITY_LIST)
+
+dnl For Haiku, we know the sysroot is in a non-standard place
+dnl it is important that -lagg comes before -lbe
+if test x"${haiku}" = xyes; then
+  HAIKU_LIBS=-lbe
+  AC_SUBST(HAIKU_LIBS)
+fi
+
+dnl Darwin uses libtool instead of ar to produce libraries. We determine which one
+dnl we have here now. For some reason on Darwin, we don't get the
+dnl count from grep via stdin correctly. Writing a temp file does the
+dnl trick, so although it's ugly, that's what we gotta do...
+AC_MSG_CHECKING([which type of library archiver we have])
+rm -f .tmp
+libtool > .tmp 2>&1
+archiver=`grep -c dynamic .tmp 2>&1`
+rm -f .tmp
+dnl is there any good way to report what we found here?
+AC_MSG_RESULT()
+if test x"${archiver}" != x && test "${archiver}" -eq 1; then
+   export MACOSX_DEPLOYMENT_TARGET="10.3"
+   darwin=yes
+else
+   darwin=no
+fi
+
+dnl When cross compiling, limit the search directories cause otherwise
+dnl we may get the host headers or libraries by accident. These values
+dnl are exported, so all the other configure tests in macros/*.m4 use
+dnl these same settings rather than duplicating them like we used to.
+dnl To override thise, use the --with-*-incl= and --with-*-libs=
+dnl options to configure.
+if test x$cross_compiling = xyes; then
+  AC_MSG_NOTICE([Configuring Gnash for cross compilation])
+  export pkgroot="`$CXX -print-search-dirs | grep "install:" | sed -e 's/install: //' -e 's:/lib/gcc/.*::'`"
+  dnl pkgroot only works correctly with builds of cross tools not in
+  dnl /usr, ie... installed from the distribution packages, or just
+  dnl plain installed in the system tools. This contaminates configure
+  dnl when building for variations of the same basic architecture,
+  dnl like i686-linux -> i586-mingw32.
+  if test x"${pkgroot}" = x"/usr"; then
+    export pkgroot=""
+  fi
+  export incllist="`eval echo ${with_top_level}/include ${pkgroot}/${host_alias}/include ${pkgroot}/include`"
+  export libslist="`eval echo ${with_top_level}/lib ${pkgroot}/${host_alias}/lib ${pkgroot}/lib64 ${pkgroot}/lib32 ${pkgroot}/lib`"
+  export pathlist="`eval echo ${pkgroot}/${host_alias}/bin:${pkgroot}/bin`"
+  npapi=no
+else
+  AC_MSG_NOTICE([Configuring Gnash for native compilation])
+  export incllist="`eval cat ${srcdir}/macros/incllist`"
+  libslist="`cat ${srcdir}/macros/libslist`"
+  if test -f /usr/bin/dpkg-architecture; then
+    export DEB_HOST_MULTIARCH="`eval dpkg-architecture -qDEB_HOST_MULTIARCH`"
+    export libslist="${libslist} /lib/${DEB_HOST_MULTIARCH} /usr/lib/${DEB_HOST_MULTIARCH}"
+  fi
+  export pathlist=$PATH
+fi
+
+if test x"${android_ndk}" != xno; then
+   incllist="${android_ndk}/include ${incllist}"
+fi
+
+AM_CONDITIONAL(CROSS_COMPILING, [ test x$cross_compiling = xyes ])
+
+for dir in ${incllist}; do
+  test -d ${dir} && pruned_incllist="${pruned_incllist} ${dir}";
+done
+
+for dir in ${libslist}; do
+  test -d ${dir} && pruned_libslist="${pruned_libslist} ${dir}";
+done
+
+libslist="${pruned_libslist}";
+incllist="${pruned_incllist}";
+
+dnl !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+dnl !! 
+dnl !! IMPORTANT NOTICE 
+dnl !!
+dnl !!  Any call to GNASH_PATH_XXX must be be given *after* this snippet.
+dnl !!  This is to ensure that PKG_CONFIG, cross_compiling and incllist are
+dnl !!  properly set at the time of call.
+dnl !!
+dnl !!  Also GNASH_PKG_FIND has to be called later. Not sure
+dnl !!  why but calling before breaks detection of CPP (see
+dnl !!  gnash-dev mailing archives for June 12 2009
+dnl !!  http://lists.gnu.org/archive/html/gnash-dev/2009-06/index.html
+dnl !! 
+dnl !! 
+dnl !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+dnl Check for PKG_CONFIG before any GNASH_PATH call
+PKG_PROG_PKG_CONFIG
+
+dnl --------------------------------------------------------
+dnl  GUI selection
+dnl --------------------------------------------------------
+
+build_haiku=no
+build_aos4=no      dnl AmigaOS4 GUI
+build_kde3=no      dnl WARNING: doesn't work (see https://savannah.gnu.org/bugs/index.php?31782)
+build_qt4=no
+build_qtopia3=no
+build_qtopia4=no
+build_gtk=no
+build_fb=no                     dnl Raw framebuffer
+build_fltk=no
+build_sdl=no
+build_aqua=no                   dnl Native MacOSX
+build_dump=no
+AC_ARG_ENABLE(gui,
+  AC_HELP_STRING([--enable-gui], [Enable support for the specified GUI toolkits (default=gtk,qt4)]),
+  [if test -n ${enableval}; then
+    enableval=`echo ${enableval} | tr '\054' ' ' `
+  fi
+  while test -n "${enableval}" ; do
+    val=`echo ${enableval} | cut -d ' ' -f 1`
+    case "${val}" in
+      gtk|GTK|gtk2|GTK2)
+        build_gtk=yes
+        ;;
+      kde3|KDE3)
+        build_kde3=yes
+        ;;
+      qt4|QT4|kde4|KDE4)
+        build_qt4=yes
+        ;;
+      qtopia3|QTOPIA3)
+        build_qtopia3=yes
+        ;;
+      qtopia4|QTOPIA4)
+        build_qtopia4=yes
+        ;;
+      sdl|SDL)
+        build_sdl=yes
+        ;;
+      aqua|AQUA|Aqua)
+        build_aqua=yes
+        ;;
+      fltk|FLTK|fltk2|FLTK2)
+        build_fltk=yes
+        ;;
+      fb|FB)
+        build_fb=yes
+        ;;
+      aos4|AOS4)
+        build_aos4=yes
+        ;;
+      haiku|HAIKU)
+        build_haiku=yes
+        ;;
+      dump|DUMP)
+        build_dump=yes
+        ;;
+      all|ALL)
+        build_dump=yes
+        dnl BSD doesn't have a framebuffer interface
+        if test x${linux} = xyes; then
+          build_fb=yes
+        fi
+        if test x${openbsd} != xyes; then
+          build_qt4=yes
+        fi
+        build_sdl=yes
+        build_gtk=yes
+        ;;
+      *) AC_MSG_ERROR([invalid gui ${enableval} given (accept: gtk|kde3|qt4|fltk|sdl|aqua|fb|qtopia3|qtopia4|dump|aos4|haiku)])
+         ;;
+      esac
+    enableval=`echo ${enableval} | cut -d ' ' -f 2-6`
+    if test "x$val" = "x$enableval"; then
+      break;
+    fi
+  done],
+  [ dnl Run the following code if no --enable-gui is given
+  build_fb=auto
+  build_sdl=auto
+  if test x"${openbsd}" = xyes; then
+    build_gtk=yes
+    build_dump=auto
+  else if test x"${haiku}" = xyes; then
+    build_haiku=yes;
+  else
+    build_qt4=auto
+    build_gtk=yes
+    build_dump=auto
+  fi
+  fi
+  ]
+)
+
+if test x"${build_haiku}" = xyes; then
+  if test x"$haiku" != xyes; then
+    echo "        ERROR: Can not build Haiku gui outside of Haiku
+operating system." >&3
+  fi
+fi
+
+dnl We can use Xephyr or fbe to create a fake framebuffer instead of real
+dnl video memory. This lets us test on a desktop machine.
+AC_ARG_WITH(fakefb,
+AC_HELP_STRING([--with-fakefb],
+ [specify a file to be mapped instead of a real framebuffer]),
+ with_fakefb=${withval})
+
+fakefb=
+if test x"${with_fakefb}" = xyes; then
+  dnl This is the default file name fbe uses.
+  fakefb=/tmp/fbe_buffer
+else
+  if test x"${with_fakefb}" != x; then
+    fakefb=${with_fakefb}
+  fi
+fi
+FAKEFB=${fakefb}
+AC_SUBST(FAKEFB)
+
+if test x"${fakefb}" != x; then
+    AC_DEFINE(ENABLE_FAKE_FRAMEBUFFER, [1], [Enable using a file instead of a real framebuffer])
+fi
+
+dnl This enable a small handful of tests that aren't designed to be
+dnl run as part of "make check", as they are either incomplete, or
+dnl can only be run interactively. These are all primarily oriented
+dnl towards code development and debugging, instead of regression
+dnl or unit testing.
+AC_ARG_ENABLE(devtests, AC_HELP_STRING([--enable-devtests],
+  [Developer only tests, not to be included in make check]),
+[case "${enableval}" in
+  yes) devtests=yes ;;
+  no)  devtests=no ;;
+  *)   AC_MSG_ERROR([bad value ${enableval} for enable-devtests option]) ;;
+esac], devtests=no)
+AM_CONDITIONAL(ENABLE_DEVELOPER_TESTS, [test x${devtests} = xyes])
+
+dnl --------------------------------------------------------
+dnl  Sound handler selection
+dnl --------------------------------------------------------
+add_sound=
+build_sound_none=no
+build_sound_sdl=no
+build_sound_ahi=no
+build_sound_mkit=no
+AC_ARG_ENABLE(sound,
+  AC_HELP_STRING([--enable-sound=[[sdl|ahi|mkit]]], [Use the specified sound handler (default=sdl)]),
+     [case "${enableval}" in
+      sdl|SDL|Sdl)
+        build_sound_sdl=yes
+        add_sound="sdl"
+        ;;
+      none|NONE|None)
+        build_sound_none=yes
+        add_sound="none"
+        ;;
+      ahi|AHI|Ahi)
+        build_sound_ahi=yes
+        add_sound="ahi"
+        ;;
+      mkit|MKIT|Mkit)
+        build_sound_mkit=yes
+        add_sound="mkit"
+        ;;
+     esac],
+  [if test x"${haiku}" = xyes; then
+     build_sound_mkit=yes
+     add_sound="mkit"
+   else
+     if test x${build_sound_none} = xno; then
+       build_sound_sdl=yes
+       add_sound=sdl
+     fi
+   fi]
+)
+
+AM_CONDITIONAL(BUILD_LIBSOUND, test x${build_sound_none} != xyes)
+if test x${build_sound_none} != xyes; then
+  AC_DEFINE(USE_SOUND, [1], [Build any sound code])
+fi
+
+dnl --------------------------------------------------------
+dnl  Media handler selection
+dnl --------------------------------------------------------
+build_media_gst=no
+build_media_ffmpeg=auto
+build_media_none=no
+AC_ARG_ENABLE(media,
+  AC_HELP_STRING([--enable-media=handler],
+    [Enable media handling support using the specified handlers: ffmpeg gst none(no sound) (default=auto) ]),
+  
+    if test -n ${enableval}; then
+      enableval=`echo ${enableval} | tr '\054' ' ' `
+    fi
+    dnl When --enable-media is given, all media defaults to off
+    dnl except the explicitly enabled ones
+    build_media_ffmpeg=no
+    build_media_gst=no
+    while test -n "${enableval}"; do
+      val=`echo ${enableval} | cut -d ' ' -f 1`
+      [case "${val}" in
+        GST|gst)
+          build_media_gst=yes
+          media_list="${media_list}gst "
+          ;;
+        FFMPEG|ffmpeg)
+          build_media_ffmpeg=yes
+          media_list="${media_list}ffmpeg "
+          ;;
+        no|NO|none)
+          build_media_none=yes
+          media_list="none"
+          ;;
+        *)
+          AC_MSG_ERROR([bad value ${enableval} for --enable-media option])
+          ;;
+     
+      esac]
+      enableval=`echo ${enableval} | cut -d ' ' -f 2-6`
+      if test "x$val" = "x$enableval"; then
+        break;
+      fi
+    done,
+    [if test x"${build_haiku}" = xyes; then
+        build_media_ffmpeg=yes
+        build_media_haiku=yes
+        media_list="ffmpeg haiku"
+     else
+        build_media_gst=yes
+        media_list="gst"
+    fi]
+)
+
+AM_CONDITIONAL(BUILD_LIBMEDIA, test x${build_media_none} != xyes)
+if test x${build_media_none} != xyes; then
+  AC_DEFINE(USE_MEDIA, [1], [Build any media code])
+fi
+
+dnl If no media is selected, and media handling isn't disabled, then enable gst
+if test x${build_media_none} = xno -a x${build_media_gst} = xno -a x${build_media_ffmpeg} = xno; then
+  build_media_gst=yes
+fi
+
+if test x"$build_media_ffmpeg" != x"no"; then # yes or auto
+  GNASH_PATH_FFMPEG
+  if test x"${build_media_ffmpeg}" = xauto; then
+    dnl TODO: have GNASH_PATH_FFMPEG set ${has_ffmpeg}
+    if test x"$FFMPEG_LIBS" != x; then
+      build_media_ffmpeg=yes
+      media_list="${media_list} ffmpeg"
+    else
+      build_ogl=no
+    fi
+  fi
+fi
+
+MEDIA_CONFIG="${media_list}"
+AC_SUBST(MEDIA_CONFIG)
+
+dnl Multiple input devices are supported. These can all work in
+dnl varying combinations, so several may be listed. These are only
+dnl required when using the Framebuffer, as without the X11 desktop,
+dnl Gnash has to handle all these internally. This can get
+dnl messy, as one might want to use a touchscreen with a normal mouse
+dnl or keyboard attached. 
+dnl By default, don't build any of these, as they are only for the 
+dnl Framebuffer running without X11.
+if test x"${build_fb}" = xyes -a x"${linux}" = xyes; then
+  build_ps2mouse=no
+  build_ps2keyboard=yes
+  build_input_events=yes
+  build_tslib=yes
+  input_events="PS/2 Mouse, PS/2 Keyboard, Input Devices, Touchscreen via Tslib"
+else
+  build_ps2mouse=no
+  build_ps2keyboard=no
+  build_input_events=no
+  build_tslib=no
+  input_events=
+fi
+AC_ARG_ENABLE(input,
+  AC_HELP_STRING([--enable-input], [Enable support for the specified input devices for the framebuffer GUI (default=ps2mouse|ps2keyboard|events|touchscreen)]),
+  [if test -n ${enableval}; then
+    enableval=`echo ${enableval} | tr '\054' ' ' `
+  fi
+  build_ps2mouse=no
+  build_ps2keyboard=no
+  build_input_events=no
+  build_tslib=no
+  while test -n "${enableval}" ; do
+    val=`echo ${enableval} | cut -d ' ' -f 1`
+    case "${val}" in
+      ps2m*|PS2m*|m*|M*)        dnl a PS/2 style mouse
+        build_ps2mouse=yes
+        input_events="${input_events}, PS/2 Mouse"
+        ;;
+      ps2k*|PS2K*|k*|K*)        dnl a PS/2 style keyboard
+        build_ps2keyboard=yes
+        input_events="${input_events}, PS/2 Keyboard"
+        ;;
+      i*|I*|ev*|Ev*)    dnl use the new Input Event, which supports both
+        input_events="${input_events}, Input Event Device"
+        build_input_events=yes
+        ;;
+      t*|T*) dnl use a touchscreen with tslib, which works like a mouse
+        build_tslib=yes
+        input_events="${input_events}, Touchscreen"
+        ;;
+      a*) dnl all
+        build_ps2mouse=yes
+        build_ps2keyboard=yes
+        build_tslib=yes
+        if test x"${linux}" = xyes; then
+          build_input_events=yes
+          input_events="PS/2 Mouse, PS/2 Keyboard, Input Devices, Touchscreen via Tslib"                
+        else
+          build_input_events=no
+          input_events="PS/2 Mouse, PS/2 Keyboard, Touchscreen via Tslib"                
+        fi
+        ;;
+      *) AC_MSG_ERROR([invalid input device list! ${enableval} given (accept: ps2mouse|keyboard|events,touchscreen)])
+         ;;
+      esac
+    enableval=`echo ${enableval} | cut -d ' ' -f 2-6`
+    if test "x$val" = "x$enableval"; then
+      break;
+    fi
+  done],
+)
+
+if test x$build_sdl != xno -o x$build_sound_sdl = xyes; then
+  GNASH_PATH_SDL
+fi
+AM_CONDITIONAL(ENABLE_TSLIB, [test x${ac_cv_header_tslib_h} = xyes])
+
+
+dnl -----------------------------------------------------
+dnl Check for SDL and decide about auto gui accordingly.
+dnl Need be done after build_sound_sdl and build_sdl are
+dnl initialized and before they are checked for yes/no
+dnl -----------------------------------------------------
+if test x"${build_sdl}" = xauto; then
+  if test xyes = x"${has_sdl}"; then
+    build_sdl=yes
+  else
+    AC_MSG_NOTICE([sdl GUI will not be built (no sdl development files found)])
+    build_sdl=no
+  fi
+fi
+
+dnl -------------------------------
+dnl Renderer Selection
+dnl -------------------------------
+input_events=
+dnl By default, we want to to build all renderers
+dnl DirectFB has both a device layer and a rendering layer, although
+dnl currently the rendering part is incomplete. Configure support is
+dnl included for development purposes.
+build_directfb=no
+dnl The OpenVG support works on both the desktop and embedded devices
+dnl that don't run X11. It is supported by iPhone/iPad/Android
+dnl devices, and the nouveau driver on the desktop.
+build_ovg=no
+dnl The OpenGLES1 renderer is a work in progress. It is originally
+dnl based on a patch to Gnash 0.8.5, which of course not only didn't
+dnl compile anymore, it was all hardcoded into the framebuffer
+dnl code. This version compiles with the latest internal rendering
+dnl API, and works properly with the glue code for the Gnash GUIs.
+build_gles1=no
+dnl OpenGL works, but suffers from performance and rendering quality
+dnl problems. This should eventually be replacd by the OpenGLES1 and
+dnl OpenVG renders.
+build_ogl=no
+dnl AGG is a software only renderer
+build_agg=yes
+build_cairo=yes
+renderer_list="agg cairo"
+AC_ARG_ENABLE(renderer,
+  AC_HELP_STRING([--enable-renderer], [Enable support for the specified renderers (agg|cairo|opengl|openvg|all, default=all)]),
+  if test -n ${enableval}; then
+    if test "x${enableval}" != "xno" -o "x${enableval}" != "xnone" ; then
+      renderer_list="none"
+      enableval=`echo ${enableval} | tr '\054' ' ' `
+    else
+      renderer_list=""
+      enableval=""
+    fi
+  fi
+  renderer_list=""
+  build_ovg=no
+  build_ogl=no
+  build_gles1=no
+  build_gles2=no
+  build_agg=no
+  build_cairo=no
+  while test -n "${enableval}" ; do
+    val=`echo ${enableval} | cut -d ' ' -f 1`
+    [case "${val}" in
+      no*|NO*)
+        renderer_list="none"
+        build_ovg=no
+        build_ogl=no
+        build_gles1=no
+        build_gles2=no
+        build_agg=no
+        build_cairo=no
+        ;;
+      all|ALL)
+        renderer_list="agg cairo opengl openvg, opengles1"
+        build_ogl=yes
+        build_agg=yes
+        build_cairo=yes
+        build_ovg=no
+        nrender=3
+        ;;
+      ogl|OGL|OpenGL|opengl)
+        renderer_list="${renderer_list} opengl"
+        build_ogl=yes
+        ;;
+      gles|GLES|gles1|GLES1)
+        renderer_list="${renderer_list} opengles1"
+        build_gles1=yes
+        build_ogl=no
+        nrender=$((nrender+1))
+        ;;
+      ovg|OVG|OpenVG|openvg)
+        renderer_list="${renderer_list} openvg"
+        build_ovg=yes
+        nrender=$((nrender+1))
+        ;;
+      directfb|dfb)
+        renderer_list="${renderer_list} DirectFB"
+        build_directfb=yes
+        nrender=$((nrender+1))
+        ;;
+      agg|AGG)
+        renderer_list="${renderer_list} agg"
+        build_agg=yes
+        ;;
+      cairo|CAIRO|Cairo*)
+        renderer_list="${renderer_list} cairo"
+        build_cairo=yes
+        ;;
+      *) AC_MSG_ERROR([invalid renderer specified: ${enableval} given (accept:  (opengl|openvg|cairo|agg|all)])
+        ;;
+      esac]
+    enableval=`echo ${enableval} | cut -d ' ' -f 2-`
+    if test "x$val" = "x$enableval"; then
+      break;
+    fi
+  done
+)
+
+if test x"${build_ovg}" = xyes; then
+  GNASH_PATH_OPENVG
+  dnl If OpenVG isn't installed, disable it
+  if test x"${has_openvg}" = xno; then
+    AC_MSG_WARN([OpenVG specified but no development files found!])
+    renderer_list=`echo ${renderer_list} | sed -e 's/ openvg//' `
+    nrender=$((nrender-1))
+  fi
+fi
+
+dnl VA API is used by default for all H.264 videos. HW requirements:
+dnl     * AMD GPUs with UVD2 and xvba-video VA driver
+dnl     * NVIDIA GPUs with vdpau-video VA driver
+dnl     * All HW with a VA driver supporting the VA/GLX extensions or
+dnl     vaPutSurface(Pixmap,...). This may include the Intel
+dnl     Moorestown platform and future G45 VA driver.
+dnl NOTE: it is possible to use Gnash/VAAPI on platforms with an Intel
+dnl GMA500 but you currently will have to build the AGG renderer
+dnl instead of the OGL (OpenGL) one. 
+build_vaapi_device=no
+build_openmax_device=no
+dnl These renders always require EGL support
+if test x${build_gles1} = xyes -o x${build_ovg} = xyes; then
+  build_egl_device=yes
+else
+  build_egl_device=no
+fi
+build_x11_device=no
+build_directfb_device=no
+if test x"${build_fb}" = xyes -o x"${build_fb}" = xauto; then
+  build_fb_agg=yes
+fi
+dnl AGG support for the framebuffer requires the rawfb device
+if test x"${build_fb_agg}" = xyes -a x"${build_agg}" = xyes; then
+  build_rawfb_device=yes
+  device_list="RawFB"
+  ndevice=1
+else
+  build_rawfb_device=no
+  device_list=""
+  ndevice=0
+fi
+AC_ARG_ENABLE(device,
+  AC_HELP_STRING([--enable-device], [Specify which hardware abstraction to use to support to enable (none,egl,directfb,rawfb,x11,vaapi)]),
+  enableval=`echo ${enableval} | tr '\054' ' ' `
+  build_egl_device=no
+  build_rawfb_device=no
+  device_list=""
+  ndevice=0
+  while test -n "${enableval}" ; do
+    val=`echo ${enableval} | cut -d ' ' -f 1`
+    [case "${val}" in
+      no*|NO*)
+        device_list="none"
+        build_vaapi_device=no
+        build_openmax_device=no
+        build_egl_device=no
+        build_directfb_device=no
+        build_x11_device=no
+        ndevice=0
+        ;;
+      va*|VA*)
+        device_list="${device_list} VAAPI"
+        build_vaapi_device=yes
+        ndevice=$((ndevice+1))
+        ;;
+      eg*|EG*)
+        device_list="${device_list} EGL"
+        build_egl_device=yes
+        ndevice=$((ndevice+1))
+        ;;
+      x1*|X1*)
+        device_list="${device_list} X11"
+        build_x11_device=yes
+        ndevice=$((ndevice+1))
+        ;;
+      di*|Di*|DI*|dfb)
+        device_list="${device_list} DirectFB"
+        build_directfb_device=yes
+        ndevice=$((ndevice+1))
+        ;;
+      ra*|RAW*)
+        device_list="${device_list} RawFB"
+        build_rawfb_device=yes
+        ndevice=$((ndevice+1))
+        ;;
+      all|ALL)
+        device_list="EGL RawFB X11"
+        build_openmax_device=no
+        build_vaapi_device=no
+        build_egl_device=yes
+        build_rawfb_device=yes
+        build_directfb_device=no
+        build_x11_device=yes
+        ndevice=3
+        ;;
+      op*|Op*|OP*)
+        device_list="${device_list} OpenMAX"
+        build_openmax_device=yes
+        ndevice=$((ndevice+1))
+        ;;
+      *) AC_MSG_ERROR([invalid device feature specified: ${enableval} given (accept: none,vaapi)])
+        ;;
+      esac]
+    enableval=`echo ${enableval} | cut -d ' ' -f 2-6`
+    if test "x$val" = "x$enableval"; then
+      break;
+    fi
+  done
+)
+
+if test x"${have_ffmpeg_vaapi}" = x"yes" -a x"${build_vaapi_device}" = x"yes"; then
+  use_libva=no
+  use_libva_x11=no
+  use_libva_glx=no
+  dnl if the version of FFmpeg is recent enough, (r20957, 52.45.0), then
+  dnl look for VAAPI support so we can use use the VAAPI enabled FFmpeg.
+  if test x"${have_ffmpeg_vaapi}" = xyes; then
+    use_libva=yes
+    GNASH_PKG_FIND([libva],
+      [va/va.h],
+      [Video Acceleration API],
+      vaInitialize
+    )
+    use_libva_x11=yes
+    GNASH_PKG_FIND([libva_x11],
+      [va/va_x11.h],
+      [VA API (X11 display)],
+      vaGetDisplay,
+      [], [-lva-x11]
+    )
+
+    if test x$build_ogl = xyes; then
+      use_libva_glx=yes
+      GNASH_PKG_FIND([libva_glx],
+        [va/va_glx.h],
+        [VA API (GLX display)],
+        vaGetDisplayGLX,
+        [], [-lva-glx]
+      )
+    fi
+  fi
+fi
+
+if test x"${build_fb_agg}" = xyes -a x"${build_rawfb_device}" = xno; then
+  AC_MSG_ERROR([Framebuffer GUI requires the rawfb device.])
+fi
+
+dnl libVA drivers. We declare conditional for both the option being
+dnl selected, as well as whether or not it's found. This we can
+dnl generate better error handling if it's not found.
+AM_CONDITIONAL(USE_VAAPI, test x"${use_libva}" = xyes)
+
+dnl Until the hwaccel patches in FFmpeg wind up in the ffmpeg-plugin,
+dnl restrict using HW Accel to using FFmpeg directly.
+dnl test xyes = xyes -a ( x != xyes -o x != xyes )
+if test x"${build_vaapi}" = x"yes" -a x"${have_ffmpeg}" != x"yes"; then
+  AC_MSG_ERROR(["Hardware acceleration currently not supported unless using FFmpeg."])
+fi
+
+AM_CONDITIONAL(HAVE_VAAPI, test x"${found_libva_incl}" = xyes)
+AM_CONDITIONAL(HAVE_VAAPI_GLX, test x"${found_libva_glx_incl}" = xyes)
+AM_CONDITIONAL(HAVE_VAAPI_X11, test x"${found_libva_x11_incl}" = xyes)
+
+if test x"${build_egl_device}" = xyes; then
+  GNASH_PKG_FIND(EGL, [EGL/egl.h], [EGL library], eglGetDisplay)
+  if test xyes = x"${has_EGL}"; then
+    AC_DEFINE(BUILD_EGL_DEVICE, [ 1 ],
+          [Build the EGL device for OpenVG, OpenGLES1&2, and X11/Mesa])
+  else
+    AC_MSG_WARN(["EGL requested but development package not found!"])
+    build_egl_device=no
+  fi
+  save_CFLAGS="$CFLAGS"
+  CFLAGS="$CFLAGS -Wall -Werror"
+  native_window_type=none
+  AC_MSG_CHECKING([For EGLNativeWindowType type])
+  AC_TRY_COMPILE([#include <EGL/eglplatform.h>], [
+    EGLNativeWindowType foo = 1;
+    int bar = foo;
+    bar++; ],
+    native_window_type=int,
+    native_window_type=void
+  )
+  CFLAGS="$save_CFLAGS"
+  AC_MSG_RESULT([${native_window_type}])
+  if test x"${native_window_type}" = x"int"; then
+    AC_DEFINE([EGL_NATIVE_WINDOW_INT], [1], [EGLNativeWindowType type])
+  fi
+fi
+
+if test ${ndevice} -eq 0; then
+      device_list="none"
+      ndevice=1
+fi
+
+AM_CONDITIONAL(BUILD_DEVICES, test ${ndevice} -gt 0)
+
+dnl 16 bit: RGB555, RGB565
+dnl 24 bit: RGB24, BGR24
+dnl 32 bit: RGBA32, BGRA32
+pixelformat=all
+AC_ARG_WITH(pixelformat,
+  AC_HELP_STRING([--with-pixelformat=], [Use the specified pixel format for AGG (default=all)]),
+  [if test -n ${withval}; then
+    pixelformat="${withval}"
+    withval=`echo ${withval} | tr '\054' ' ' `
+  fi
+  while test -n "${withval}" ; do
+    val=`echo ${withval} | cut -d ' ' -f 1`
+    case "${val}" in
+      all)
+        # allow special value "all" set by user (handled below)
+        ;; 
+      argb32|ARGB32)
+        AC_DEFINE(PIXELFORMAT_ARGB32, [1], [ARGB32])
+        ;;
+      abgr32|ABGR32)
+        AC_DEFINE(PIXELFORMAT_ABGR32, [1], [ABGR32])
+        ;;
+      bgra32|BGRA32)
+        AC_DEFINE(PIXELFORMAT_BGRA32, [1], [BGRA32])
+        ;;
+      bgr24|BGR24)
+        AC_DEFINE(PIXELFORMAT_BGR24, [1], [BGR24])
+        ;;
+      rgba32|RGBA32)
+        AC_DEFINE(PIXELFORMAT_RGBA32, [1], [RGBA32])
+        ;;
+      rgb24|RGB24)
+        AC_DEFINE(PIXELFORMAT_RGB24, [1], [RGB24])
+        ;;
+      rgb555|RGB555)
+        AC_DEFINE(PIXELFORMAT_RGB555, [1], [RGB555])
+        ;;
+      rgb565|RGB565)
+        AC_DEFINE(PIXELFORMAT_RGB565, [1], [RGB565])
+        ;;
+      *) AC_MSG_ERROR([invalid pixel format ${withval} given (accept: all|RGB555|RGB565|RGB24|BGR24|BGRA32|RGBA32|ARGB32|ABGR32)])
+         ;;
+      esac
+    withval=`echo ${withval} | cut -d ' ' -f 2-6`
+    if test "x$val" = "x$withval"; then
+      break;
+    fi
+  done],
+  [if test x$build_haiku = xyes -a x$build_sdl != xyes; then
+	AC_DEFINE(PIXELFORMAT_BGRA32, [1], [BGRA32])
+        pixelformat=BGRA32
+   fi]
+)
+
+if test x$pixelformat = xall; then
+  if test x$build_agg = xyes; then
+    ### The fact that we're building GTK doesn't mean we're not also
+    ### building KDE or SDL, each needing its own pixel format !
+    #if test x$build_gtk = xyes; then
+    #  AC_DEFINE(PIXELFORMAT_RGB24, [1], [RGB24 pixel format])
+    #  pixelformat="RGB24"
+    #else
+      AC_DEFINE(PIXELFORMAT_RGB555, [1], [RGB555 pixel format])
+      AC_DEFINE(PIXELFORMAT_RGB565, [1], [RGB565 pixel format])
+      AC_DEFINE(PIXELFORMAT_RGB24,  [1], [RGB24 pixel format])
+      AC_DEFINE(PIXELFORMAT_BGR24,  [1], [BGR24 pixel format])
+      AC_DEFINE(PIXELFORMAT_RGBA32, [1], [RGBA32 pixel format])
+      AC_DEFINE(PIXELFORMAT_BGRA32, [1], [BGRA32 pixel format])
+      AC_DEFINE(PIXELFORMAT_ARGB32, [1], [ARGB32 pixel format])
+      AC_DEFINE(PIXELFORMAT_ABGR32, [1], [ABGR32 pixel format])
+    #fi
+  fi
+fi
+
+if test x"${build_ogl}" != xno; then # yes or auto
+  GNASH_PATH_OPENGL
+  if test x"${build_ogl}" = xauto; then
+    if test xyes = x"${has_opengl}"; then
+      build_ogl=yes
+      renderer_list="${renderer_list} opengl"
+    else
+      build_ogl=no
+    fi
+  fi
+fi
+
+AM_CONDITIONAL(BUILD_OVG_RENDERER,   [ test x${build_ovg} = xyes ])
+AM_CONDITIONAL(BUILD_GLES1_RENDERER, [ test x${build_gles1} = xyes ])
+AM_CONDITIONAL(BUILD_GLES2_RENDERER, [ test x${build_gles2} = xyes ])
+AM_CONDITIONAL(BUILD_OGL_RENDERER,   [ test x${build_ogl} = xyes])
+AM_CONDITIONAL(BUILD_AGG_RENDERER,   [ test x${build_agg} = xyes ])
+AM_CONDITIONAL(BUILD_CAIRO_RENDERER, [ test x${build_cairo} = xyes ])
+
+if test x"${has_openvg}" = xyes; then
+   AC_DEFINE([RENDERER_OPENVG], [1], [Use OpenVG renderer])
+fi
+
+if test x"${build_ogl}" = xyes; then
+   AC_DEFINE([RENDERER_OPENGL], [1], [Use OpenGL renderer])
+fi
+
+if test x"${build_agg}" = xyes; then
+  AC_DEFINE([RENDERER_AGG], [1], [Use AntiGrain renderer])
+fi
+
+if test x"${build_cairo}" = xyes; then
+  GNASH_PKG_FIND(cairo, [cairo.h], [cairo render library], cairo_status)
+  AC_DEFINE([RENDERER_CAIRO], [1], [Use cairo renderer])
+fi
+
+if test x"${build_agg}" = xyes; then
+   GNASH_PATH_AGG
+fi
+
+AC_PATH_PROG(PERL, perl)
+AM_CONDITIONAL(HAVE_PERL, test x"$PERL" != x)
+
+AC_PATH_PROG(CSOUND, csound)
+AM_CONDITIONAL(HAVE_CSOUND, test x"$CSOUND" != x)
+
+AC_PATH_PROG(GIT, git)
+AC_SUBST(GIT)
+
+dnl --------------------------------------------------------
+dnl Extension selection
+dnl --------------------------------------------------------
+ext_dejagnu=no
+ext_mysql=no
+ext_fileio=no
+ext_gtk=no
+ext_lirc=no
+ext_dbus=no
+ext_all=no
+extensions_list=
+extensions_support=no
+nextensions=0
+AC_ARG_ENABLE(extensions,
+  AC_HELP_STRING([--enable-extensions=], [Specify which extensions to build (default: none)])
+AC_HELP_STRING([--disable-extensions], [Disable support for extensions entirely]),
+  if test -n ${enableval}; then
+    if test "x${enableval}" != "xno"; then
+      extlist="${enableval}"
+      enableval=`echo ${enableval} | tr '\054' ' ' `
+      extensions_support=yes
+    else
+      extlist=""
+      enableval=""
+    fi
+  fi
+  nextensions=0
+  while test -n "${enableval}" ; do
+    val=`echo ${enableval} | cut -d ' ' -f 1`
+    extensions_list="${extensions_list} ${val}"
+    [case "${val}" in
+      dejagnu|DEJAGNU|dj|DJ)
+        AC_DEFINE(USE_DEJAGNU_EXT, [1], [Build the DejaGnu extension])
+        AC_MSG_NOTICE([Adding DejaGnu extension])
+        ext_dejagnu=yes
+        nextensions=$((nextensions+1))
+        ;;
+      mysql|MYSQL|sql|SQL)
+        AC_DEFINE(USE_MYSQL_EXT, [1], [Build the MySQL extension])
+        AC_MSG_NOTICE([Adding MySql extension])
+        ext_mysql=yes
+        nextensions=$((nextensions+1))
+        ;;
+      fileio|FILEIO|io|IO)
+        AC_DEFINE(USE_FILEIO_EXT, [1], [Build the FileIO extension])
+        AC_MSG_NOTICE([Adding FileIO extension])
+        ext_fileio=yes
+        nextensions=$((nextensions+1))
+        ;;
+      gtk|GTK|gtk2|GTK2)
+        AC_DEFINE(USE_GTK_EXT, [1], [Build the GTK extension])
+        ext_gtk=yes
+        nextensions=$((nextensions+1))
+        ;;
+      lirc|LIRC)
+        AC_DEFINE(USE_LIRC_EXT, [1], [Build the LIRC extension])
+        ext_lirc=yes
+        nextensions=$((nextensions+1))
+        ;;
+      dbus|DBUS)
+        AC_DEFINE(USE_DBUS_EXT, [1], [Build the DBUS extension])
+        ext_dbus=yes
+        nextensions=$((nextensions+1))
+        ;;
+      all|ALL)
+        AC_DEFINE(USE_GTK_EXT, [1], [Build all the extensions])
+        ext_dejagnu=yes
+        ext_mysql=yes
+        ext_fileio=yes
+        ext_gtk=yes
+        ext_lirc=yes
+        ext_dbus=yes
+        ext_all=yes
+        nextensions=9
+        ;;
+      *) AC_MSG_ERROR([invalid extension specified: ${enableval} given (accept: MYSQL|DEJAGNU|FILEIO|GTK|LIRC|DBUS|METOME|ALL)])
+         ;;
+      esac]
+    enableval=`echo ${enableval} | cut -d ' ' -f 2-6`
+    if test "x$val" = "x$enableval"; then
+      break;
+    fi
+  done
+  EXTENSIONS_LIST="$extensions_list"
+  AC_SUBST(EXTENSIONS_LIST)
+)
+
+if test x$ext_dbus = xyes; then
+  GNASH_PATH_DBUS
+fi
+
+if test x$ext_mysql = xyes; then
+  GNASH_PATH_MYSQL
+fi
+
+AM_CONDITIONAL(BUILD_DEJAGNU_EXT, [ test x$ext_dejagnu = xyes ])
+AM_CONDITIONAL(BUILD_FILEIO_EXT, [ test x$ext_fileio = xyes ])
+AM_CONDITIONAL(BUILD_MYSQL_EXT, [ test x$ext_mysql = xyes ])
+AM_CONDITIONAL(BUILD_GTK_EXT, [ test x$ext_gtk = xyes ])
+AM_CONDITIONAL(BUILD_LIRC_EXT, [ test x$ext_lirc = xyes ])
+AM_CONDITIONAL(BUILD_DBUS_EXT, [ test x$ext_dbus = xyes ])
+AM_CONDITIONAL(BUILD_EXTENSIONS, [ test -n "$extensions_list"])
+
+dnl --------------------------------------------------------
+dnl Libtool
+dnl --------------------------------------------------------
+
+AC_LIBTOOL_DLOPEN
+AC_LIBTOOL_WIN32_DLL
+AC_DISABLE_STATIC
+AC_PROG_LIBTOOL
+AC_SUBST(LIBTOOL_DEPS)
+DLOPEN="-dlopen"
+DLPREOPEN="-dlpreopen"
+AC_SUBST(DLOPEN)
+AC_SUBST(DLPREOPEN)
+
+GNASH_PKG_FIND([ltdl], [ltdl.h], [libltdl library], [lt_dlinit])
+
+if test x"$has_ltdl" = x"yes";then
+  AC_DEFINE(HAVE_LTDL, [1], [Libtool 2.x defines this, but libtool 1.5 does not])
+fi
+
+dnl --------------------------------------------------------
+dnl SOL dir
+dnl --------------------------------------------------------
+soldir=/tmp
+AC_ARG_WITH(soldir,
+ AC_HELP_STRING([--with-soldir],
+ [directory for .sol files]),
+ with_soldir=${withval})
+if test x${with_soldir} != x; then
+  soldir=${with_soldir}
+fi
+SOLDIR=${soldir}
+AC_SUBST(SOLDIR)
+
+dnl --------------------------------------------------------
+dnl AVM2
+dnl --------------------------------------------------------
+dnl AC_ARG_ENABLE(avm2,
+dnl   AC_HELP_STRING([--enable-avm2], [Enable support for AS3]),
+dnl   [case "${enableval}" in
+dnl     yes) avm2=yes ;;
+dnl     no)  avm2=no ;;
+dnl     *)   AC_MSG_ERROR([bad value ${enableval} for enable-avm2 option]) ;;
+dnl   esac], avm2=no
+dnl )
+dnl AM_CONDITIONAL(ENABLE_AVM2, [test x"$avm2" = xyes])
+dnl if test x$avm2 = xyes; then
+dnl     AC_DEFINE(ENABLE_AVM2, [1], [Enable AVM2 code])
+dnl fi
+AM_CONDITIONAL(ENABLE_AVM2, false)
+
+dnl This option is only used if you want Gnash to interwork with 
+dnl the Adobe player using the LocalConnection class.
+dnl lckey=0xdd3adabd
+AC_ARG_WITH(lckey,
+ AC_HELP_STRING([--with-lckey],
+ [shared memory key for your system]),
+ with_lckey=${withval})
+
+if test x${with_lckey} != x; then
+  lckey=${with_lckey}
+else
+  lckey=0xcbc384f8
+fi
+LC_KEY=${lckey}
+AC_SUBST(LC_KEY)
+
+AC_ARG_ENABLE(python,
+  AC_HELP_STRING([--enable-python],[Enable python for the python wrapper]),
+[case "${enableval}" in
+  yes) python=yes ;;
+  no)  python=no ;;
+  *)   AC_MSG_ERROR([bad value ${enableval} for --enable-python option]) ;;
+esac],python=no)
+
+dnl Look for python, which is optional. If enabled, a python loadable
+dnl module of Gnash is created.
+GNASH_PATH_PYTHON
+AM_CONDITIONAL([USE_PYTHON], test x"$python" = xyes)
+AM_CONDITIONAL([HAS_PYTHON], test x"$has_python" = xyes)
+
+dnl By default debug logging is enabled. For better performance, it can
+dnl be disabled, as when running as a plugin, nobody sees the debug messages
+dnl anyway. Debug logging is primarily for developers, so we can turn it off
+dnl for package builds.
+AC_ARG_ENABLE(log,
+  AC_HELP_STRING([--enable-log],[Enable debug logging]),
+[case "${enableval}" in
+  yes) debuglog=yes ;;
+  no)  debuglog=no ;;
+  *)   AC_MSG_ERROR([bad value ${enableval} for --enable-log option]) ;;
+esac],debuglog=yes)
+
+if test x"${debuglog}" = x"yes"; then
+  AC_DEFINE([DEBUG_LOGGING], [1], [Enable debug logging])
+fi
+
+# Maybe use jemalloc, which handles memory fragmentation for
+# ECAMscript languages better than the regular system malloc.
+# This seems like a good idea, as both the other player and
+# Mozilla/Firefox both recently switched to using jemalloc.
+AC_ARG_ENABLE(jemalloc,
+  AC_HELP_STRING([--enable-jemalloc],[Enable jemalloc instead of system malloc])
+AC_HELP_STRING([--disable-jemalloc],[Disable jemalloc]),
+[case "${enableval}" in
+  yes) jemalloc=yes ;;
+  no)  jemalloc=no ;;
+  *)   AC_MSG_ERROR([bad value ${enableval} for --enable-jemalloc option]) ;;
+esac],jemalloc=yes)
+
+dnl We can search libs for mallinfo to decide whether we have it or not.
+dnl This is added to the linker flags when it's found. Usually it's -lc, but
+dnl on OpenSolaris it's -lmalloc, so this fixes the build.
+AC_SEARCH_LIBS([mallinfo], [c malloc],
+               AC_DEFINE(HAVE_MALLINFO, [1], [Has mallinfo()])
+               mallinfo=yes
+               )
+
+AM_CONDITIONAL([HAVE_MALLINFO], test x$mallinfo = xyes)
+ 
+if test x"${jemalloc}" = x"yes"; then
+  GNASH_PKG_FIND(jemalloc, [jemalloc.h], [jemalloc memory management], mallctl)
+fi
+
+AM_CONDITIONAL(JEMALLOC, test x"${has_jemalloc}" = xyes)
+
+AC_SEARCH_LIBS([getaddrinfo], [c])
+
+AC_ARG_ENABLE(fps-debug,
+  AC_HELP_STRING([--enable-fps-debug],[Enable FPS debugging code]),
+[case "${enableval}" in
+  yes) AC_DEFINE([GNASH_FPS_DEBUG], [1], [Enable FPS debugging code])
+esac])
+
+dnl IPC_INFO isn't portable, and doesn't exist on BSD
+AC_TRY_COMPILE([#include <sys/ipc.h> #include <sys/shm.h>], [
+  int flag = IPC_INFO; ],
+  AC_DEFINE([HAVE_IPC_INFO], [1], [Use ipc_info])
+)
+
+dnl --------------------------------------------------------
+dnl Disable menus
+dnl --------------------------------------------------------
+dnl Don't add the GUI menu. Some educational systems think this adds
+dnl clutter and confusion, like on the OLPC.
+AC_ARG_ENABLE(menus,
+  AC_HELP_STRING([--disable-menus],[Disable the GUI menus]),
+[case "${enableval}" in
+  yes) menus=yes ;;
+  no)  menus=no ;;
+  *)   AC_MSG_ERROR([bad value ${enableval} for --disable-menus option]) ;;
+esac],menus=yes)
+
+if test x"$menus" = x"yes"; then
+  AC_DEFINE([USE_MENUS], [], [GUI Menu support])
+fi
+AM_CONDITIONAL(MENUS, test x$menus = xyes)
+
+dnl --------------------------------------------------------
+dnl Disable SWF information
+dnl --------------------------------------------------------
+dnl Don't gather SWF information in tree form. This takes
+dnl resources and memory that can be saved if there's no
+dnl need to examine SWF internals.
+AC_ARG_ENABLE(swftree,
+  AC_HELP_STRING([--disable-swftree],[Disable showing SWF properties]),
+[case "${enableval}" in
+  yes) swftree=yes ;;
+  no)  swftree=no ;;
+  *)   AC_MSG_ERROR([bad value ${enableval} for --disable-swf-properties option]) ;;
+esac],swftree=yes)
+
+if test x"$swftree" = x"yes"; then
+  AC_DEFINE([USE_SWFTREE], [], [View SWF information])
+fi
+AM_CONDITIONAL(SWFTREE, test x$swftree = xyes)
+
+dnl --------------------------------------------------------
+dnl Disable testsuite
+dnl --------------------------------------------------------
+dnl Disable running any tests for "make check". This may sound stupid, but
+dnl this option is designed to solely be used by maintainers in the 
+dnl DISTCHECK_CONFIGURE_FLAGS when building packages. Gnash's testing infrastructure
+dnl is complex, and often the the testsuites will work, but due to some obscure reason,
+dnl make distcheck fails.
+AC_ARG_ENABLE(testsuite,
+  AC_HELP_STRING([--disable-testsuite],[Disable the testsuite, maintainers option only]),
+[case "${enableval}" in
+  yes) testsuite=yes ;;
+  no)  testsuite=no ;;
+  *)   AC_MSG_ERROR([bad value ${enableval} for --disable-testsuite option]) ;;
+esac],testsuite=yes)
+
+if test x"$testsuite" = x"yes"; then
+  AC_DEFINE([USE_TESTSUITE], [], [Testsuite support, maintainers option only])
+fi
+AM_CONDITIONAL(TESTSUITE, test x$testsuite = xyes)
+
+dnl --------------------------------------------------------
+dnl Write the file to disk in the plugin
+dnl --------------------------------------------------------
+AC_ARG_ENABLE(write,
+  AC_HELP_STRING([--enable-write], [Makes the Mozilla plugin write the currently playing SWF movie to /tmp.]),
+[case "${enableval}" in
+  yes) write=yes ;;
+  no)  write=no ;;
+  *)   AC_MSG_ERROR([bad value ${enableval} for --enable-write option]) ;;
+esac],write=no)
+
+if test x"$write" = x"yes"; then
+  AC_DEFINE([WRITE_FILE], [], [Write files while streaming])
+fi
+
+dnl --------------------------------------------------------
+dnl Write a standalone gnash launcher to disk from the plugin
+dnl --------------------------------------------------------
+AC_ARG_ENABLE(sa-launcher,
+  AC_HELP_STRING([--disable-sa-launcher], [Drops support for the NPAPI plugin writing of standalone executable launcher scripts for the currently playing SWF movie to /tmp.]),
+[case "${enableval}" in
+  yes) sa_launcher=yes ;;
+  no)  sa_launcher=no ;;
+  *)   AC_MSG_ERROR([bad value ${enableval} for --enable-sa-launcher option]) ;;
+esac],sa_launcher=yes)
+
+if test x"$sa_launcher" = x"yes"; then
+  AC_DEFINE([CREATE_STANDALONE_GNASH_LAUNCHER], [], [Add support for writing a standalone executable launcher for movies embedded in web pages])
+fi
+
+dnl --------------------------------------------------------
+dnl Build the cygnal server if specified.
+dnl --------------------------------------------------------
+AC_ARG_ENABLE(cygnal,
+  AC_HELP_STRING([--enable-cygnal], [Enable building of the Cygnal server]),
+[case "${enableval}" in
+  yes) cygnal=yes
+       extensions_support=yes ;;
+  no)  cygnal=no ;;
+  *)   AC_MSG_ERROR([bad value ${enableval} for enable-cygnal option]) ;;
+esac],cygnal=no)
+AM_CONDITIONAL(CYGNAL, test x$cygnal = xyes)
+
+if test x$extensions_support = xyes; then
+    AC_DEFINE([USE_EXTENSIONS], [1], [Specify that extension support is enabled.])
+fi
+AM_CONDITIONAL(ENABLE_EXTENSIONS, [ test "x${extensions_support}" != "xno" ])
+
+dnl --------------------------------------------------------
+dnl Build the cgibins server if specified.
+dnl --------------------------------------------------------
+AC_ARG_ENABLE(cgibins,
+  AC_HELP_STRING([--enable-cgibins], [Enable building of the CGIs for Cygnal]),
+[case "${enableval}" in
+  yes) cgibin=yes ;;
+  no)  cgibin=no ;;
+  *)   AC_MSG_ERROR([bad value ${enableval} for enable-cgibins option]) ;;
+esac],cgibin=yes)
+AM_CONDITIONAL(USE_CGI, test x$cgibin = xyes)
+if test x"${cgibin}" = x"yes"; then
+  AC_DEFINE([USE_CGIBIN], [1], [Enable cgi-bin processes for Cygnal])
+fi
+
+dnl --------------------------------------------------------
+dnl  Double buffer
+dnl --------------------------------------------------------
+dnl Add an option for double buffering when rendering, currently only used by
+dnl the frmaebuffer GUI.
+dnl If defined, an internal software-buffer is used for rendering and is then
+dnl copied to the video RAM. This avoids flicker and is faster for complex 
+dnl graphics, as video RAM access is usually slower. (strongly suggested)
+AC_ARG_ENABLE(doublebuf,
+  AC_HELP_STRING([--disable-doublebuf], [Disble support for double buffering when rendering with AGG]),
+  [case "${enableval}" in
+    yes) doublebuf=yes ;;
+    no)  doublebuf=no ;;
+    *)   AC_MSG_ERROR([bad value ${enableval} for enable-doublebuf option]) ;;
+  esac], doublebuf=yes
+)
+AM_CONDITIONAL(ENABLE_DBUF, [test x"$doublebuf" = xyes])
+if test x$doublebuf = xyes; then
+    AC_DEFINE(ENABLE_DOUBLE_BUFFERING, [1], [Disable double buffering for AGG])
+fi
+
+dnl --------------------------------------------------------
+dnl  Offscreen buffer
+dnl --------------------------------------------------------
+dnl This enables rendering to an offscreen buffer, instead of directly to window
+AC_ARG_ENABLE(offscreen,
+  AC_HELP_STRING([--enable-offscreen], [Enable support for rendering offscreen]),
+  [case "${enableval}" in
+    yes) offscreen=yes ;;
+    no)  offscreen=no ;;
+    *)   AC_MSG_ERROR([bad value ${enableval} for enable-offscreen option]) ;;
+  esac], offscreen=no
+)
+
+
+dnl --------------------------------------------------------
+dnl  SSH support selection
+dnl --------------------------------------------------------
+dnl Enable using libssh with libnet
+AC_ARG_ENABLE(ssh,
+  AC_HELP_STRING([--enable-ssh], [Enable using SSH for network authentication]),
+[case "${enableval}" in
+  yes) build_ssh=yes ;;
+  no)  build_ssh=no ;;
+  *)   AC_MSG_ERROR([bad value ${enableval} for --enable-ssh option]) ;;
+esac], build_ssh=no)
+
+AM_CONDITIONAL(BUILD_SSH, test x"${build_ssh}" = xyes)
+if test x"${build_ssh}" = xyes; then
+  GNASH_PKG_FIND(ssh, [libssh/libssh.h], [libssh library], ssh_socket_init)
+dnl  GNASH_PKG_FIND(poppler, [popt.h], [Poppler library], poppler_init)
+fi
+if test x"${has_ssh}" = x"yes"; then
+  AC_DEFINE([USE_SSH], [1], [Use SSH for authentication])
+fi
+
+dnl --------------------------------------------------------
+dnl  SSL support selection
+dnl --------------------------------------------------------
+
+dnl Enable using OpenSSL with libnet.
+AC_ARG_ENABLE(ssl,
+  AC_HELP_STRING([--enable-ssl], [Enable using OpenSSL directly]),
+[case "${enableval}" in
+  yes) build_ssl=yes ;;
+  no)  build_ssl=no ;;
+  *)   AC_MSG_ERROR([bad value ${enableval} for --enable-ssl option]) ;;
+esac], build_ssl=no)
+
+with_cert=
+with_pem=
+AM_CONDITIONAL(BUILD_SSL, test x"${build_ssl}" = xyes)
+AC_ARG_WITH(cert,
+  AC_HELP_STRING([--with-cert],
+  [cert file for SSL]),
+  with_cert=${withval})
+AC_ARG_WITH(pem,
+  AC_HELP_STRING([--with-pe],
+  [pem file for SSL]),
+  with_pem=${withval})
+
+if test x"${build_ssl}" = xyes; then
+  GNASH_PKG_FIND(ssl, [openssl/ssl.h], [OpenSSL library], SSL_library_init)
+fi
+if test x"${has_ssl}" = x"yes"; then
+  AC_DEFINE([USE_SSL], [1], [Use SSL for authentication])
+fi
+
+dnl -----------------------------------------------------------
+dnl Set the general plugins install policy here
+dnl (NOTE: before GNASH_PATH_FIREFOX and GNASH_PATH_KDE*)
+dnl -----------------------------------------------------------
+
+AC_ARG_WITH(plugins-install,
+  AC_HELP_STRING([--with-plugins-install=system|user|prefix], [Policy for plugins install. Default: user.]),
+	[case "${withval}" in
+	  user) PLUGINS_INSTALL_POLICY=user ;;
+	  system) PLUGINS_INSTALL_POLICY=system ;;
+	  prefix) PLUGINS_INSTALL_POLICY=prefix ;;
+	  *)  AC_MSG_ERROR([bad value ${withval} for --with-plugins-install]) ;;
+	 esac 
+	], PLUGINS_INSTALL_POLICY=user) 
+
+dnl -----------------------------------------------------------
+dnl   Verify dependencies for requested GUIs are met, and
+dnl   disable build of the GUIS for which deps are NOT met
+dnl ------------------------------------------------------------
+
+if test x$build_gtk = xyes; then
+   GNASH_PATH_GTK2
+   GNASH_PATH_PANGO
+   GNASH_PKG_FIND(atk, [atk/atk.h], [atk library], atk_focus_tracker_init, [1.0])
+   if test x"${build_ogl}" = xyes; then
+      GNASH_PATH_GLEXT
+   fi
+   if test x"${build_cairo}" = xyes; then
+      GNASH_PKG_FIND(cairo, [cairo.h], [cairo render library], cairo_status)
+   fi
+fi
+
+if test x"${build_qt4}" != xno; then
+ GNASH_PATH_QT4
+fi
+
+if test x"${build_qt4}" = xauto; then
+  if test x"${has_qt4}" = xyes; then
+     build_qt4=yes
+  else
+     build_qt4=no
+  fi
+fi
+
+if test x"${build_kde3}" != xno -o x"${build_qtopia3}" != xno; then
+ GNASH_PATH_QT3
+fi
+
+if test x"${build_kde3}" != xno; then
+  GNASH_PATH_KDE3
+fi
+
+
+if test x"${build_kde3}" = xauto; then
+  if test x"${has_qt3}" = xyes -a x"${has_kde3}" = xyes; then
+     build_kde3=yes
+  else
+     build_kde3=no
+  fi
+fi
+
+dnl Check possibility to build DUMP gui, if requested
+if test x"${build_dump}" != xno; then
+  if test x"${build_agg}" = xyes; then
+    build_dump=yes
+  else
+    if test x"${build_dump}" = xyes; then
+      dnl SHOULD we just check at the end of file instead ?
+      AC_MSG_ERROR(dump GUI cannot be built without AGG renderer);
+    fi
+    build_dump=no
+  fi
+fi
+
+dnl Check possibility to build FB gui, if requested
+dnl FB dependency is a linux system (linux/fb.h)
+if test x"${build_fb}" != xno; then
+  if test x"${linux}" = xyes -o x"${android}" = xyes; then
+      build_fb=yes
+  else
+    if test x"${build_fb}" = xyes; then
+      dnl SHOULD we just check at the end of file instead ?
+      AC_MSG_ERROR(framebuffer GUI cannot be built on non-linux platforms);
+    fi
+    AC_MSG_NOTICE([framebuffer GUI won't be built (non-linux platform)])
+    build_fb=no
+  fi
+fi
+
+dnl TODO: add checks for all other GUIs
+
+dnl -------------------------------
+dnl Input Device selection
+dnl -------------------------------
+
+dnl Multiple input devices are supported. These can all work in
+dnl varying combinations, so several may be listed. These are only
+dnl required when using the Framebuffer, as without the X11 desktop,
+dnl Gnash has to handle all these internally. This can get
+dnl messy, as one might want to use a touchscreen with a normal mouse
+dnl or keyboard attached. 
+dnl By default, don't build any of these, as they are only for the Framebuffer
+dnl running without X11.
+if test x"${build_fb}" = xyes; then
+  build_ps2mouse=no
+  build_ps2keyboard=yes
+  build_input_events=yes
+  build_tslib=yes
+  input_events="Input Devices, Touchscreen via Tslib"
+else
+  build_ps2mouse=no
+  build_ps2keyboard=no
+  build_input_events=no
+  build_tslib=no
+  input_events=
+fi
+AC_ARG_ENABLE(input,
+  AC_HELP_STRING([--enable-input], [Enable support for the specified input devices for the framebuffer GUI (default=ps2mouse|ps2keyboard|events|touchscreen)]),
+  [if test -n ${enableval}; then
+    enableval=`echo ${enableval} | tr '\054' ' ' `
+  fi
+  while test -n "${enableval}" ; do
+    val=`echo ${enableval} | cut -d ' ' -f 1`
+    case "${val}" in
+      ps2m*|PS2m*|m*|M*)        dnl a PS/2 style mouse
+        build_ps2mouse=yes
+        input_events="${input_events}, PS/2 Mouse"
+        ;;
+      ps2k*|PS2K*|k*|K*)        dnl a PS/2 style keyboard
+        build_ps2keyboard=yes
+        input_events="${input_events}, PS/2 Keyboard"
+        ;;
+      i*|I*|ev*|Ev*)    dnl use the new Input Event, which supports both
+        input_events="${input_events}, Input Event Device"
+        build_input_events=yes
+        ;;
+      t*|T*) dnl use a touchscreen with tslib, which works like a mouse
+        build_tslib=yes
+        input_events="${input_events}, Touchscreen"
+        ;;
+      *) AC_MSG_ERROR([invalid input device list! ${enableval} given (accept: ps2mouse|keyboard|events,touchscreen)])
+         ;;
+      esac
+    enableval=`echo ${enableval} | cut -d ' ' -f 2-6`
+    if test "x$val" = "x$enableval"; then
+      break;
+    fi
+  done],
+)
+
+if test x"${build_tslib}" = xyes; then
+  AC_DEFINE(USE_TSLIB, [1], [Use a tslib supported touchscreen])
+  GNASH_PKG_FIND(ts, [tslib.h], [Touchscreen library], ts_config)
+fi
+AM_CONDITIONAL(ENABLE_TSLIB, [test x${ac_cv_header_tslib_h} != xno])
+
+if test x"${build_ps2mouse}" = xyes; then
+  AC_DEFINE(USE_MOUSE_PS2, [1], [Add support for a directly using a PS/2 Mouse])
+fi
+AM_CONDITIONAL(ENABLE_MOUSE, [test x"${build_ps2mouse}" = xyes])
+
+if test x"${build_ps2keyboard}" = xyes; then
+  AC_DEFINE(USE_KEYBOARD_PS2, [1], [Add support for directly using a PS/2 Keyboard])
+fi
+if test x"${build_input_events}" = xyes; then
+  AC_DEFINE(USE_INPUT_EVENTS, [1], [Add support for a directly using Linux Input Event Devices])
+fi
+AM_CONDITIONAL(ENABLE_INPUT_EVENTS, [test x"${build_input_events}" = xyes])
+dnl this is enabled if we have any input devices at all
+AM_CONDITIONAL(ENABLE_INPUT_DEVICES, [test x"${input_events}" != x])
+
+
+dnl -----------------------------------------------------------
+dnl Try to ignore stupid dependencies
+dnl -----------------------------------------------------------
+
+AC_MSG_CHECKING(linker --as-needed support)
+gcc_cv_ld_as_needed=no
+# Check if linker supports --as-needed and --no-as-needed options
+if $LD --help 2>/dev/null | grep as-needed > /dev/null; then
+  gcc_cv_ld_as_needed=yes
+fi
+if test x"$gcc_cv_ld_as_needed" = xyes; then
+  LDFLAGS="$LDFLAGS -Wl,--as-needed"
+fi
+AC_MSG_RESULT($gcc_cv_ld_as_needed)
+
+AC_DEFINE(USE_GIF, [1], [Use the GIF library])
+AC_DEFINE(USE_PNG, [1], [Use the PNG library])
+AM_CONDITIONAL(USE_GIF, true)
+AM_CONDITIONAL(USE_PNG, true)
+
+AC_PATH_TOOL([AUTOTRACE], [autotrace])
+AC_HEADER_DIRENT
+
+dnl -----------------------------------------------------------------
+dnl PLUGIN RELATED STUFF
+dnl -----------------------------------------------------------------
+
+dnl !! This has been moved here to make --enable-npapi work
+dnl !! All of plugin-related macro calls could be moved into
+dnl !! a specialized macros/plugin.m4
+
+dnl ----------------------------------------------------
+dnl Add KPARTS support, if specified or KDE gui is built
+dnl ----------------------------------------------------
+
+AC_ARG_ENABLE(kparts3,
+  AC_HELP_STRING([--disable-kparts3], [Disable support for Konqueror 3.x plugin (default: enabled if kde3 gui is)]),
+[case "${enableval}" in
+  yes) build_kparts3=yes ;;
+  no)  build_kparts3=no ;;
+  *)   AC_MSG_ERROR([bad value ${enableval} for --disable-kparts3 option]) ;;
+esac],build_kparts3=$build_kde3)
+
+dnl --------------------------------------------------------
+dnl Add KPARTS 4.x support, if specified or KDE gui is built
+dnl --------------------------------------------------------
+
+AC_ARG_ENABLE(kparts4,
+  AC_HELP_STRING([--disable-kparts4], [Disable support for Konqueror 4.x plugin (default: enabled if Qt4 gui is)]),
+[case "${enableval}" in
+  yes) build_kparts4=yes ;;
+  no)  build_kparts4=no ;;
+  *)   AC_MSG_ERROR([bad value ${enableval} for --disable-kparts4 option]) ;;
+esac],build_kparts4=$build_qt4)
+
+if test x"${build_kparts4}" != xno; then
+  GNASH_PATH_KDE4
+fi
+
+dnl -----------------------------------------------------------
+dnl Add NPAPI support, if specified or GTK or Qt4 gui is built
+dnl -----------------------------------------------------------
+
+AC_ARG_ENABLE(npapi,
+  AC_HELP_STRING([--disable-npapi], [Disable NPAPI plugin build (default: enabled if gtk or Qt4 gui is)]),
+  [case "${enableval}" in
+    yes) npapi=yes ;;
+    no)  npapi=no ;;
+    *)   AC_MSG_ERROR([bad value ${enableval} for disable-npapi option]) ;;
+  esac],
+  if test x$build_gtk = xyes -o x$build_qt4 = xyes; then
+    npapi=yes
+  fi
+)
+
+if test x"$npapi" = x"yes"; then
+  GNASH_PATH_NPAPI
+fi
+
+dnl -----------------------------------------------------------------
+dnl Enable us to disable building all browser plugins in one command.
+dnl -----------------------------------------------------------------
+
+AC_ARG_ENABLE(plugins,
+  AC_HELP_STRING([--disable-plugins], [Disable all browser plugins from building (default=no)]),
+  [case "${enableval}" in
+    yes) plugins=yes ;;
+    no)  plugins=no ;;
+    *)   AC_MSG_ERROR([bad value ${enableval} for disable-plugins option]) ;;
+  esac],
+  plugins=yes
+)
+if test x$plugins = xno; then
+  npapi=no
+  build_kparts3=no
+  build_kparts4=no
+fi
+
+
+GNASH_PATH_FIREFOX
+
+dnl 
+dnl New versions of the NPAPI require const for this prototype, which currently
+dnl seems to only be wit Ubuntu Oneiric.
+AC_MSG_CHECKING([for const needed for NPP_GetMIMEDescription() prototype])
+npapi_flags="`echo "${NPAPI_CFLAGS}" | sed -e 's/-I//' -e 's/-DXP_UNIX//' | tr -d ' '`/npapi.h"
+const_test="`grep NPP_GetMIMEDescription ${npapi_flags} | grep -c const`"
+if test ${const_test} -eq 1; then
+  AC_DEFINE(NPAPI_CONST, [1], [Newer versions use const in prototypes])
+  AC_MSG_RESULT([yes])
+else
+  AC_MSG_RESULT([no])
+fi
+
+AC_TRY_COMPILE([#include <linux/input.h>], [
+  struct input_absinfo abs;
+  abs.resolution = 0;; ],
+ AC_DEFINE([ABSINFO_RESOLUTION], [1], [ABS Resolution field])
+)
+
+dnl -----------------------------------------------------------------
+dnl END OF PLUGIN RELATED STUFF
+dnl -----------------------------------------------------------------
+
+AM_CONDITIONAL(LIRC, [test x$lirc_ext = xyes])
+
+AC_CHECK_HEADERS(getopt.h)
+AC_CHECK_HEADERS(libgen.h)
+AC_CHECK_HEADERS(pwd.h)
+AC_CHECK_HEADERS(sys/utsname.h)
+AC_CHECK_HEADERS(signal.h)
+AC_CHECK_HEADERS(unistd.h)
+AC_CHECK_HEADERS(sys/time.h)
+AC_CHECK_HEADERS(linux/uinput.h, [uinput=yes], [uinput=no])
+AC_CHECK_LIB(bz2, BZ2_bzopen, [AC_SUBST(BZ2_LIBS, -lbz2)])
+AC_CHECK_LIB(c, getpwnam, AC_DEFINE(HAVE_GETPWNAM, 1, [Has getpwnam] ))
+
+AM_CONDITIONAL(HAS_UINPUT, [test x$uinput = xyes])
+
+dnl X11 is needed for fltk (at least),
+dnl and probably for many other guis too ...
+dnl if ! test x$build_fb = xyes; then # <--- this is wrong as build_x is non-exclusive
+dnl AC_PATH_XTRA
+dnl AC_CHECK_LIB(Xmu, XmuCvtStringToOrientation)
+dnl AC_CHECK_LIB(gmp, _gmp_get_memory_functions)
+GNASH_PATH_X11
+dnl fi
+AM_CONDITIONAL(HAVE_X11, [test x${has_x11} = xyes])
+if test x${build_x11_device} = xyes -a  x${has_x11} = xyes; then
+  AC_DEFINE(BUILD_X11_DEVICE, [1], [Build the X11 device])
+fi
+
+dnl See if ipc_perm structure has the ipc_perm.key field, and if so,
+dnl which variant of the name is used.
+ipc_key=no
+AC_TRY_COMPILE([
+  #include <sys/ipc.h>
+  #include <sys/shm.h>], [
+ struct shmid_ds shmseg;      
+ key_t x = shmseg.shm_perm.key;],
+ ipc_key=yes
+ AC_DEFINE(IPC_PERM_KEY, [key], [Has the key field in ipc_perm])
+)
+
+if test x$ipc_key = xno; then
+  AC_TRY_COMPILE([
+    #include <sys/ipc.h>
+    #include <sys/shm.h>], [
+    struct shmid_ds shmseg;      
+    key_t x = shmseg.shm_perm.__key;],
+    AC_DEFINE(IPC_PERM_KEY, [__key], [Has the key field in ipc_perm])
+    ipc_key=yes
+  )
+fi
+
+dnl If sysv semaphores functs are stubs (e.g. on Hurd),
+dnl disable LocalConnection tests
+AC_CHECK_FUNCS(semget, semget=yes)
+AM_CONDITIONAL(HAVE_SEMGET, test x${semget} = xyes)
+
+AC_CACHE_CHECK([for finite], ac_cv_finite,
+ [AC_TRY_COMPILE([
+   #include <math.h>
+   #ifdef HAVE_IEEEFP_H
+   #include <ieeefp.h>
+   #endif],
+ [double x; int y; y = finite(x);],
+ ac_cv_finite=yes,
+ ac_cv_finite=no
+)])
+if test x"$ac_cv_finite" = x"yes"; then
+  AC_SEARCH_LIBS(finite, m,
+    [AC_DEFINE(HAVE_FINITE, [1], [Has finite])]
+  )
+fi
+
+AC_LANG_PUSH(C++)
+AC_CACHE_CHECK([for isfinite], ac_cv_isfinite,
+ [AC_TRY_COMPILE([#include <cmath>],
+ [using namespace std; double x; int y; y = isfinite(x);],
+ ac_cv_isfinite=yes,
+ ac_cv_isfinite=no
+)])
+AC_LANG_POP(C++)
+if test x"$ac_cv_isfinite" = x"yes"; then
+  dnl Don't give up if isfinite is not found in -lm
+  dnl isfinite is defined as a macro in C99.
+  AC_SEARCH_LIBS(isfinite, m)
+  AC_DEFINE(HAVE_ISFINITE, [1], [Has isfinite])
+fi
+
+AC_LANG_PUSH(C++)
+AC_CACHE_CHECK([whether $CXX implements __PRETTY_FUNCTION__], ac_cv_implements___PRETTY_FUNCTION__, [
+  AC_TRY_LINK([#include <cstdio>
+], 
+    [ std::printf("%s", __PRETTY_FUNCTION__); ], 
+    [ ac_cv_implements___PRETTY_FUNCTION__="yes" ],
+    [ ac_cv_implements___PRETTY_FUNCTION__="no" ]
+  )
+])
+if test "x$ac_cv_implements___PRETTY_FUNCTION__" = "xyes" ; then
+  AC_DEFINE(HAVE_PRETTY_FUNCTION, [1], [__PRETTY_FUNCTION__ is defined])
+fi
+
+AC_CACHE_CHECK([whether $CXX implements __FUNCTION__], ac_cv_implements___FUNCTION__, [
+  AC_TRY_LINK([#include <cstdio>
+], 
+    [ std::printf("%s", __FUNCTION__); ], 
+    [ ac_cv_implements___FUNCTION__="yes" ],
+    [ ac_cv_implements___FUNCTION__="no" ]
+  )
+])
+if test "x$ac_cv_implements___FUNCTION__" = "xyes" ; then
+  AC_DEFINE(HAVE_FUNCTION, [1], [__FUNCTION__ is defined])
+fi
+
+AC_CACHE_CHECK([whether $CXX implements __func__], ac_cv_implements___func__, [
+  AC_TRY_LINK([#include <cstdio>
+], 
+    [ std::printf("%s", __func__); ], 
+    [ ac_cv_implements___func__="yes" ],
+    [ ac_cv_implements___func__="no" ]
+  )
+])
+if test "x$ac_cv_implements___func__" = "xyes" ; then
+  AC_DEFINE(HAVE_func, [1], [__func__ is defined])
+fi
+AC_LANG_POP(C++)
+AC_REPLACE_FUNCS(getopt)
+
+dnl Date portability stuff, used in server/asobj/Date.cpp
+AC_CHECK_FUNCS(gettimeofday)
+AC_CHECK_FUNCS(ftime)
+AC_CHECK_FUNCS(tzset)
+AC_CHECK_FUNCS(localtime_r)
+
+AC_CACHE_CHECK([whether struct tm has tm_gmtoff], ac_cv_tm_gmtoff, [
+        AC_TRY_LINK([
+/* ctime(1) says "The glibc version of struct tm has additional fields
+ * defined  when _BSD_SOURCE was set before including <time.h>"
+ * In practice, you do not need to define it yourself (tested on glibc-2.2.1 
+ * and 2.3.6) but if you *do* define it yourself, it makes *all* functions
+ * favour BSD-like behaviour over of GNU/POSIX, which seems dangerous.
+ */
+// #define _BSD_SOURCE 1
+#include <time.h>
+], 
+                [ struct tm tm; long l = tm.tm_gmtoff; ], 
+                [ ac_cv_tm_gmtoff="yes" ],
+                [ ac_cv_tm_gmtoff="no" ]
+        )
+])
+if test "x$ac_cv_tm_gmtoff" = "xyes" ; then
+        AC_DEFINE(HAVE_TM_GMTOFF, [1], [struct tm has member tm_gmtoff])
+fi
+
+AC_CACHE_CHECK([whether timezone is a long], ac_cv_long_timezone, [
+        AC_TRY_LINK([
+/* On Linux/glibc, tzset(3) says "extern long timezone;" (seconds West of GMT)
+ * but on BSD char *timezone(int,int) is a function returning a string name.
+ * The BSD function timegm() may be the equivalent, but this should
+ * not be necessary because on BSD the code should use tm.tm_gmtoff instead
+ * (use of long timezone is a fallback strategy for when tm_gmtoff exists not).
+ */
+#include <stdio.h>
+#include <time.h>
+extern long timezone;
+  ], 
+    [ printf("%ld", timezone); ], 
+    [ ac_cv_long_timezone="yes" ],
+    [ ac_cv_long_timezone="no" ]
+   )
+])
+if test "x$ac_cv_long_timezone" = "xyes" ; then
+  AC_DEFINE(HAVE_LONG_TIMEZONE, [1], [extern timezone is a long integer, not a function])
+fi
+
+AC_CHECK_FUNCS(mkstemps)
+AC_CHECK_FUNCS(sysconf)
+AC_CHECK_FUNCS(shmget shmat shmdt mmap)
+AC_CHECK_FUNCS(scandir)         dnl supported by BSD and Linux, but you never know...
+AC_CHECK_LIB(rt, clock_gettime)
+AC_CHECK_FUNC(clock_gettime, AC_DEFINE(HAVE_CLOCK_GETTIME, 1, [Has clock_gettime()] ))
+dnl Look for Win32 networking stuff
+AC_CHECK_HEADERS(winsock.h)
+AC_CHECK_HEADERS(winsock2.h)
+
+GNASH_PKG_FIND(nspr, [nspr.h], [Netscape Portable Runtime (NSPR)], PR_Init)
+
+AC_PATH_TOOL(WINDRES, [windres])
+AC_SUBST(WINDRES)
+
+GNASH_PKG_FIND(z, [zlib.h], [zlib compression library], compress)
+GNASH_PKG_FIND(jpeg, [jpeglib.h], [jpeg images], jpeg_mem_init)
+GNASH_PKG_FIND(png, [png.h], [png images], png_info_init)
+GNASH_PKG_FIND(gif, [gif_lib.h], [gif images], DGifOpen)
+if test x"${GIF_LIBS}" = x ; then
+ GNASH_PKG_FIND(ungif, [gif_lib.h], [gif images], DGifOpen)
+ GIF_LIBS=${UNGIF_LIBS}
+ GIF_CFLAGS=${UNGIF_CFLAGS}
+fi
+if test x"$testsuite" = x"yes"; then
+  GNASH_PKG_INCLUDES([dejagnu], [dejagnu.h])
+fi
+
+GNASH_PKG_FIND(speex, [speex/speex.h], [speex audio codec], speex_decode_int)
+AM_CONDITIONAL(HAVE_SPEEX, [ test x$has_speex = xyes ])
+if test x$has_speex = xyes ; then
+  AC_DEFINE([DECODING_SPEEX], [1], [Speex codec available])
+fi
+
+GNASH_PKG_FIND(speexdsp, [speex/speex_resampler.h], [speex DSP utilities], speex_resampler_process_int)
+if test x$has_speexdsp = xyes ; then
+  AC_DEFINE([RESAMPLING_SPEEX], [1], [Speex resampler available])
+fi
+
+dnl Find freetype and fontconfig
+GNASH_PATH_FREETYPE2
+GNASH_PKG_FIND(fontconfig, [fontconfig/fontconfig.h], [fontconfig library], FcFontMatch)
+
+GNASH_PATH_CURL
+
+if test x$cross_compiling = xno; then
+  AC_PATH_MING
+fi
+
+if test x"$MING_VERSION_CODE" = x; then
+ MING_VERSION_CODE=00000000
+fi
+
+AM_CONDITIONAL(ENABLE_MING,
+	[ test x"$MAKESWF" != x -a $MING_VERSION_CODE -gt 00040000 ])
+
+AM_CONDITIONAL(MING_VERSION_0_4,
+        [ test $MING_VERSION_CODE -ge 00040000  ])
+AM_CONDITIONAL(MAKESWF_SUPPORTS_PREBUILT_CLIPS,
+        [ test $MING_VERSION_CODE -ge 00040002  ])
+AM_CONDITIONAL(MING_SUPPORTS_INIT_ACTIONS,
+        [ test $MING_VERSION_CODE -ge 00040004  ])
+AM_CONDITIONAL(MING_SUPPORTS_REPLACE_TAG,
+        [ test $MING_VERSION_CODE -ge 00040005 ])
+AM_CONDITIONAL(MING_SUPPORTS_SWFBUTTON_ADD_CHARACTER,
+        [ test $MING_VERSION_CODE -ge 00040005 ])
+AM_CONDITIONAL(MING_SUPPORTS_STREAMING_SOUND,
+        [ test $MING_VERSION_CODE -ge 00040006 ])
+AM_CONDITIONAL(MING_SUPPORTS_SWFBUTTON_SET_DEPTH,
+        [ test $MING_VERSION_CODE -ge 00040006 ])
+AM_CONDITIONAL(MING_VERSION_0_4_3,
+        [ test $MING_VERSION_CODE -ge 00040300 ])
+AM_CONDITIONAL(MING_VERSION_0_4_4,
+        [ test $MING_VERSION_CODE -ge 00040400 ])
+
+if test x$cross_compiling = xno; then
+    AC_ARG_WITH([swfdec_testsuite],
+        AC_HELP_STRING([--with-swfdec-testsuite],
+            [directory where swfdec testsuite (the 'test' dir) is]),
+        if test x"${withval}" = xyes; then
+            dir=`dirname $0`
+            dir=`cd ${dir} && pwd`
+            withval="${dir}/testsuite/swfdec/src/test"
+        fi
+        SWFDEC_TESTSUITE=${withval}
+    )
+    AC_SUBST(SWFDEC_TESTSUITE)
+fi
+AM_CONDITIONAL(ENABLE_SWFDEC_TESTSUITE, [ test x"$SWFDEC_TESTSUITE" != x ])
+
+if test x$cross_compiling = xno; then
+  AC_ARG_ENABLE([http_testsuite],
+      AC_HELP_STRING([--enable-http-testsuite@<:@=URL@:>@],
+          [Enable http based testsuite (default url is http://www.gnashdev.org/testcases)]),
+          [case "${enableval}" in
+             no) HTTP_TESTSUITE="" ;;
+            yes) HTTP_TESTSUITE="http://www.gnashdev.org/testcases" ;;
+              *) HTTP_TESTSUITE="${enableval}";;
+           esac])
+  AC_SUBST(HTTP_TESTSUITE)
+fi
+AM_CONDITIONAL(ENABLE_HTTP_TESTSUITE, [ test x"$HTTP_TESTSUITE" != x ])
+
+if test x$cross_compiling = xno; then
+  AC_ARG_ENABLE([red5_testing],
+      AC_HELP_STRING([--enable-red5-testing@<:@=HOST@:>@],
+          [Enable red5 based testing (default host is www.gnashdev.org)]),
+          [case "${enableval}" in
+             no) RED5_HOST="" ;;
+            yes) RED5_HOST="www.gnashdev.org" ;;
+              *) RED5_HOST="${enableval}";;
+           esac
+               if test x"$RED5_HOST" != x -a x"$curl_rtmp_support" != x; then
+                 RED5_TESTING=yes
+             fi])
+  AC_SUBST(RED5_HOST)
+fi
+AM_CONDITIONAL(ENABLE_RED5_TESTING, [ test x"$RED5_TESTING" != x ])
+
+if test x$cross_compiling = xno; then
+  AC_ARG_ENABLE([rtmpy_testing],
+      AC_HELP_STRING([--enable-rtmpy-testing@<:@=HOST@:>@],
+          [Enable rtmpy based testing (default host is www.gnashdev.org)]),
+          [case "${enableval}" in
+             no) RTMPY_HOST="" ;;
+            yes) RTMPY_HOST="www.gnashdev.org" ;;
+              *) RTMPY_HOST="${enableval}";;
+           esac])
+  AC_SUBST(RTMPY_HOST)
+fi
+AM_CONDITIONAL(ENABLE_RTMPY_TESTING, [ test x"$RTMPY_HOST" != x ])
+
+dnl The name might differ between systems.
+if test x"$testsuite" = x"yes"; then
+AC_PATH_PROGS(NETCAT, [nc netcat])
+AC_PATH_PROG(WGET, wget)
+fi
+AM_CONDITIONAL(HAS_NETCAT, [ test x"$NETCAT" != x ])
+AM_CONDITIONAL(HAS_WGET, [ test x"$WGET" != x ])
+
+dnl
+dnl See if we can use the swfmill, mtasc, swfc and haxe based testsuites 
+dnl
+if test x"$testsuite" = x"yes" -a x$cross_compiling = xno; then
+  AC_PATH_PROG(AS3COMPILE, as3compile)
+  AC_PATH_PROG(SWFC, swfc)
+  AC_PATH_SWFMILL
+  AC_PATH_MTASC
+  AC_PATH_HAXE
+fi
+
+AM_CONDITIONAL(ENABLE_SWFMILL, [ test x"$SWFMILL" != x ])
+AM_CONDITIONAL(SWFMILL_AS3_SUPPORT,
+        [ test x"$SWFMILL" != x && test $SWFMILL_VERSION -ge 00021206 ])
+
+dnl SWFMILL versions older than 0.3 didn't get function2 flags order correctly
+AM_CONDITIONAL(SWFMILL_FUNCTION2_FLAGS_ORDER_CORRECT,
+        [ test x"$SWFMILL" != x && test $SWFMILL_VERSION -ge 00021206 ])
+
+AM_CONDITIONAL(ENABLE_AS3COMPILE, [ test x"$AS3COMPILE" != x ])
+AM_CONDITIONAL(ENABLE_MTASC, [ test x"$MTASC" != x ])
+AM_CONDITIONAL(ENABLE_HAXE, [ test x"$HAXE" != x ])
+AM_CONDITIONAL(ENABLE_SWFC, [ test x"$SWFC" != x ])
+AM_CONDITIONAL(ENABLE_HAXE, [ test x"$HAXE" != x ])
+
+AC_PATH_PROG(DOXYGEN, doxygen)
+AM_CONDITIONAL(ENABLE_DOXYGEN, [ test x"$DOXYGEN" != x ])
+
+AM_CONDITIONAL(HAVE_KDE3,    [test x$has_kde3 = xyes])
+AM_CONDITIONAL(HAVE_KDE4,    [test x$has_kde4 = xyes])
+AM_CONDITIONAL(HAVE_QT3,     [test x$has_qt3 = xyes])
+AM_CONDITIONAL(HAVE_QT4,     [test x$has_qt4 = xyes])
+
+AM_CONDITIONAL([QT_X11],     [test "$platform" = "X11"])
+AM_CONDITIONAL([QTOPIA],     [test "$platform" = "Qtopia"])
+AM_CONDITIONAL([QT_OSX],     [test "$platform" = "OSX"])
+AM_CONDITIONAL([QT_OS9],     [test "$platform" = "OS9"])
+AM_CONDITIONAL([QT_WIN32],   [test "$platform" = "Win32"])
+
+dnl Need GLIB for both GTK and GST
+if test x"${build_gtk}" = xyes -o x"${build_media_gst}" = xyes; then
+  GNASH_PATH_GLIB
+fi
+
+AM_CONDITIONAL(HAVE_GLIB, [ test x"${has_glib}" = xyes ])
+
+if test x$npapi = xyes; then
+  if ! test x$build_gtk = xyes -o x$build_qt4 = xyes; then
+    AC_MSG_WARN(["Enabled NPAPI plugin, but it's not supported by the selected GUI"])
+  fi
+fi
+
+if test x$windows = xyes -a x$npapi = xyes; then
+  if test "x$NSPR_CFLAGS" = x -a "x$NSPR_LIBS" = x; then
+    AC_MSG_ERROR(["On Win32, NPAPI plugin requires NSPR."])
+  fi
+  if test "x$WINDRES" = x; then
+    AC_MSG_ERROR(["On Win32, NPAPI plugin requires windres."])
+  fi
+fi
+
+dnl Need GLIB for NPAPI plugin
+if test x$npapi = xyes; then
+  GNASH_PATH_GLIB
+fi
+
+dnl if kde isn't installed, even if it's specified, don't try to build
+dnl the KPARTS plugin, which is KDE based.
+if test x$has_kde3 = xno -a x$build_kparts3 = xyes; then
+  build_kparts3=no
+  AC_MSG_WARN(["Disabling KPARTS 3.x plugin, no KDE development found"])
+fi
+
+if test x$build_kde3 = xno -a x$build_kparts3 = xyes; then
+  AC_MSG_WARN(["Enabled KPARTS 3.x plugin, but you aren't building a KDE based GUI!"])
+fi
+if test x$has_kde4 = xno -a x$build_kparts4 = xyes; then
+  build_kparts4=no
+  AC_MSG_WARN(["Disabling KPARTS 4.x plugin, no KDE 4.x development found"])
+fi
+
+if test x$build_qt4 = xno -a x$kparts4 = xyes; then
+  AC_MSG_WARN(["Enabled KPARTS 4.x plugin, but you aren't building a KDE 4.x based GUI!"])
+fi
+
+AM_CONDITIONAL(BUILD_QTOPIA3_GUI,  [ test x$build_qtopia3 = xyes ])
+AM_CONDITIONAL(BUILD_QTOPIA4_GUI,  [ test x$build_qtopia4 = xyes ])
+
+AM_CONDITIONAL(BUILD_KDE3_GUI,     [ test x$build_kde3 = xyes ])
+AM_CONDITIONAL(BUILD_QT4_GUI,     [ test x$build_qt4 = xyes ])
+
+AM_CONDITIONAL(BUILD_GTK_GUI,      [ test x$build_gtk = xyes ])
+AM_CONDITIONAL(BUILD_FLTK_GUI,     [ test x$build_fltk = xyes ])
+AM_CONDITIONAL(BUILD_SDL_GUI,      [ test x$build_sdl = xyes ])
+AM_CONDITIONAL(BUILD_FB_GUI,       [ test x$build_fb = xyes ])
+AM_CONDITIONAL(BUILD_AQUA_GUI,     [ test x$build_aqua = xyes ])
+AM_CONDITIONAL(BUILD_DUMP_GUI,     [ test x$build_dump = xyes ])
+AM_CONDITIONAL(BUILD_AMIGAOS4_GUI, [ test x$build_aos4 = xyes ])
+AM_CONDITIONAL(BUILD_HAIKU_GUI,    [ test x$build_haiku = xyes ])
+
+# plugin building flags
+AM_CONDITIONAL(NPAPI,   [test x"${npapi}" = xyes])
+AM_CONDITIONAL(KPARTS3, [test x"${build_kparts3}" = xyes])
+AM_CONDITIONAL(KPARTS4, [test x"${build_kparts4}" = xyes])
+
+if test x"${build_gles1}"; then
+  GNASH_PATH_GLES
+fi
+
+dnl only Linux supports /dev/fb0
+if test x"${build_rawfb_device}" = xyes; then
+   AC_DEFINE([BUILD_RAWFB_DEVICE], [1], [Use raw Framebuffer device support])
+fi
+
+if test x"${build_directfb_device}" = xyes; then
+   GNASH_PKG_FIND(directfb, [directfb.h], [DirectFB render library], DirectFBCreate)
+   AC_DEFINE([BUILD_DIRECTFB_DEVICE], [1], [Use DirectFB device support])
+fi
+
+AM_CONDITIONAL(BUILD_VAAPI_DEVICE, [test x"${use_libva}" = xyes])
+AM_CONDITIONAL(BUILD_EGL_DEVICE, [test x"${build_egl_device}" = xyes])
+AM_CONDITIONAL(BUILD_DIRECTFB_DEVICE, [ test x${build_directfb_device} = xyes])
+AM_CONDITIONAL(BUILD_RAWFB_DEVICE, [ test x${build_rawfb_device} = xyes])
+AM_CONDITIONAL(BUILD_X11_DEVICE, [test x${build_x11_device} = xyes])
+
+if test x"${build_gtk}" = xyes; then
+  AC_ARG_ENABLE(ghelp,
+    AC_HELP_STRING([--enable-ghelp], [Enable support for the GNOME help system]),
+    [case "${enableval}" in
+      yes) ghelp=yes ;;
+      no)  ghelp=no ;;
+      *)   AC_MSG_ERROR([bad value ${enableval} for enable-ghelp option]) ;;
+    esac], ghelp=no
+  )
+
+  if test x"${ghelp}" = x"yes" ; then
+    AC_PATH_PROG(SCROLLKEEPER, scrollkeeper-config, [], [$PATH:/usr/bin/X11:/usr/local/bin/X11:/opt/X11])
+    AC_PATH_PROG(SCROLLUPDATE, scrollkeeper-update, [],	[$PATH:/usr/bin/X11:/usr/local/bin/X11:/opt/X11])
+    AC_PATH_PROG(SCROLLINSTALL, scrollkeeper-preinstall, [], [$PATH:/usr/bin/X11:/usr/local/bin/X11:/opt/X11])
+
+    if test x"$SCROLLKEEPER" = x -o x"$SCROLLUPDATE" = x -o x"$SCROLLINSTALL" = x ; then
+      ghelp=no
+      AC_MSG_WARN([You need to install scrollkeeper for gnome help])
+    fi
+  fi
+fi
+AM_CONDITIONAL(GHELP, [test x${ghelp} = xyes])
+
+if test x${build_fltk} = xyes; then
+  GNASH_PKG_FIND(Xft, [Xft.h], [xft library], XftGlyphRender)
+fi
+
+dnl Some systems have a pervered set of dependencies.
+dnl Fedora Core 6 appears to have a dependency on expat for fontconfig.
+dnl We only need the library, but this is the easy wind to find it.
+GNASH_PKG_FIND(expat, [expat.h], [Expat library], XML_ErrorString)
+
+dnl these conditionals were moved out of kde.m4
+AM_CONDITIONAL(HAS_KDE3, [test x$has_kde3 = xyes])
+# used to disable x11-specific stuff on special platforms
+AM_CONDITIONAL(include_x11, test "$kde_use_qt_emb" = "no" && test "$kde_use_qt_mac" = "no")
+AM_CONDITIONAL(include_ARTS, test "$build_arts" '!=' "no")
+AM_CONDITIONAL(unsermake_enable_pch, test "$kde_use_pch" = "yes" && test "$kde_gcc_supports_pch" = "yes")
+
+AM_CONDITIONAL(HAVE_GLEXT, [test x$glext = xyes])
+
+dnl We don't have GTKGLExt, so default to SDL, and don't build the Firefox plugin
+if test x$glext = xno -a x$build_ogl = xyes; then
+  if test x$gtk2 = xyes -a x$build_gtk = xyes; then
+    AC_ERROR([You have GTK installed, but not GtkGLExt. You need GtkGLExt to use the OpenGL renderer. Attempting to build SDL version])
+  fi
+  gui=sdl
+  npapi=no
+  AC_MSG_WARN([GTK2 specified for the GUI, but GtkGlExt is not present. Trying SDL instead.])
+fi
+
+missing_codecs=""
+if test x"$build_media_gst" = "xyes"; then
+  AC_PATH_PROG(GST_INSPECT, gst-inspect, ,[${pathlist}])
+  if test "x$GST_INSPECT" != "x" -a x"${darwin}" = xno ; then
+    AC_PATH_PROG(GST_INSPECT, gst-inspect-0.10, ,[${pathlist}])
+  fi
+  if test "x$GST_INSPECT" != "x" -a x"${darwin}" = xno ; then
+    dnl FIXME: there may be multiple acceptable plugins that are acceptable for
+    dnl our use. For example, mad or FFmpeg will play mp3.
+    codecs="ffdec_flv ffdec_flashsv ffdec_vp6f ffdec_flashsv mad vorbisdec ffdec_vp6"
+    for i in $codecs; do
+       hits="`$GST_INSPECT $i | grep -c 'Long name'`"
+       if test $hits -eq 0; then
+         missing_codecs="$missing_codecs $i"
+         AC_MSG_WARN([Missing codec: $i])
+       fi
+    done
+  fi
+  GNASH_PKG_FIND(gstreamer_plugins_base, [gst/interfaces/probeprobe.h], [gstreamer interfaces library], gst_property_probe_probe_and_get_values_name, [0.10])
+  GNASH_PKG_FIND(gstreamer_app, [gst/app/gstappsink.h], [gstreamer app library], call_gmon_start, [0.10])
+  GNASH_PKG_FIND(gstreamer, [gst/gst.h], [gstreamer library], gst_init, [0.10])
+  dnl if cross compiling, we're usually not going to be able to pop up
+  dnl the codec installer to download the package to install, so disable
+  dnl it if cross compiling with gstreamer support.
+  if test x$cross_compiling = xno; then
+    GNASH_PKG_FIND(gstreamer_pbutils, [gst/pbutils/install-plugins.h], [gstreamer PB Utils library], gst_install_plugins_supported, [0.10])
+  fi
+  dnl when cross compiling Gstreamer, not all supplied SDKs include all the
+  dnl development libraries since most devices don't need to support plugin
+  dnl development, only the runtime. In these caes we often have the header
+  dnl files but not the libraries.
+  if test x"${has_gstreamer_plugins_base}" = xyes; then
+    GSTREAMER_LIBS="-lgstinterfaces-0.10 $GSTREAMER_LIBS"
+    AC_DEFINE(HAS_GSTREAMER_PLUGINS_BASE, [1], [Has the Gstreamer Plugin Dev package installed])
+  fi
+fi
+
+AM_CONDITIONAL(HAVE_CAIRO, [true])
+AM_CONDITIONAL(HAVE_OPENGL, [true])
+
+AM_CONDITIONAL(USE_SOUND_SDL, test x$build_sound_sdl = xyes)
+AM_CONDITIONAL(USE_SOUND_AHI, test x$build_sound_ahi = xyes)
+AM_CONDITIONAL(USE_SOUND_MKIT, test x$build_sound_mkit = xyes)
+AM_CONDITIONAL(USE_FFMPEG_ENGINE, test x"${build_media_ffmpeg}" = x"yes")
+AM_CONDITIONAL(USE_GST_ENGINE, test x"${build_media_gst}" = x"yes")
+AM_CONDITIONAL(HAVE_OPENGL, test x"${OPENGL_LIBS}" != x)
+dnl for now the Haiku media handler is experimental
+AM_CONDITIONAL(USE_HAIKU_ENGINE, test x"$build_media_haiku" = xyes)
+
+if test x"${build_media_ffmpeg}" = x"yes"; then
+  AC_DEFINE([ENABLE_FFMPEG_MEDIA],  [1], [Use FFmpeg for media decoding])
+fi
+
+if test x"${build_media_gst}" = x"yes"; then
+  AC_DEFINE([ENABLE_GST_MEDIA],  [1], [Use gstreamer for media decoding])
+fi
+
+if test x"${build_media_haiku}" = x"yes"; then
+  AC_DEFINE([ENABLE_HAIKU_MEDIA],  [1], [Use haiku for media decoding])
+fi
+
+if test x$build_sound_mkit = xyes; then
+  if test x"${haiku}" != xyes; then
+    AC_MSG_ERROR([Media Kit sound handling is supported only under Haiku]);
+  else
+    AC_DEFINE([SOUND_MKIT],  [1], [Use Haiku Media Kit for sound handling])
+  fi
+fi
+
+if test x"${build_sound_sdl}" = xyes; then
+  AC_DEFINE([SOUND_SDL],  [1], [Use SDL for sound handling])
+fi
+
+if test x"${build_sound_ahi}" = xyes; then
+  if test x"$amigaos4" != xyes; then
+    AC_MSG_ERROR([AHI sound handling is supported only under AmigaOS]);
+  else
+    AC_DEFINE([SOUND_AHI],  [1], [Use AmigaOS AHI for sound handling])
+  fi
+fi
+
+if test x$build_fltk = xyes; then
+  GNASH_PKG_FIND(fltk2, [fltk/FL_API.h], [Fast Light Toolkit], fl_window_flush)
+  if test x"${has_fltk2}" = xyes; then
+    AC_CHECK_LIB(Xi, XInput_find_display,
+      [AC_SUBST(FLTK2_LIBS, "$FLTK2_LIBS -lXi")])
+  fi
+fi
+
+AM_CONDITIONAL(HAVE_FLTK2, [ test x$has_fltk2 = xyes ])
+AM_CONDITIONAL(HAS_XFT, [ test x$has_xft = xyes ])
+
+GNASH_DOCBOOK
+AM_CONDITIONAL(ENABLE_INFO, test x${INSTALL_INFO} != x)
+AM_CONDITIONAL(DOCBOOK, test x$docbook = xyes)
+AM_CONDITIONAL(ENABLE_TEXI, [ test x"$DB2X_TEXI" != x -o x"$DB2X_TEXIXML" != x ])
+AM_CONDITIONAL(ENABLE_PDF, [ test x"$DB2X_PDF" ])
+AM_CONDITIONAL(ENABLE_HTML, [ test x"$XSLTPROC" != x -a x"$docbook_styles" != x ])
+AM_CONDITIONAL(ENABLE_FOP, [ test x"$FOP" != x -a x"$docbook_styles" != x ])
+AM_CONDITIONAL(ENABLE_XMLTEX, [ test x"$PDFXMLTEX" != x -a x"$XSLTPROC" != x -a x"$docbook_styles" != x ])
+AM_CONDITIONAL(ENABLE_MAN, [ test x"$DB2X_MAN" != x -o x"$DB2X_MANXML" != x ])
+AM_CONDITIONAL(HAVE_AGG, [test x"${AGG_LIBS}" != x])
+
+dnl Define winsock if we're on windows. We could do something complicated,
+dnl but since AC_EXEEXT does it for us, we'll do this the easy way.
+if test x"$EXEEXT" = "exe"; then
+  AC_DEFINE(HAVE_WINSOCK,1,[This is defined is we are on Win32])
+fi
+
+dnl ****************************************
+dnl *** Check for ELF visibility support ***
+dnl ****************************************
+
+dnl Enable visibility by default, disabled if extensions are enabled
+AC_ARG_ENABLE([visibility],
+  AC_HELP_STRING([--enable-visibility], [Use ELF visibility attributes])
+AC_HELP_STRING([--disable-visibility], [Disable ELF visibility]), [], [
+    if test x"$extensions_support" != x"no"; then
+      enable_visibility=no
+    else
+      enable_visibility=yes
+    fi])
+
+if test x"$enable_visibility" != x"no"; then
+  dnl Check whether the compiler supports the visibility attribute
+  save_CFLAGS="$CFLAGS"
+  CFLAGS="$CFLAGS -Wall -Werror"
+  AC_MSG_CHECKING([whether $CC supports the GNUC visibility attribute])
+  AC_COMPILE_IFELSE([AC_LANG_SOURCE(
+    [
+      void __attribute__ ((visibility("default"))) test_default (void) {}
+      void __attribute__ ((visibility("hidden"))) test_hidden (void) {}
+      int main (int argc, char **argv) { test_default (); test_hidden (); return 0; }
+    ])],
+    [
+      AC_DEFINE([HAVE_GNUC_VISIBILITY], [1], [Define this for GCC-visibility.])
+      AC_MSG_RESULT([yes])
+    ],
+    [
+      AC_MSG_RESULT([no])
+    ]
+  )
+  CFLAGS="$save_CFLAGS"
+fi
+
+AC_ARG_ENABLE([pch],
+  AC_HELP_STRING([--enable-pch], [Enable precompiled header support]), [], [enable_pch=no])
+
+AM_CONDITIONAL([ENABLE_PCH], [test x"$enable_pch" != x"no"])
+
+PCH_FLAGS="-include all-includes.h -Winvalid-pch"
+AC_SUBST(PCH_FLAGS)
+
+GNASH_PATH_PTHREADS
+
+GNASH_PATH_BOOST
+
+AC_ARG_ENABLE([strict],
+  AC_HELP_STRING([--enable-strict],[Accept only standards compliant code (GCC only)]),
+  [case "${enableval}" in
+    yes) strict=yes ;;
+    no) strict=no ;;
+    *) AC_MSG_ERROR([bad value ${enableval} for --enable-strict option]) ;;
+  esac],
+  [strict=no]
+)
+
+if test x"$strict" = x"yes" -a x$build_agg = xyes; then
+   AC_MSG_ERROR([agg renderer will fail with --enable-strict.]);	
+fi
+
+# We want warnings, lots of warnings  :-)
+# It should be possible to build with -ansi, not with
+# -pedantic because of agg.
+#
+# -ansi was actually dropped because it hides 'fileno', which
+# is used in a few places
+#
+if test x"$GCC" = x"yes"; then
+  CXXFLAGS="$CXXFLAGS \
+    $CROSS_CXXFLAGS \
+    -W \
+    -Wall \
+    -Wcast-qual \
+    -Wpointer-arith \
+    -Wreturn-type \
+    -Wnon-virtual-dtor \
+    -Wunused \
+    "
+  CFLAGS="$CFLAGS \
+    $CROSS_CXXFLAGS \
+    -W \
+    -Wall \
+    -Wcast-align \
+    -Wcast-qual \
+    -Wpointer-arith \
+    -Wreturn-type \
+    -Wmissing-declarations \
+    -Wmissing-prototypes \
+    -Wstrict-prototypes \
+    "
+  if test x"$strict" = x"yes"; then
+    CXXFLAGS="$CXXFLAGS \
+      -Wextra \   
+      -pedantic \
+      -Wno-long-long \
+      "
+
+    CFLAGS="$CFLAGS \
+      -pedantic \
+      -Wno-long-long \
+      -ansi \
+      "
+  fi
+fi
+
+AC_ARG_ENABLE([cassert],
+  AC_HELP_STRING([--disable-cassert],[Disable assertion checking]),
+  [case "${enableval}" in
+    yes) cassert=yes ;;
+    no) cassert=no ;;
+    *) AC_MSG_ERROR([bad value ${enableval} for --enable-cassert option]) ;;
+  esac],
+  [cassert=yes]
+)
+
+if test x"$cassert" = x"no"; then
+    CXXFLAGS="$CXXFLAGS \
+      -DNDEBUG \
+      "
+    CFLAGS="$CFLAGS \
+      -DNDEBUG \
+      "
+fi
+
+dnl /* http://gcc.gnu.org/bugzilla/show_bug.cgi?id=19664 */
+AC_DEFUN([CHECK_VISIBILITY_GCC_BUG],
+  [
+    AC_CACHE_CHECK([if -fvisibility-inlines-hidden is broken], ac_cv_gcc_visibility_bug, [
+        AC_LANG_PUSH(C++)
+        save_CFLAGS=$CFLAGS
+        save_CXXFLAGS=$CXXFLAGS
+        save_LDFLAGS=$LDFLAGS
+        CFLAGS="-fPIC -O0"
+        CXXFLAGS="-fPIC -fvisibility-inlines-hidden -O0"
+        LDFLAGS="$LDFLAGS -shared -fPIC"
+
+        AC_TRY_LINK(
+        [          
+          template<typename CharT>
+          struct VisTest
+          {
+            inline VisTest ();
+          };
+          template<typename CharT>
+          inline VisTest<CharT>::VisTest()
+        {}
+        extern template class VisTest<char>;  // It works if we drop that line
+        int some_function( int do_something ) __attribute__((visibility("default")));
+	int some_function( int )
+          {
+            VisTest<char> a;
+            return 0;
+          }
+        ], [],
+        ac_cv_gcc_visibility_bug=no, ac_cv_gcc_visibility_bug=yes)
+
+        CFLAGS=$save_CFLAGS
+        CXXFLAGS=$save_CXXFLAGS
+        LDFLAGS=$save_LDFLAGS
+        AC_LANG_POP(C++)
+      ]
+    )
+    if test x$ac_cv_gcc_visibility_bug = xno; then
+      CXXFLAGS="$CXXFLAGS -fvisibility-inlines-hidden"
+    fi
+  ]
+)
+
+CHECK_VISIBILITY_GCC_BUG
+
+if test x$ac_cv_gcc_visibility_bug = xno; then
+  AC_LANG_PUSH(C++)
+  AC_MSG_CHECKING([whether $CXX supports -fvisibility=hidden])
+  save_CXXFLAGS=$CXXFLAGS
+  CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
+  AC_LINK_IFELSE([AC_LANG_PROGRAM()], 
+                 [ac_cv_gcc_visibility=yes;
+                  AC_MSG_RESULT([yes])],
+                 [ac_cv_gcc_visibility=no;
+                  AC_MSG_RESULT([no])]);
+  CXXFLAGS="$save_CXXFLAGS"
+  AC_LANG_POP(C++)
+fi
+
+
+AM_CONDITIONAL(VISIBILITY_WORKS, test x"$ac_cv_gcc_visibility" = xyes)
+
+if test x"$ac_cv_gcc_visibility" = xyes -a x"$enable_visibility" != xno; then
+  CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
+fi
+
+AC_ARG_ENABLE([harden],
+  AC_HELP_STRING([--disable-harden],[Disable hardening]),
+  [case "${enableval}" in
+    yes) harden=yes ;;
+    no)  harden=no ;;
+    *) AC_MSG_ERROR([bad value ${enableval} for --enable-harden option]) ;;
+  esac],
+  [harden=yes]
+)
+
+AC_DEFUN([ADD_HARDENING_FLAGS],[
+   AX_APPEND_COMPILE_FLAGS([-fpie -fPIE -Wformat -Werror=format-security])
+
+   AX_CHECK_COMPILE_FLAG([-fstack-protector-strong],
+     [AX_APPEND_FLAG([-fstack-protector-strong])],
+     [AX_APPEND_COMPILE_FLAGS(["-fstack-protector --param ssp-buffer-size=4"])])
+])
+
+if test x"$harden" = x"yes"; then
+  CPPFLAGS="${CPPFLAGS} -D_FORTIFY_SOURCE=2"
+
+  ADD_HARDENING_FLAGS
+  AC_LANG_PUSH(C++)
+  ADD_HARDENING_FLAGS
+  AC_LANG_POP(C++)
+
+  AX_APPEND_LINK_FLAGS([-fPIE -pie -Wl,-z,relro -Wl,-z,now])
+fi
+
+dnl Define convenience constants so Gnash can print out the
+dnl default configuration of the build.
+RENDERER_CONFIG="${renderer_list}"
+RENDERER_LIBS=
+for rend in `echo "${add_renderer}" | tr ',' ' '`; do
+	RENDERER_LIBS="${RENDERER_LIBS} \$(top_builddir)/librender/libgnash${rend}.la"
+done
+AC_SUBST(RENDERER_LIBS)
+AC_SUBST(RENDERER_CONFIG)
+
+HWACCEL_CONFIG="${device_list}"
+AC_SUBST(HWACCEL_CONFIG)
+
+dnl check for missing libraries and disable them.
+if test x"$BOOST_LIBS" != x; then
+  if test x"${missing_cygnal_libs}" != x; then
+    for i in ${missing_cygnal_libs}; do
+      if test $i = serialization; then
+        AC_DEFINE([BOOST_MULTI_INDEX_DISABLE_SERIALIZATION], ["1"], [if the library is missing, don't use it.])
+      fi
+    done
+  fi
+fi
+
+dnl ========= Check for GConf
+
+AC_MSG_CHECKING([whether GConf support is requested])
+AC_ARG_WITH([gconf],
+  [AS_HELP_STRING([--without-gconf],
+          [Disable the use of gconf])],
+  [],
+  [case "${host}" in
+    *-cygwin* | *-mingw* | *-pw32*) with_gconf=no ;;
+    *) with_gconf=yes ;;
+   esac])
+AC_MSG_RESULT([$with_gconf])
+
+AM_CONDITIONAL([WITH_GCONF],[test "$with_gconf" = "yes"])
+
+if test "$with_gconf" = "yes"; then
+   PKG_CHECK_MODULES([GCONF],[gconf-2.0])
+   AC_DEFINE([WITH_GCONF],[1],[Define if GConf support is enabled])
+
+   AM_GCONF_SOURCE_2
+
+   AC_PATH_PROG([GCONFTOOL], [gconftool-2], [false])
+   if test "$GCONFTOOL" = "false"; then
+      AC_MSG_ERROR([gconftool-2 executable not found in your path - should be installed with GConf])
+   fi
+else
+   AM_CONDITIONAL([GCONF_SCHEMAS_INSTALL],false)
+fi
+
+
+CYGNAL_PATHS
+
+SUPPORTED_GUIS=
+if test x$build_qtopia3 = xyes; then
+  SUPPORTED_GUIS="${SUPPORTED_GUIS},qtopia3"
+fi
+if test x$build_qtopia4 = xyes; then
+  SUPPORTED_GUIS="${SUPPORTED_GUIS},qtopia4"
+fi
+if test x$build_fb = xyes; then
+  SUPPORTED_GUIS="${SUPPORTED_GUIS},fb"
+fi
+if test x$build_fltk = xyes; then
+  SUPPORTED_GUIS="${SUPPORTED_GUIS},fltk"
+fi
+if test x$build_kde3 = xyes; then
+  SUPPORTED_GUIS="${SUPPORTED_GUIS},kde3"
+fi
+if test x$build_qt4 = xyes; then
+  SUPPORTED_GUIS="${SUPPORTED_GUIS},qt4"
+fi
+if test x$build_gtk = xyes; then
+  SUPPORTED_GUIS="${SUPPORTED_GUIS},gtk"
+fi
+if test x$build_sdl = xyes; then
+  SUPPORTED_GUIS="${SUPPORTED_GUIS},sdl"
+fi
+if test x$build_aqua = xyes; then
+  SUPPORTED_GUIS="${SUPPORTED_GUIS},aqua"
+fi
+if test x$build_dump = xyes; then
+  SUPPORTED_GUIS="${SUPPORTED_GUIS},dump"
+fi
+if test x$build_aos4 = xyes; then
+  SUPPORTED_GUIS="${SUPPORTED_GUIS},aos4"
+fi
+if test x$build_haiku = xyes; then
+  SUPPORTED_GUIS="${SUPPORTED_GUIS},haiku"
+fi
+SUPPORTED_GUIS="`echo ${SUPPORTED_GUIS} | sed 's/,//'`" # Strip leading comma
+AC_SUBST(SUPPORTED_GUIS)
+
+AC_CONFIG_LINKS(cygnal/testsuite/cygnal.all/cygnalrc:cygnal/testsuite/cygnal.all/cygnalrc.in)
+AC_CONFIG_LINKS(testsuite/libbase.all/gnashrc:testsuite/libbase.all/gnashrc.in)
+AC_CONFIG_LINKS(testsuite/libbase.all/gnashrc-local:testsuite/libbase.all/gnashrc-local.in)
+
+AC_CONFIG_FILES(
+gnash.pc:gnash.pc.in
+desktop/gnash-gtk-launcher:desktop/gnash-gtk-launcher.in
+desktop/gnash-qt-launcher:desktop/gnash-qt-launcher.in
+)
+
+AC_OUTPUT(Makefile
+desktop/Makefile
+po/Makefile
+libmedia/Makefile
+libsound/Makefile
+libbase/Makefile
+libcore/Makefile
+libcore/vm/Makefile
+libcore/parser/Makefile
+librender/Makefile
+utilities/Makefile
+doc/Makefile
+doc/C/Makefile
+doc/Doxyfile
+testsuite/Makefile
+testsuite/media/Makefile
+testsuite/libbase.all/Makefile
+testsuite/as3compile.all/Makefile
+testsuite/actionscript.all/Makefile
+testsuite/samples/Makefile
+testsuite/swfdec/Makefile
+testsuite/misc-ming.all/Makefile
+testsuite/misc-ming.all/action_order/Makefile
+testsuite/misc-ming.all/sound/Makefile
+testsuite/misc-ming.all/displaylist_depths/Makefile
+testsuite/misc-ming.all/init_action/Makefile
+testsuite/misc-ming.all/loop/Makefile
+testsuite/misc-ming.all/loading/Makefile
+testsuite/misc-ming.all/register_class/Makefile
+testsuite/misc-mtasc.all/Makefile
+testsuite/misc-haxe.all/Makefile
+testsuite/misc-haxe.all/classes.all/Makefile
+testsuite/misc-swfmill.all/Makefile
+testsuite/misc-swfmill.all/trace-as2/Makefile
+testsuite/misc-swfmill.all/trace-as3/Makefile
+testsuite/misc-swfc.all/Makefile
+testsuite/network.all/Makefile
+testsuite/movies.all/Makefile
+testsuite/libcore.all/Makefile
+testsuite/libmedia.all/Makefile
+gui/Makefile
+gui/Info.plist
+gui/pythonmod/Makefile
+extensions/Makefile
+extensions/dejagnu/Makefile
+extensions/mysql/Makefile
+extensions/fileio/Makefile
+extensions/gtk2/Makefile
+extensions/lirc/Makefile
+extensions/dbus/Makefile
+plugin/Makefile
+plugin/npapi/Makefile
+plugin/klash/Makefile
+plugin/klash4/Makefile
+plugin/win32/Makefile
+plugin/aos4/Makefile
+libdevice/Makefile
+cygnal/Makefile
+cygnal/libnet/Makefile
+cygnal/libamf/Makefile
+cygnal/cgi-bin/Makefile
+cygnal/cgi-bin/echo/Makefile
+cygnal/cgi-bin/oflaDemo/Makefile
+cygnal/cgi-bin/fitcDemo/Makefile
+cygnal/testsuite/Makefile
+cygnal/testsuite/libamf.all/Makefile
+cygnal/testsuite/libnet.all/Makefile
+cygnal/testsuite/cygnal.all/Makefile
+)
+
+###
+########################## Final report begins... ############################
+###
+
+dnl Create temporary directory in a secure way
+tmp=`mktemp -d ${TMPDIR=/tmp}/gnash-configure-XXXXXX`
+if test \! -n "$tmp" || test \! -d "$tmp"; then
+  tmp=`(umask 077 && mkdir -d ${TMPDIR=/tmp}/gnash-configure-${RANDOM}-$$) 2>/dev/null`
+fi
+cerr="${tmp}/errors"
+cwarn="${tmp}/warnings"
+crec="${tmp}/recommended"
+deb_err="${tmp}/deb_err"
+deb_war="${tmp}/deb_war"
+deb_rec="${tmp}/deb_rec"
+rpm_err="${tmp}/rpm_err"
+rpm_war="${tmp}/rpm_war"
+rpm_rec="${tmp}/rpm_rec"
+yast_err="${tmp}/yast_err"
+yast_war="${tmp}/yast_war"
+yast_rec="${tmp}/yast_rec"
+echo ""
+
+#trap 'rm cerr' 0 # trap isn't a good idea, might override other traps
+exec 3> $cerr 
+exec 4> $cwarn
+exec 5> $crec
+
+for F in "$deb_err" "$deb_war" "$deb_rec" "$rpm_err" "$rpm_war" "$rpm_rec" "$yast_err" "$yast_war" "$yast_rec"; do
+  touch "$F";
+done
+
+pkg_out_fd=
+deb_dest=
+rpm_dest=
+yast_dest=
+
+dnl These macros should be portable as I checked most things used are in
+dnl POSIX-2008, GNU CoreUtils, and shipped in MinGW. Old unices? No clue.
+dnl In any case, they are hardly relevant on non-GNU systems.
+
+dnl Beware, here comes some long scary shell commands.
+
+AC_DEFUN([PKG_ERR],
+[
+  pkg_out_fd=3
+  echo "          ERROR: `echo "$1" | fold -s -w 62 | sed 's/^/                 /' | tr '\n' '#' | cut -b 18- | tr '#' '\n'`" >&$pkg_out_fd
+  deb_dest="$deb_err"
+  rpm_dest="$rpm_err"
+  yast_dest="$yast_err"
+])
+
+AC_DEFUN([PKG_WAR],
+[
+  pkg_out_fd=4
+  echo "        WARNING: `echo "$1" | fold -s -w 62 | sed 's/^/                 /' | tr '\n' '#' | cut -b 18- | tr '#' '\n'`" >&$pkg_out_fd
+  deb_dest="$deb_war"
+  rpm_dest="$rpm_war"
+  yast_dest="$yast_war"
+])
+
+AC_DEFUN([PKG_REC],
+[
+  pkg_out_fd=5
+  echo "    RECOMMENDED: `echo "$1" | fold -s -w 62 | sed 's/^/                 /' | tr '\n' '#' | cut -b 18- | tr '#' '\n'`" >&$pkg_out_fd
+  deb_dest="$deb_rec"
+  rpm_dest="$rpm_rec"
+  yast_dest="$yast_rec"
+])
+
+AC_DEFUN([PKG_SUGGEST],
+[
+  echo "`echo "$1" | fold -s -w 62 | sed 's/^/                 /'`" >&$pkg_out_fd
+])
+
+AC_DEFUN([DEB_INSTALL],
+[
+  echo "                 or .deb users: `echo "apt-get install $1" | fold -s -w 48 | sed 's/^/                                /' | tr '\n' '#' | cut -b 33- | tr '#' '\n'`" >&$pkg_out_fd
+  echo -n " $1" >> "$deb_dest"
+])
+
+AC_DEFUN([DEB_ALTERNATIVE],
+[
+  echo "                 or maybe     : `echo "apt-get install $1" | fold -s -w 48 | sed 's/^/                                /' | tr '\n' '#' | cut -b 33- | tr '#' '\n'`" >&$pkg_out_fd
+  echo -n "/$1" >> "$deb_dest"
+])
+
+AC_DEFUN([RPM_INSTALL],
+[
+  echo "                 or .rpm users: `echo "yum install $1" | fold -s -w 48 | sed 's/^/                                /' | tr '\n' '#' | cut -b 33- | tr '#' '\n'`" >&$pkg_out_fd
+  echo -n " $1" >> "$rpm_dest"
+])
+
+AC_DEFUN([RPM_ALTERNATIVE],
+[
+  echo "                 or maybe     : `echo "yum install $1" | fold -s -w 48 | sed 's/^/                                /' | tr '\n' '#' | cut -b 33- | tr '#' '\n'`" >&$pkg_out_fd
+  echo -n "/$1" >> "$rpm_dest"
+])
+
+AC_DEFUN([YAST_INSTALL],
+[
+  echo "                 or yast users: `echo "yast install $1" | fold -s -w 48 | sed 's/^/                                /' | tr '\n' '#' | cut -b 33- | tr '#' '\n'`" >&$pkg_out_fd
+  echo -n " $1" >> "$yast_dest"
+])
+
+AC_DEFUN([YAST_ALTERNATIVE],
+[
+  echo "                 or maybe     : `echo "yast install $1" | fold -s -w 48 | sed 's/^/                                /' | tr '\n' '#' | cut -b 33- | tr '#' '\n'`" >&$pkg_out_fd
+  echo -n "/$1" >> "$yast_dest"
+])
+
+AC_DEFUN([PKG_ALTERNATIVE],
+[
+  echo "`echo "$1" | fold -s -w 62 | sed 's/^/                 /'`" >&$pkg_out_fd
+])
+
+echo "Configurable options are:"
+
+if test x"${jemalloc}" = x"yes"; then
+  echo "        JEMALLOC Memory management enabled (default)."
+else
+  echo "        JEMALLOC Memory management disabled."
+fi
+
+if test x"${pthreads}" = x"yes"; then
+  echo "        POSIX Threads support enabled (default)."
+else
+  if test x"${build_haiku}" = x"yes"; then
+     echo "        POSIX Thread support built into C library."
+  else
+     echo "        POSIX Thread support disabled."
+  fi
+fi
+
+if test x"${npapi}" = x"yes"; then
+  echo "        NPAPI plugin enabled (default). Use --disable-npapi to disable."
+  echo "        NPAPI plugin will be installed in ${FIREFOX_PLUGINS}"
+else
+  echo "        NPAPI plugin disabled."
+fi
+
+if test x"${build_kparts3}" = x"yes"; then
+  echo "        KPARTS 3.x plugin enabled (default). Use --disable-kparts3 to disable"
+  echo "            KPARTS 3.x plugin will be installed in ${KDE3_PLUGINDIR}"
+  echo "            KPARTS 3.x service will be installed in ${KDE3_SERVICESDIR}"
+  echo "            KPARTS 3.x config dir will be in ${KDE3_CONFIGDIR}"
+  echo "            KPARTS 3.x appsdata will be installed in ${KDE3_APPSDATADIR}"
+else
+  echo "        KPARTS 3.x plugin disabled."
+fi
+
+if test x"${build_kparts4}" = x"yes"; then
+  echo "        KPARTS 4.x plugin enabled (default). Use --disable-kparts4 to disable"
+  echo "            KPARTS 4.x plugin will be installed in ${KDE4_PLUGINDIR}"
+  echo "            KPARTS 4.x service will be installed in ${KDE4_SERVICESDIR}"
+  echo "            KPARTS 4.x config dir will be in ${KDE4_CONFIGDIR}"
+  echo "            KPARTS 4.x appsdata will be installed in ${KDE4_APPSDATADIR}"
+else
+  echo "        KPARTS 4.x plugin disabled."
+fi
+
+# set a variable if we shouldn't continue. This way we can print
+# out everything that is missing in one pass, hopefully making it
+# easy for new developers to get everything they need installed.
+
+echo ""
+echo "Configured paths for ${build} are:"
+
+if test x"${jemalloc}" = x"yes"; then
+  if test x"${has_jemalloc}" = xyes; then
+    echo "        JEMALLOC flags are: ${JEMALLOC_CFLAGS}"
+    echo "        JEMALLOC libs are: ${JEMALLOC_LIBS}"
+  else
+    PKG_ERR([No jemalloc development package installed!])
+    PKG_SUGGEST([Install a jemalloc development environment from
+    http://www.canonware.com/jemalloc/])
+    DEB_INSTALL([libjemalloc-dev])
+    RPM_INSTALL([jemalloc-devel])
+    PKG_ALTERNATIVE([or specify --disable-jemalloc])
+  fi
+fi
+
+dnl Dump QT3 options is the user specified a QTOPIA3 or KDE3 GUI
+if test x"${build_kde3}" = xyes -o x"${build_qtopia3}" = xyes; then
+  if test x"${has_qt3}" = xyes; then
+    echo "        QT3 flags are: ${QT3_CFLAGS}"
+    echo "        QT3 libs are: ${QT3_LIBS}"
+  else
+    PKG_ERR([No QT 3.x development package installed!])
+    PKG_SUGGEST([Install a QT 3.x development environment from http://qt.nokia.com/])
+    DEB_INSTALL([libqt3-mt-dev])
+    RPM_INSTALL([qt3-devel])
+    RPM_ALTERNATIVE([qt-devel])
+    PKG_ALTERNATIVE([or change to a different gui with --enable-gui=...])
+  fi
+fi
+
+dnl Dump QT4 options is the user specified a QTOPIA4 or Qt4 GUI
+if test x"${build_qt4}" = xyes -o x"${build_qtopia4}" = xyes; then
+  if test x"${has_qt4}" = xyes; then
+    echo "        QT4 flags are: ${QT4_CFLAGS}"
+    echo "        QT4 libs are: ${QT4_LIBS}"
+  else
+    PKG_ERR([No QT 4.x development package installed!])
+    PKG_SUGGEST([Install a QT 4.x development environment from http://qt.nokia.com/])
+    DEB_INSTALL([libqt4-dev])
+    DEB_ALTERNATIVE([qt4-dev-tools]) dnl TODO: Is this required?
+    RPM_INSTALL([qt4-devel])
+    RPM_ALTERNATIVE([qt-devel])
+    PKG_ALTERNATIVE([or change to a different gui with --enable-gui=...])
+  fi
+fi
+
+if test x"${build_kparts4}" = xyes; then
+  if test x"${has_kde4}" = xyes; then
+    echo "        KDE4 flags are: ${KDE4_CFLAGS}"
+    echo "        KDE4 libs are: ${KDE4_LIBS}"
+  else
+    PKG_WAR([kparts4 plugin is disabled!])
+    PKG_SUGGEST([Install version 4.x of the KDE development environment from http://kde.org])
+    DEB_INSTALL([kdelibs5-dev])
+    RPM_INSTALL([kdelibs-devel])
+  fi
+fi
+
+if test x"$build_qtopia3" = xyes; then
+  if test x"${QTOPIA3_LIBS}" != x ; then
+    if test x"${QTOPIA3_CFLAGS}" != x ; then
+      echo "        QTOPIA 3.x flags are: $QTOPIA3_CFLAGS"
+    else
+      echo "        QTOPIA 3.x flags are: default include path"
+    fi
+    echo "        QTOPIA 3.x libs are: $QTOPIA3_LIBS"
+  else
+    PKG_ERR([No QTOPIA 3.x library development package installed!])
+    PKG_SUGGEST([Install it from http://trolltech.com/downloads/ as binary packages are not available.]) dnl TODO: This link is no longer valid.
+  fi
+fi
+
+if test x"$build_qtopia4" = xyes; then
+  if test x"${QTOPIA4_LIBS}" != x ; then
+    if test x"${QTOPIA4_CFLAGS}" != x ; then
+      echo "        QTOPIA 4.x flags are: $QTOPIA4_CFLAGS"
+    else
+      echo "        QTOPIA 4.x flags are: default include path"
+    fi
+    echo "        QTOPIA 4.x libs are: $QTOPIA4_LIBS"
+  else
+    PKG_ERR([No QTOPIA 4.x library development package installed!])
+    PKG_SUGGEST([Install it from http://trolltech.com/downloads/ as binary packages are not available.]) dnl TODO: This link is no longer valid.
+  fi
+fi
+
+
+# -o x$build_kparts3 = xyes
+if test x$build_kde3 = xyes; then
+  if test x"$has_kde3" = xyes; then
+    echo "        KDE 3.x flags are: $KDE3_CFLAGS"
+    echo "        KDE 3.x libs are: $KDE3_LIBS"
+  else
+    PKG_ERR([No KDE 3.x development package installed!])
+    PKG_SUGGEST([Install version 3.x of the KDE development environment from http://kde.org])
+    DEB_INSTALL([kdelibs4-dev])
+    RPM_INSTALL([kdelibs3-devel])
+    PKG_ALTERNATIVE([or disable the KDE 3.x gui, and reconfiguring using --enable-gui=<list-of-guis> and omitting kde from the list or avoiding --enable-gui=... as a whole.])
+  fi
+fi
+
+if test x"${JPEG_LIBS}" != x ; then
+  if test x"${JPEG_CFLAGS}" != x ; then
+    echo "        JPEG flags are: $JPEG_CFLAGS"
+  else
+    echo "        JPEG flags are: default include path"
+  fi
+  echo "        JPEG libs are: $JPEG_LIBS"
+else
+  PKG_ERR([No JPEG library development package installed!])
+  PKG_SUGGEST([Install it from http://ijg.org])
+  DEB_INSTALL([libjpeg-dev])
+  RPM_INSTALL([libjpeg-devel])
+fi
+
+if test x"${GIF_LIBS}" != x ; then
+  if test x"${GIF_CFLAGS}" != x ; then
+    echo "        GIF flags are: $GIF_CFLAGS"
+  else
+    echo "        GIF flags are: default include path"
+  fi
+  echo "        GIF libs are: $GIF_LIBS"
+else
+  PKG_ERR([No GIF library development package installed!])
+  PKG_SUGGEST([Install it from http://sourceforge.net/projects/giflib/])
+  DEB_INSTALL([libungif-dev])
+  DEB_ALTERNATIVE([libgif-dev])
+  RPM_INSTALL([libgif-devel])
+  RPM_ALTERNATIVE([giflib-devel])
+  RPM_ALTERNATIVE([libungif-devel])
+fi
+
+if test x"${PNG_LIBS}" != x ; then
+  if test x"${PNG_CFLAGS}" != x ; then
+    echo "        PNG flags are: $PNG_CFLAGS"
+  else
+    echo "        PNG flags are: default include path"
+  fi
+  echo "        PNG libs are: $PNG_LIBS"
+else
+  PKG_REC([No PNG library development package installed!])
+  PKG_SUGGEST([Gnash will be built without support for dynamic loading of PNG files.])
+  PKG_SUGGEST([Install it from http://www.libpng.org])
+  DEB_INSTALL([libpng12-dev])
+  RPM_INSTALL([libpng-devel])
+fi
+
+if test x"${build_ovg}" = x"yes"; then
+  if test x"${has_openvg}" = xyes; then
+    echo "        OpenVG flags are: $OPENVG_CFLAGS"
+    echo "        OpenVG libs are: $OPENVG_LIBS"
+    else
+      echo "        ERROR: No OpenVG development package installed!" >&3
+      echo "               You need to install the libmesa development package" >&3
+      echo "               or .deb users: apt-get install libopenvg1-mesa-dev" >&3
+      echo "               or .rpm users: yum install mesa-libOpenVG-devel-7.8.1-7.fc13.i686" >&3
+      echo "               or use a different renderer with --enable-renderer=" >&3
+  fi
+fi
+
+if test x"${build_ogl}" = x"yes"; then
+  if test x"$OPENGL_LIBS" != x; then
+    if test x"$OPENGL_CFLAGS" != x; then
+      echo "        OpenGL flags are: $OPENGL_CFLAGS"
+    else
+      echo "        OpenGL flags are: default include path"
+    fi
+    echo "        OpenGL libs are: $OPENGL_LIBS"
+    else
+      PKG_ERR([No OpenGL development package installed!])
+      PKG_SUGGEST([You need to install the libmesa development package])
+      DEB_INSTALL([libgl1-mesa-dev])
+      RPM_INSTALL([mesa-libGL-devel])
+      RPM_ALTERNATIVE([xorg-x11-Mesa-libGL])
+      PKG_ALTERNATIVE([or use a different renderer with --enable-renderer=])
+  fi
+fi
+
+if test x"${build_gles1}" = x"yes"; then
+  if test x"${has_gles1}" = xyes; then
+    if test x"${GLES1_CFLAGS}" != x; then
+      echo "        OpenGLES1 flags are: ${GLES1_CFLAGS}"
+    else
+      echo "        OpenGLES1 flags are: default include path"
+    fi
+    echo "        OpenGLES1 libs are: ${GLES1_LIBS}"
+  else
+      PKG_ERR([No OpenGL-ES development package installed!])
+      PKG_SUGGEST([You need to install the this from source probably])
+      PKG_ALTERNATIVE([or use a different renderer with --enable-renderer=])
+  fi
+fi
+
+dnl GLEXT is only needed for GTK/OpenGL
+if test x$build_gtk = xyes -a x$build_ogl = xyes ; then
+  if test x"$GLEXT_LIBS" != x; then
+    if test x"$GLEXT_CFLAGS" != x; then
+      echo "        GtkGLExt flags are: $GLEXT_CFLAGS"
+    else
+      echo "        GtkGLExt flags are: default include path"
+    fi
+      echo "        GtkGLExt libs are: $GLEXT_LIBS"
+  else
+    PKG_ERR([No GtkGLExt development package installed!])
+    PKG_SUGGEST([It is needed to build the GTK/OpenGL GUI/renderer combination.])
+    PKG_SUGGEST([Install it from http://gtkglext.sourceforge.net])
+    DEB_INSTALL([libgtkglext1-dev])
+    RPM_INSTALL([gtkglext-devel])
+    PKG_ALTERNATIVE([or --enable-gui=sdl or --enable-renderer=agg])
+  fi
+fi
+
+if test x$build_gtk = xyes; then #{
+  if test x"$GTK2_LIBS" != x; then
+    if test x"$GTK2_CFLAGS" != x; then
+      echo "        GTK2 flags are: $GTK2_CFLAGS"
+    else
+      echo "        GTK2 flags are: default include path"
+    fi
+      echo "        GTK2 libs are: $GTK2_LIBS"
+  else
+    PKG_ERR([No GTK2 development package installed!])
+    PKG_SUGGEST([Install it from http://gtk.org])
+    DEB_INSTALL([libgtk2.0-dev])
+    RPM_INSTALL([gtk2-devel])
+  fi
+
+  if test x"$PANGO_LIBS" != x; then
+    if test x"$PANGO_CFLAGS" != x; then
+      echo "        Pango flags are: $PANGO_CFLAGS"
+    else
+      echo "        Pango flags are: default include path"
+    fi
+    echo "        Pango libs are: $PANGO_LIBS"
+  else
+    PKG_ERR([No Pango development package installed!])
+    PKG_SUGGEST([Install it from http://pango.org])
+    DEB_INSTALL([libpango1.0-dev])
+    RPM_INSTALL([pango-devel])
+  fi
+
+  if test x"$GLIB_LIBS" != x; then
+    if test x"$GLIB_CFLAGS" != x; then
+      echo "        GLib flags are: $GLIB_CFLAGS"
+    else
+      echo "        GLib flags are: default include path"
+    fi
+    echo "        GLib libs are: $GLIB_LIBS"
+  else
+    PKG_ERR([No GLib development package installed!])
+    PKG_SUGGEST([Install it from http://gtk.org])
+    DEB_INSTALL([libglib2.0-dev])
+    RPM_INSTALL([glib2-devel])
+  fi
+
+  if test x"$ATK_LIBS" != x; then
+    if test x"$ATK_CFLAGS" != x; then
+      echo "        ATK flags are: $ATK_CFLAGS"
+    else
+      echo "        ATK flags are: default include path"
+    fi
+      echo "        ATK libs are: $ATK_LIBS"
+  else
+    PKG_ERR([No ATK development package installed!])
+    PKG_SUGGEST([Install it from http://atk.org])
+    DEB_INSTALL([libatk1.0-dev])
+    RPM_INSTALL([atk-devel])
+  fi
+
+fi
+
+if test x"$build_media_gst" = x"yes"; then
+  if test x"$missing_codecs" != x; then   
+      echo "        Your Gstreamer installation is missing these codecs: $missing_codecs"
+      echo "        Please install the gstreamer-ffmpeg for Gstreamer"
+  fi  
+  if test x"$GSTREAMER_LIBS" != x; then
+    if test x"$GSTREAMER_CFLAGS" != x; then
+      echo "        Gstreamer flags are: $GSTREAMER_CFLAGS"
+    else
+      echo "        Gstreamer flags are: default include path"
+    fi
+    echo "        Gstreamer libs are: $GSTREAMER_LIBS"
+  else
+    PKG_ERR([GST media handling requested but gstreamer-0.10+ not found])
+    PKG_SUGGEST([Install it from http://www.gstreamer.net])
+    DEB_INSTALL([libgstreamer0.10-dev])
+    RPM_INSTALL([gstreamer-devel])
+    YAST_INSTALL([gstreamer010-devel])
+  fi
+  if test x"$has_gstreamer_pbutils" != "xyes"; then
+    PKG_REC([If the user has not installed the necessary Gstreamer plugins, Gstreamer can pop up a message prompting them to.])
+    PKG_SUGGEST([Install gstpbutils (>= 0.10.15) from http://www.gstreamer.net for that to be enabled])
+    DEB_INSTALL([libgstreamer-plugins-base0.10-dev])
+    PKG_SUGGEST([or .rpm users: simply install the below package]) dnl TODO: Can/should this notice be done cleaner?
+    PKG_SUGGEST([Also see --with-gstpbutils-incl and --with-gstpbutils-lib])
+  fi
+  if test x"$has_gstreamer_plugins_base" = "xno"; then
+    dnl TODO: Check if this is really a mandatory asset!
+    PKG_ERR([Base plugins are required for gstreamer media!])
+    PKG_SUGGEST([Install gstreamer-plugins-base from http://www.gstreamer.net])
+    DEB_INSTALL([libgstreamer-plugins-base0.10-dev])
+    RPM_INSTALL([gstreamer-plugins-base-devel])
+  fi
+fi
+
+dnl TODO: figure out some RPM package names.
+dnl TODO: The following tests is probably incorrect for any/older/exotic systems! Could someone experienced look at it?
+if test x"${build_media_ffmpeg}" = x"yes"; then
+  if test x"$FFMPEG_LIBS" != x; then
+    echo "        MP3 and video support enabled through FFmpeg"
+    if test x"$FFMPEG_CFLAGS" != x; then
+      echo "        FFmpeg flags are: $FFMPEG_CFLAGS"
+    else
+      echo "        FFmpeg flags are: default include path"
+    fi
+    echo "        FFmpeg libs are: $FFMPEG_LIBS"
+  else
+    PKG_ERR([No FFmpeg development package installed!])
+    PKG_SUGGEST([You can install FFmpeg from http://ffmpeg.org])
+    DEB_INSTALL([libavcodec-dev])
+    RPM_INSTALL([ffmpeg-devel])
+    PKG_ALTERNATIVE(or reconfigure with --enable-media=gst)
+  fi
+
+  if test x"${avformat_h}" = x; then
+    PKG_ERR([FFmpeg's avformat header is installed but not libavformat!])
+    PKG_SUGGEST([You can install FFmpeg from http://ffmpeg.org])
+    DEB_INSTALL([libavformat-dev])
+    YAST_INSTALL([libavformat-api]) dnl (but currently installs into /usr/lib64)
+    PKG_ALTERNATIVE(or explicitly set the path using --with-ffmpeg-incl=)
+    PKG_ALTERNATIVE(or reconfigure with --enable-media=gst)
+  fi
+
+  if test x"${have_ffmpeg_swscale}" = "xno"; then
+    PKG_ERR([No libswscale development package installed!])
+    PKG_SUGGEST([You can install libswscale from http://ffmpeg.org])
+    DEB_INSTALL([libswscale-dev])
+    PKG_ALTERNATIVE(or reconfigure with --enable-media=gst)
+  fi
+
+  if test x"${have_ffmpeg_libavutil}" = "xno"; then
+    PKG_ERR([No libavutil development package installed!])
+    PKG_SUGGEST([You can install libavutil from http://ffmpeg.org])
+    DEB_INSTALL([libavutil-dev])
+    PKG_ALTERNATIVE(or reconfigure with --enable-media=gst)
+  fi
+
+  if test x"${ffmpeg_aac_float_planar}" = "xyes" -a \
+    x"${have_ffmpeg_swresample}" = "xno" -a \
+    x"${have_libav_avresample}" = "xno"; then
+      PKG_REC([Please install libswresample/libavresample development package. If you don't, Gnash will be unable to resample some formats (e.g. AAC on youtube)])
+      PKG_SUGGEST([You can install libavresample from http://libav.org])
+      PKG_SUGGEST([You can install libswresample from http://ffmpeg.org])
+      DEB_INSTALL([libavresample-dev])
+      PKG_ALTERNATIVE(or reconfigure with --enable-media=gst)
+  fi
+fi
+
+if test x$build_cairo = xyes; then
+  if test x"$CAIRO_LIBS" != x; then
+    if test x"$CAIRO_CFLAGS" != x; then
+      echo "        Cairo flags are: $CAIRO_CFLAGS"
+    else
+      echo "        Cairo flags are: default include path"
+    fi
+    echo "        Cairo libs are: $CAIRO_LIBS"
+  else
+    PKG_ERR([No Cairo development package installed!])
+    PKG_SUGGEST([You need to have the Cairo development package installed if you have used --enable-render=cairo to configure.])
+    PKG_SUGGEST([Install it from http://cairographics.org])
+    DEB_INSTALL([libcairo-dev])
+    RPM_INSTALL([cairo-devel])
+  fi
+fi
+
+if test x$build_fltk = xyes; then
+  if test x"$FLTK2_LIBS" != x; then
+    if test x"$FLTK2_CFLAGS" != x; then
+      echo "        FLTK flags are: $FLTK2_CFLAGS"
+    else
+      echo "        FLTK flags are: default include path"
+    fi
+      echo "        FLTK libs are: $FLTK2_LIBS"
+  else
+    PKG_ERR([No FLTK2 development package installed!])
+    PKG_SUGGEST([Install it from http://fltk.org])
+    PKG_ALTERNATIVE(or change to a different gui with --enable-gui=...)
+  fi
+fi
+
+if test x$build_fltk = xyes; then
+  if test x"$XFT_LIBS" != x; then
+    if test x"$XFT_CFLAGS" != x; then
+      echo "        Xft flags are: $XFT_CFLAGS"
+    else
+      echo "        Xft flags are: default include path"
+    fi
+    echo "        Xft libs are: $XFT_LIBS"
+  fi
+fi
+
+# See whether SDL is required
+need_sdl=false
+test x$build_sdl = xyes			&& need_sdl=true
+test x$build_sound_sdl = xyes	&& need_sdl=true
+
+if $need_sdl; then
+  if test x"$SDL_LIBS" != x; then
+    echo "        SDL flags are: $SDL_CFLAGS"
+    echo "        SDL libs are: $SDL_LIBS"
+  else
+    PKG_ERR([No SDL development package installed!])
+    PKG_SUGGEST([Install it from http://www.libsdl.org/download-1.2.php])
+    DEB_INSTALL([libsdl1.2-dev])
+    RPM_INSTALL([SDL-devel])
+    PKG_ALTERNATIVE(or change to a different gui with --enable-gui=...)
+  fi
+fi
+unset need_sdl
+
+if test x"$nsapi" = x"yes"; then
+    echo "        Plugin will be installed in ${FIREFOX_PLUGINS}"
+fi
+
+if test x"${pthreads}" = x"yes"; then
+  if test x"$PTHREAD_CFLAGS" != x; then
+    echo "        POSIX Threads flags are: $PTHREAD_CFLAGS"
+  fi
+  if test x"${PTHREAD_LIBS}" != x; then
+    echo "        POSIX Threads lib is: $PTHREAD_LIBS"
+  else
+    if test x"${cross_compiling}" = xno; then
+      echo "ERROR: No pthread development package installed!" >&3
+    fi
+  fi
+fi
+
+if test x"${docbook}" = x"yes"; then
+  if test x"$MAKEINFO" = x; then
+    PKG_ERR([No makeinfo tools installed!])
+    PKG_SUGGEST([Install it from http://www.gnu.org/software/texinfo/])
+    DEB_INSTALL([texinfo])
+    RPM_INSTALL([texinfo])
+    RPM_ALTERNATIVE([texinfo-tex])
+  fi
+  dnl low-level tools
+  if test x"$DB2X_TEXIXML" = x -o x"$DB2X_MANXML" = x -o x"$DB2X_XSLTPROC" = x; then
+    dnl high-level tools
+    if test x"${DB2X_TEXI}" = x -o x"${DB2X_MAN}" = x; then
+      PKG_ERR([No DocBook2X tools installed!])
+      PKG_SUGGEST([Install it from http://docbook2x.sourceforge.net])
+      dnl TODO: Could someone look at this and confirm the needed software is installed?
+      dnl FIXME: I removed the texidocbook and docbook-utilsnfo packages as they are not on my system.
+      DEB_INSTALL([docbook2x docbook-xml docbook-xsl texinfo xsltproc])
+      PKG_ALTERNATIVE([or configure without --enable-docbook])
+    fi
+  else
+    echo "        You have version $db2x_version of the DocBook2X tools."
+  fi
+else
+  PKG_WAR([without --enable-docbook we will use the cached documentation files included in the gnash distribution. If you change files in doc/C, you should --enable-docbook.])
+fi
+
+if test x"$CURL_LIBS" != x; then
+  if test x"$CURL_CFLAGS" != x; then
+    echo "        CURL flags are: $CURL_CFLAGS"
+  else
+    echo "        CURL flags are: default include path"
+  fi
+  echo "        CURL libs are: $CURL_LIBS"
+  if test -z "$curl_rtmp_support"; then
+    PKG_REC([CURL library present but built without RTMP protocol support.])
+    PKG_SUGGEST([If you install it with RTMP protocol support, Gnash will be able to play RTMP streaming.])
+  fi
+else
+  PKG_REC([If you install the CURL library, Gnash will be able to display remote content (streaming from URLs) using CURL.])
+  PKG_SUGGEST([Install libcurl from http://curl.haxx.se/libcurl])
+  DEB_INSTALL([libcurl4-gnutls-dev]) dnl TODO: Do we prefer this one? GnuTLS is LGPL'd so it's probably more licensively compatible than OpenSSL?
+  DEB_ALTERNATIVE([libcurl-dev])
+  RPM_INSTALL([curl-devel])
+fi
+
+if test x"$SPEEX_LIBS" != x; then
+  if test x"$SPEEX_CFLAGS" != x; then
+    echo "        Speex flags are: $SPEEX_CFLAGS"
+  else
+    echo "        Speex flags are: default include path"
+  fi
+    echo "        Speex libs are: $SPEEX_LIBS"
+else
+  PKG_REC([If you install the Speex library, Gnash will be able to decoded Speex encoded audio in FLV files.])
+  PKG_SUGGEST([Install libspeex from http://speex.org])
+  DEB_INSTALL([libspeex-dev])
+  RPM_INSTALL([speex-devel])
+fi
+
+if test x"$SPEEXDSP_LIBS" != x; then
+  if test x"$SPEEXDSP_CFLAGS" != x; then
+    echo "        Speex DSP flags are: $SPEEXDSP_CFLAGS"
+  else
+    echo "        Speex DSP flags are: default include path"
+  fi
+    echo "        Speex DSP libs are: $SPEEXDSP_LIBS"
+else
+  PKG_REC([If you install the Speex DSP library, Gnash will be able to resample Speex encoded audio in FLV files.])
+  PKG_SUGGEST([Install libspeexdsp from http://speex.org])
+  DEB_INSTALL([libspeexdsp-dev])
+  RPM_INSTALL([speexdsp-devel])
+fi
+
+if test x"$ext_dbus" = xyes; then
+  if test x"$DBUS_LIBS" != x; then
+    if test x"$DBUS_CFLAGS" != x; then
+      echo "        DBUS flags are: $DBUS_CFLAGS"
+    else
+      echo "        DBUS flags are: default include path"
+    fi
+      echo "        DBUS libs are: $DBUS_LIBS"
+  else
+    PKG_WAR([No DBUS development package was found! Gnash will be built without support for remote controls.])
+    PKG_SUGGEST([Install libdbus from http://www.dbus.org])
+    DEB_INSTALL([dbus-dev])
+    DEB_ALTERNATIVE([libdbus-1-dev])
+    RPM_INSTALL([dbus-devel])
+  fi
+fi
+
+if test x$build_agg = xyes; then # {
+  echo "        AGG Pixel format is: $pixelformat"
+  if test x"$AGG_LIBS" != x -a x"${agg25}" == xyes; then # {
+    if test x"$AGG_CFLAGS" != x; then # {
+      echo "        AGG flags are: $AGG_CFLAGS"
+    else # }{
+      echo "        AGG flags are: default include path"
+    fi # }
+    echo "        AGG libs are: $AGG_LIBS"
+  else # }{
+    if test x"$AGG_LIBS" != x -a x"${agg25}" != xyes; then
+      PKG_ERR([Your installation of AGG appears to be version 2.4 or older. Please upgrade to AGG 2.5 or greater.])
+    else
+      PKG_ERR([No AGG development package installed!])
+    fi
+    PKG_SUGGEST([Install it from http://www.antigrain.com])
+    DEB_INSTALL([libagg-dev])
+    RPM_INSTALL([agg-devel])
+  fi # }
+fi # }
+
+dnl TODO: This package is handled a bit stupidly in regard to the package
+dnl suggestion system. It would be better to check for each package
+dnl separately, instead of passing the missing ones in variables..
+if test x"$BOOST_LIBS" != x; then
+  echo "        BOOST flags are: $BOOST_CFLAGS"
+  echo "        BOOST libs are: $BOOST_LIBS"
+  echo "        BOOST libs for cygnal are: $BOOST_CYGNAL_LIBS"
+
+  if test x"${missing_headers}" != x; then
+    for i in ${missing_headers}; do
+      PKG_ERR([The Boost $i header is not installed])
+      PKG_SUGGEST([Install it from http://www.boost.org])
+    done
+  fi
+
+  if test x"${cygnal}" = x"yes"; then
+    if test x"${missing_cygnal_libs}" != x; then
+      for i in ${missing_cygnal_libs}; do
+        PKG_ERR([No Boost $i package installed])
+        PKG_SUGGEST([Install it from http://www.boost.org])
+        debtmppkg="libboost-`echo ${i} | sed 's/_/-/g'`-dev"
+        DEB_INSTALL([$debtmppkg])
+        PKG_ALTERNATIVE([or configure with --disable-cygnal])
+      done
+    fi
+  fi
+
+  if test x"${npapi}" = x"yes"; then
+    if test x"${missing_plugin_libs}" != x; then
+      for i in ${missing_plugin_libs}; do
+        PKG_ERR([No Boost $i package installed])
+        PKG_SUGGEST([Install it from http://www.boost.org])
+        debtmppkg="libboost-`echo ${i} | sed 's/_/-/g'`-dev"
+        DEB_INSTALL([$debtmppkg])
+        PKG_ALTERNATIVE([or configure with --disable-npapi])
+      done
+    fi
+  fi
+
+  if test x"${missing_libs}" != x; then
+    for i in ${missing_libs}; do
+      PKG_ERR([No Boost $i package installed])
+      PKG_SUGGEST([Install it from http://www.boost.org])
+      debtmppkg="libboost-`echo ${i} | sed 's/_/-/g'`-dev"
+      DEB_INSTALL([$debtmppkg])
+    done
+  fi
+else
+  PKG_ERR([No Boost development package installed])
+  PKG_SUGGEST([Install it from http://www.boost.org])
+  dnl I am not sure that libboost-program-options-dev should be passed here, but
+  dnl it seems like the cleanest way to get it.
+  if test x"$cygnal" = xyes; then
+    DEB_INSTALL([libboost-dev libboost-thread-dev libboost-program-options-dev libboost-date-time-dev])
+  else
+    DEB_INSTALL([libboost-dev libboost-thread-dev libboost-program-options-dev])
+  fi
+  RPM_INSTALL([boost-devel])
+fi
+
+dnl don't look for the flash compilers when cross compiling.
+if test x"$testsuite" = x"yes"; then
+  if test x$cross_compiling = xno; then
+    if test x"$MING_LIBS" != x; then
+      echo "        MING flags are $MING_CFLAGS"
+      echo "        MING libs are $MING_LIBS"
+    else
+      PKG_WAR([You need to have the Ming development package installed to run most of the tests in Gnash testsuite.])
+      PKG_SUGGEST([Install it from http://www.libming.org/])
+      DEB_INSTALL([libming-dev])
+      RPM_INSTALL([libming-devel])
+    fi
+
+    if test x"$MAKESWF" != x; then
+      echo "        MING version code is $MING_VERSION_CODE"
+      echo "        MAKESWF is $MAKESWF"
+    else
+      PKG_WAR([You need to have the Ming utilities package version 0.4 or higher installed to run many of the tests in Gnash testsuite.])
+      PKG_SUGGEST([Install it from http://www.libming.org/])
+      DEB_INSTALL([libming-util])
+      RPM_INSTALL([ming-util])
+      RPM_ALTERNATIVE([ming-utils])
+    fi
+
+    if test x"$MAKESWF" != x && test $MING_VERSION_CODE -lt 00040006; then
+      echo "        WARNING: You have an older version of Ming installed and will not" >&4
+      echo "                 be able to run all of the tests in Gnash testsuite." >&4
+      echo "                 Install the latest version from http://www.libming.org" >&4
+    fi
+
+    if test x"$SWFDEC_TESTSUITE" != x; then
+      echo "        SWFDEC testsuite dir is $SWFDEC_TESTSUITE"
+    fi
+
+    if test x"$MTASC" != x; then
+      echo "        MTASC is $MTASC"
+      echo "        MTASC CLASSPATH is $MTASC_CLASSPATH"
+    else
+      PKG_WAR([You need to have the MTASC compiler packages installed to run some of the tests in Gnash testsuite.])
+      PKG_SUGGEST([Install it from http://mtasc.org])
+      DEB_INSTALL([mtasc])
+      RPM_INSTALL([mtasc])
+    fi
+
+    if test x"$HAXE" != x; then
+      echo "        HAXE is $HAXE"
+      echo "        HAXE CLASSPATH is $HAXE_CLASSPATH"
+    else
+      PKG_WAR([You need to have the HAXE compiler package version 2.00 or higher installed to run some of the tests in Gnash testsuite.])
+      PKG_SUGGEST([Install it from http://haxe.org])
+      DEB_INSTALL([haxe])
+      RPM_INSTALL([haxe])
+    fi
+
+    if test x"$SWFMILL" != x; then
+      echo "        SWFMILL is $SWFMILL"
+      if test x"$ENABLE_AVM2" != x -a "$SWFMILL_VERSION" -lt 00021206; then
+        PKG_WAR([You are building Gnash with AVM2 support but your swfmill version is too old to run AS3 tests.])
+      fi
+    else
+      PKG_WAR([You need to have the swfmill tool installed to run some of the tests in Gnash testsuite.])
+      PKG_SUGGEST([Install it from http://swfmill.org])
+      DEB_INSTALL([swfmill])
+      RPM_INSTALL([swfmill])
+    fi
+
+    if test x"$SWFC" != x; then
+      echo "        SWFC is $SWFC"
+    else
+      PKG_WAR([You need to have swfc from SWFTools installed to run some of the tests in Gnash testsuite.])
+      PKG_SUGGEST([Install it from http://swftools.org])
+      DEB_INSTALL([swftools])
+      RPM_INSTALL([swftools])
+    fi
+
+    if test x"$AS3COMPILE" != x; then
+      echo "        AS3COMPILE is $AS3COMPILE"
+    else
+      PKG_WAR([You need to have as3compile from SWFTools installed to run some of the tests in Gnash testsuite.])
+      PKG_SUGGEST([Install it from http://swftools.org])
+    fi
+
+    if test x"$HTTP_TESTSUITE" != x; then
+      echo "        HTTP testsuite dir is $HTTP_TESTSUITE"
+    fi
+
+    if test x"$RED5_TESTING" != x; then
+      echo "        RED5 testing host is $RED5_HOST"
+    fi
+  fi
+fi
+
+  if test x"$PERL" != x; then
+    echo "        PERL is $PERL"
+  else
+    PKG_WAR([You need to have perl installed to run some of the tests in Gnash testsuite.])
+    PKG_SUGGEST([Install it from http://perl.org])
+    DEB_INSTALL([perl])
+    RPM_INSTALL([perl])
+  fi
+
+if test x"$testsuite" = x"yes"; then
+  if test x"$CSOUND" != x; then
+    echo "        CSOUND is $CSOUND"
+  else
+    PKG_WAR([You need to have csound installed to (re)generate some sound-related test files in Gnash testsuite.])
+    PKG_SUGGEST([Install it from http://www.csounds.com/])
+    DEB_INSTALL([csound])
+    RPM_INSTALL([csound])
+  fi
+fi
+
+if test x"$Z_LIBS" != x; then
+  if test x"$Z_CFLAGS" != x; then
+    echo "        Z flags are: $Z_CFLAGS"
+  else
+    echo "        Z flags are: default include path"
+  fi
+  echo "        Z libs are: $Z_LIBS"
+else
+  PKG_REC([You need to have the zlib development packages installed to play compressed SWF (most of them from version 6 up) and to display some kinds of JPEG files.])
+  PKG_SUGGEST([Install it from http://zlib.net])
+  DEB_INSTALL([zlib1g-dev])
+  RPM_INSTALL([zlib-devel])
+  PKG_ALTERNATIVE([It may still be possible to configure without zlib.])
+fi
+
+if test x"$FREETYPE2_LIBS" != x; then
+  if test x"$FREETYPE2_CFLAGS" != x; then
+    echo "        FreeType flags are: $FREETYPE2_CFLAGS"
+  else
+    echo "        FreeType flags are: default include path"
+  fi
+  echo "        FreeType libs are: $FREETYPE2_LIBS"
+else
+  PKG_REC([You need to have the freetype development packages installed to use device fonts.])
+  PKG_SUGGEST([Install it from http://freetype.org])
+  DEB_INSTALL([libfreetype6-dev])
+  RPM_INSTALL([freetype-devel])
+  PKG_ALTERNATIVE([It may still be possible to configure without freetype.])
+fi
+
+if test x"$FONTCONFIG_LIBS" != x; then
+  if test x"$FONTCONFIG_CFLAGS" != x; then
+    echo "        Fontconfig flags are: $FONTCONFIG_CFLAGS"
+  else
+    echo "        Fontconfig flags are: default include path"
+  fi
+  echo "        Fontconfig libs are: $FONTCONFIG_LIBS"
+else
+  PKG_REC([You need to have the fontconfig development packages installed to use device fonts.])
+  PKG_SUGGEST([Install it from http://fontconfig.org])
+  DEB_INSTALL([libfontconfig1-dev])
+  RPM_INSTALL([fontconfig-devel])
+  PKG_ALTERNATIVE([It may still be possible to configure without fontconfig.])
+fi
+
+if test x$ext_mysql = xyes; then
+  if test x$mysql != xno; then
+    if test x"$MYSQL_LIBS" != x; then
+      echo "        MYSQL flags are: $MYSQL_CFLAGS"
+      echo "        MYSQL libs are: $MYSQL_LIBS"
+    else
+      PKG_ERR([No MySQL development package is installed.])
+      PKG_SUGGEST([Install it from http://mysql.org])
+      DEB_INSTALL([libmysqlclient-dev])
+      RPM_INSTALL([mysql-devel])
+      PKG_ALTERNATIVE([or reconfigure without --enable-extensions=mysql])
+    fi
+  fi
+fi
+
+if test "$GMSGFMT" = ":"; then
+  PKG_WAR([You need the gettext package installed to use translations. Required for building a package or 'make distcheck'])
+  PKG_SUGGEST([Install it from http://www.gnu.org/software/gettext/])
+  DEB_INSTALL([gettext])
+  RPM_INSTALL([gettext])
+fi
+
+if test x"${build_vaapi}" = x"yes"; then
+  if test x"${LIBVA_CFLAGS}" = xyes; then
+      echo "        LIBVA flags are: default"
+    else
+      echo "        LIBVA flags are: $LIBVA_CFLAGS"
+      echo "        LIBVA libraries are: $LIBVA_LIBS"
+  fi
+  if test x$use_libva_x11 = xyes; then
+    if test x"${LIBVA_X11_CFLAGS}" = xyes; then
+      echo "        LIBVA X11 flags are: default"
+    else
+      echo "        LIBVA X11 flags are: $LIBVA_X11_CFLAGS"
+      echo "        LIBVA X11 libraries are: $LIBVA_X11_LIBS"
+    fi
+  fi
+  if test x$use_libva_glx = xyes; then
+    if test x"${LIBVA_GLX_CFLAGS}" = xyes; then
+      echo "        LIBVA GLXflags are: default"
+    else
+      echo "        LIBVA GLX flags are: $LIBVA_GLX_CFLAGS"
+    fi
+    echo "        LIBVA GLX libraries are: $LIBVA_GLX_LIBS"
+  fi
+fi
+
+if test x"$ac_cv_gcc_visibility" != xyes; then
+  if test x"$npapi" = xyes; then
+    PKG_WAR([NPAPI (mozilla) plugin is enabled, but your compiler does not support symbol visibility. This may cause the plugin to malfunction and may result in small children being eaten. You have been warned!])
+  fi
+fi
+
+if test x"$npapi" = xyes; then
+  if test x"$has_npapi" = xyes; then
+    echo "        NPAPI flags are: $NPAPI_CFLAGS"
+  else
+    PKG_ERR([No xulrunner development package is installed!])
+    PKG_SUGGEST([Install it from http://releases.mozilla.org/pub/mozilla.org/xulrunner])
+    DEB_INSTALL([xulrunner-dev])
+    DEB_ALTERNATIVE([firefox-dev])
+    RPM_INSTALL([xulrunner-devel])
+    PKG_ALTERNATIVE([or specify --disable-npapi])
+  fi
+else
+  echo "        NPAPI plugin is disabled"
+fi
+
+if test x"${DEJAGNU}" != x""; then
+  echo "        DEJAGNU's runtest is $DEJAGNU"
+else
+  PKG_WAR([You need the dejagnu package installed to get a summary after running 'make check'.])
+  PKG_SUGGEST([Install it from http://www.gnu.org/software/dejagnu/])
+  DEB_INSTALL([dejagnu])
+  RPM_INSTALL([dejagnu])
+fi
+
+dnl Haiku
+if test x"${build_haiku}" = xyes -o x"${build_sound_mkit}" = xyes -o x"${build_media_haiku}" = x"yes"; then
+    echo "        Haiku libs are: $HAIKU_LIBS"
+fi
+
+if test x"$has_ltdl" = x"yes";then
+  echo "        LIBLTDL flags are: $LTDL_CFLAGS"
+  echo "        LIBLTDL libs are: $LTDL_LIBS"
+else
+  if test x"${extensions_support}" != xno; then
+    PKG_ERR([No libltdl development package is installed, yet --disable-extensions was not specified.])
+    PKG_SUGGEST([Install it from ftp://ftp.gnu.org/gnu/libtool/])
+    DEB_INSTALL([libltdl-dev])
+    RPM_INSTALL([libtool-ltdl-devel])
+  fi
+fi
+
+if test x"$enable_visibility" != xno; then
+  if test x"${extensions_support}" != xno; then
+    PKG_ERR([Extensions not supported with ELF visibility activated.])
+    PKG_SUGGEST([Use --disable-extensions or --disable-visibility.])
+  fi
+fi
+ 
+if test x"$python" = x"yes"; then
+  if test x"$has_python" = x"yes"; then
+    echo "        PYTHON flags are: $PYTHON_CFLAGS"
+    echo "        PYTHON libs are: $PYTHON_LIBS"
+    echo "        PYTHON executable is: $PYTHON"
+  else
+    PKG_ERR([No Python development package is installed, but it's enabled.])
+  fi
+fi
+if test x${build_ssl} = xyes; then
+  if test x"${has_ssl}" = xyes; then
+    if test x"${SSL_CFLAGS}" = xyes; then
+      echo "        SSL flags are: default"
+    else
+      echo "        SSL flags are: $SSL_CFLAGS"
+    fi
+    echo "        SSL libs are: $SSL_LIBS"
+  else
+    PKG_ERR([No SSL development package is installed, but it's enabled."])
+  fi
+fi
+
+if test x${build_ssh} = xyes; then
+  if test x"${has_ssh}" = xyes; then
+    if test x"${SSH_CFLAGS}" = xyes; then
+      echo "        SSH flags are: default"
+    else
+      echo "        SSH flags are: $SSH_CFLAGS"
+    fi
+    echo "        SSH libs are: $SSH_LIBS"
+  else
+    PKG_ERR([No SSH development package is installed, but it's enabled."])
+  fi
+fi
+
+if test x"${build_all_as3}" = x"yes"; then
+  echo "        Building the entire ActionScript class libary"
+else
+  echo "        Only building these ActionScript classes into the library:"
+  echo "     ${classlist}"
+fi
+
+if test x"$testsuite" = x"yes"; then
+  if test x"$NETCAT" != x; then
+    echo "        You have netcat installed, which is only used for testing"
+  else
+    echo "        Install netcat for networking test support"
+  fi
+  if test x"$WGET" != x; then
+    echo "        You have wget installed, which is only used for testing"
+  else
+    echo "        Install wget for networking test support"
+  fi
+fi
+
+if test x$cross_compiling = xyes; then
+   if test x"${android_ndk}" != xno; then
+      AC_MSG_NOTICE([This build is setup for cross compiling for Android])
+   else
+      AC_MSG_NOTICE([This build is setup for cross compiling])
+   fi
+fi
+
+echo "--------"
+
+if test x"${cygnal}" = x"yes"; then
+  echo "        Building Cygnal media server enabled (default). Use --disable-cygnal to disable."
+else
+  echo "        Building Cygnal media server disabled."
+fi
+
+if test x"${with_top_level}" != x; then
+  echo "        Top level for cross compiling support files is: $with_top_level"
+fi
+
+if test x"${build_gtk}" = xyes -a x"${pixelformat}" = xrgb565; then
+  echo "        WARNING: Pixel format RGB565 selected in combination with the" >&4
+  echo "                 GTK GUI. Only a hacked GTK will work (e.g. on the OLPC)." >&4
+fi
+
+if test x"${extensions_list}" != x; then
+  echo "        Building extensions: ${extensions_list}"
+fi
+
+if test x"${extensions_support}" = xno; then
+  echo "        Extension support disabled."
+fi
+
+if test x"${security_list}" != x; then
+  echo "        Enabling security features: ${security_list}"
+fi
+
+if test x"${statistics_list}" != x; then
+  echo "        Enabling statistics collecting for: ${statistics_list}"
+fi
+
+if test x"${SUPPORTED_GUIS}" = x; then
+  AC_MSG_ERROR(no supported GUIs found);
+fi
+
+echo "        GUI toolkits supported: ${SUPPORTED_GUIS}"
+echo "        Renderers supported: ${renderer_list}"
+echo "        Hardware Acceleration: ${device_list}"
+echo "        Media handlers: ${media_list}"
+echo "        Using ${add_sound} for sound handling"
+
+if test x"$docbook" = x"yes"; then
+  echo '        DocBook document processing enabled (for "make html" and "make pdf")'
+  if test x"$docbook_styles" != x; then
+    echo "        Docbook styles sheets in $docbook_styles"
+  fi
+else
+  echo "        DocBook document processing disabled (default)"
+fi
+
+dnl The Framebuffer GUI has several other settings. As it doesn't have X11,
+dnl we have to handle input devics ourselves.
+if test x"${build_fb}" = xyes; then
+echo "        Using ${input_events} for Input"
+  if test x"${fakefb}" != x; then
+    echo "        Using shared memory as a fake framebuffer"
+  fi
+  if test x"${offscreen}" = xyes; then
+    echo "        Using offscreen rendering"
+  fi
+  if test x"${doublebuf}" = xyes; then
+    echo "        Using double buffering when rendering"
+  fi
+fi
+
+if test -s $cwarn; then
+  echo ""
+  cat $cwarn
+  rm $cwarn
+  echo ""
+  echo "Gnash should still compile even with these warnings."
+  echo "If it doesn't, report the warnings as a bug."
+else
+  rm $cwarn
+fi
+
+if test -s $crec; then
+  echo ""
+  cat $crec
+  rm $crec
+  echo ""
+  echo "Gnash should still compile, but you'll miss important support"
+else
+  rm $crec
+fi
+
+if test -s $cerr; then
+  echo ""
+  cat $cerr >&2
+fi
+
+deb_err="`cat $deb_err`"
+deb_war="`cat $deb_war`"
+deb_rec="`cat $deb_rec`"
+rpm_err="`cat $rpm_err`"
+rpm_war="`cat $rpm_war`"
+rpm_rec="`cat $rpm_rec`"
+yast_err="`cat $yast_err`"
+yast_war="`cat $yast_war`"
+yast_rec="`cat $yast_rec`"
+
+if test x"${android}" != xyes; then
+  # Pipe stderr to /dev/null since Fedora complains when target isn't there.
+  if test x`which apt-get 2>/dev/null` != x; then
+    if test x"$deb_err" != x -o x"$deb_war" != x -o x"$deb_rec" != x; then
+      echo "#!/bin/sh" > deb-attempt-install-dependencies.sh
+      echo "packages=\"$deb_err $deb_war $deb_rec\"" >> deb-attempt-install-dependencies.sh
+      echo "PKGCOMMAND=\"apt-get install -y -q\"" >> deb-attempt-install-dependencies.sh
+      cat ${srcdir}/base-attempter.sh >> deb-attempt-install-dependencies.sh
+      chmod +x deb-attempt-install-dependencies.sh
+      echo ""
+      echo ".deb users might be able to install most dependencies by executing:"
+      echo "sudo ./deb-attempt-install-dependencies.sh"
+    fi
+  fi
+
+  if test x`which yum 2>/dev/null` != x; then
+    if test x"$rpm_err" != x -o x"$rpm_war" != x -o x"$deb_rec" != x; then
+      echo "#!/bin/sh" > rpm-attempt-install-dependencies.sh
+      echo "packages=\"$rpm_err $rpm_war  $rpm_rec\"" >> rpm-attempt-install-dependencies.sh
+      echo "PKGCOMMAND=\"yum install -y \""    >> rpm-attempt-install-dependencies.sh
+      cat ${srcdir}/base-attempter.sh >> rpm-attempt-install-dependencies.sh
+      chmod +x rpm-attempt-install-dependencies.sh
+      echo ""
+      echo ".rpm users might be able to install most dependencies by executing:"
+      echo "sudo ./rpm-attempt-install-dependencies.sh"
+    fi
+  fi
+fi
+
+dnl TODO: Add support for yast here, which AFAIK is used on OpenSuse.
+
+dnl If anything critical is missing, don't bother to continue
+if test -s $cerr; then
+  echo ""
+  rm $cerr
+  AC_MSG_ERROR([Please install required packages])
+else
+  rm $cerr
+fi
+
+rm -rf $tmp
+
+if test x"$fork" = x"no"; then
+  echo ""
+  AC_MSG_ERROR([Currently only forking the standalone player works!])
+fi
+echo ""
+
+# Local Variables:
+# c-basic-offset: 2
+# tab-width: 2
+# indent-tabs-mode: nil
+# End:

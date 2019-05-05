@@ -1,0 +1,68 @@
+# Allow load of resources in the MEDIA dir
+append localSandboxPath @@MEDIADIR@@
+
+# Read/Write shared object to testsuite temp so dir
+set SOLSafeDir @@TMPSODIR@@
+set SOLReadOnly false
+
+# this is to be compatible with swfdec tests expectances
+set flashVersionString WIN 9,0,100,0
+
+# Don't bother printing SWF errors during automated testing
+set MalformedSWFVerbosity false
+
+# Don't bother printing AS errors during automated testing
+set ASCodingErrorsVerbosity false
+
+# Use a verbosity of 0 by default, -v will change it
+set verbosity 0
+
+# Do NOT write to the logfile
+set writeLog false
+
+# Enable sound (for testcases using it..)
+set sound true
+
+# Don't really play sound while testing (at least with gstreamer)
+# In the future, we might want to use a 'testsink' here for checking:wq
+# actual output
+set GstAudioSink fakesink
+
+# Open a can of worms by raising likelyhood of movie definition destruction
+set movieLibraryLimit 1
+
+# Allow override of quality, or tests will fail.
+set quality -1
+
+# No sense in starting stopped.
+set startStopped false
+
+# TODO: call an actual utility script in testsuite
+#       so that test runners can check what's sent!
+set urlOpenerFormat echo '%u' > /dev/null
+
+# Blacklist (for testing NetConnection)
+set blacklist www.blacklistedserver.org
+
+# LocalConnection must be enabled for testing.
+set localconnection false
+
+# Use the default Renderer
+set Renderer
+
+# Use the default MediaHandler
+set MediaHandler
+
+# Use a custom key to prevent conflicts with a running plugin
+set LCShmkey @@SHMKEY@@
+
+# Do not ignore FSCommand while running tests !
+set ignoreFSCommand false
+
+# Make sure user script limit setting don't get
+# in our way while testing
+set scriptsTimeout 30
+set scriptsRecursionLimit 256
+set lockScriptLimits false
+
+# TODO: enable extensions ?

@@ -1,0 +1,445 @@
+= [test_15bpp_bitmap.swf] =
+
+== Origin ==
+
+Produced by Jan Flanders for Gnash testing.
+See http://savannah.gnu.org/bugs/?34625
+
+== Description ==
+
+A shape filled by a 15bpp bitmap (DEFINELOSSLESS, fmt = 4).
+Uses well-defined colors to aim for easier color checking.
+
+= [gotoFrameOnKeyEvent.swf] =
+
+== Origin == 
+
+Produced by dongdong <dedodong@163.com> (a friend of Zou Lunkai).
+Zou asked his permission to included the movie into Gnash testsuite.
+Dongdong reported bug #18916, now closed.
+
+== Description ==
+
+Executes gotoFrame actions in response to key events.
+Expected behaviour is described by textfields, so should be intuitive.
+
+= [sound1.swf] =
+
+== Origin == 
+
+== Description ==
+
+Plays two small sounds played in sequence.
+Each sound is accompained with a label showing in sync with it's start.
+
+They are either uncompressed or in ADPCM, which the
+gstreamer-backend doesn't suport yet
+
+sdl sound handler plays this fine (doesn't need --enable-mp3)
+
+gst sound handler is currently unable to play this, but it's being worked on.
+
+= [car_smash.swf] =
+
+== Origin == 
+
+== Description ==
+
+= [clip_as_button2.swf] =
+
+== Origin == 
+
+== Description ==
+
+= [clip_as_button.swf] =
+
+== Origin == 
+
+== Description ==
+
+Displais two circles on top and two circles inscribed into two rectangles
+on the bottom. A textfield centered on the bottom is used to print
+events.
+
+The circle on top-left is yellow and reacts to mouse button press by
+changing color to gray and printing "movie clip pressed" in the textfield.
+(it's a movieclip, most likely)
+
+The circle on top-right is blue and reacts to mouse button press by
+changing color to green and printing "button pressed" in the textfield.
+(it's a button, most likely)
+
+The rectangle on bottom-left is light blue and reacts to mouse button press by
+printing "big movie clip pressed" in the textfield. The circle inscribed
+in it is yellow but doesn't handle mouse events itself, so clicking on
+it does the same thing as clicking in the rectangle that contains it.
+
+The rectangle on bottom-right is light blue and doesn't react to mouse button
+press. The circle incribed in it is yellow and react to mouse button press
+by changing color to a kind of dark cyan and printing
+"small movie clip pressed" in the textfield. 
+
+= [counter.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [display_list_test.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [dlist_test1.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [event-test1.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [extended_clipping_test_1.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [gradient-tests.swf] =
+
+== Origin == 
+
+Self-made by Udo Giacomozzi, Gnash developer
+
+== Description ==
+
+Various tests to check correct rendering of non-solid fill styles.
+Check with gradient-test.png for a correct rendering.
+
+First row: Linear gradients.
+Left: simplest linear gradient, black to white, no transform
+Center: Two additional color stops to get a very sharp border. The fill
+  is also shrinked and rotated. This shows if the transformation matrix
+  works correctly and if gradient overflow is correct (continue with
+  first/last color, don't repeat the whole gradient). The two red 
+  lines show where the color transitions should be. 
+Right: Gradient with many color stops (red lines show transitions). 
+  The shape is non-rectangular but the gradient has no transformation
+  matrix.
+
+Second row: Radial gradients.
+Left: simplest radial gradient, black to white, no transform
+Center: Six color stops added to the previous sample with red
+  lines showing where they should be. The gradient is not centered.
+Third: Simple radial gradient, but scaled (shrinked). Shows gradient
+  overflow, which should be white. The dashed red line shows where
+  the gradient ends (more or less).
+Right: Gradient with four color stops, rotated and scaled.
+
+Third row: Bitmap fills.
+Left: Simple, scaled bitmap. No rotation.
+Second: Slightly rotated bitmap (test anti-aliasing)
+Third: Horizontally flipped bitmap
+Last: Curved shape with bitmap fill. The fill is rotated and shrinked.
+  The bitmap should be repeated and the blue corners shows the position
+  of one sample tile.
+
+Bottom row: 
+Left: Highly scaled 4x4 bitmap. Shows resampling quality.
+Right: Same scaled 4x4 bitmap and a linear gradient on top of it. The
+  gradient has the same blue tone though the LUT but with decreasing
+  alpha value.
+
+
+= [money3.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [shared-fonts.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [slider.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [sr2_title.swf] =
+
+== Origin == 
+
+== Description ==
+
+= [subshapes.swf] =
+
+== Origin == 
+
+Produced by Udo Giacomozzi, gnash developer.
+
+== Description ==
+
+This is a test for shapes and the new_shape flag. Flash always tries
+to combine multiple layers to one single shape if possible (when the
+keyframes match and no dynamic objects are contained). To ensure the
+correct Z-order while drawing it inserts a flag in the stream that
+marks the switch to a higher layer. In Gnash, this flag is found in
+the "path" class named "m_new_shape". The first path always has this
+flag set.
+
+The test contains three layers: Two rectangular shapes and a middle
+layer with a red line. The line must be covered by the blue rectangle
+but not by the gray rectangle.
+
+
+= [test_action_order2.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_action_order.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_basic_types.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_button_functions.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_cascaded_clipbuttons.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_clipping_layer.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_colour_tweening.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_forin_array.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_frame1.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_frame2.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_function2.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [TestFunction2.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_goto_frame.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_goto_play.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_goto_stop.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_gradients_alpha.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_gradients_no_alpha.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_gradient_tweening.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_long_static_text.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_rotation2.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_rotation_shear.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_rotation.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_shape_tweening-2.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_shape_tweening.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_string.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_undefined_v6.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [test_undefined_v7.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [text-test2.swf] =
+
+== Origin == 
+
+== Description ==
+
+
+= [text-test.swf] =
+
+== Origin == 
+
+== Description ==
+
+= [input-fields.swf] =
+
+== Origin ==
+
+Self-made by Udo Giacomozzi, Gnash developer
+
+== Description ==
+
+Various tests to check correct rendering of text fields.
+Both dynamic and static textfields tested, using embedded and device fonts.
+
+= [test_lastopcode_v6.swf] =
+
+== Origin ==
+
+Generated by strk with ming and flasm
+
+== Description ==
+
+Single frame with single doaction block with this opcode sequence:
+
+  swfaction 0xFE
+  push 'done'
+  trace
+
+Basically just a test for https://savannah.gnu.org/bugs/index.php?32950

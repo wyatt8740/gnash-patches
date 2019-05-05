@@ -1,0 +1,26 @@
+  <authorgroup> 
+      <author> 
+          <firstname>Rob</firstname> 
+          <surname>Savoye</surname> 
+          <affiliation> 
+	      <address>
+	          <email>rob@welcomehome.org</email>
+	      </address> 
+          </affiliation> 
+      </author> 
+
+      <!-- TRANSLATOR NOTE: add yourself to this section
+      <othercredit role="translator">
+        <firstname>Example</firstname> 
+        <surname>Translator</surname> 
+        <affiliation> 
+	  <orgname>Example Translation Team</orgname> 
+	  <address> 
+              <email>translator@example.org</email> 
+          </address> 
+        </affiliation> 
+        <contrib>Example translation</contrib>
+      </othercredit>
+      -->
+
+  </authorgroup> 

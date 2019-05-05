@@ -1,0 +1,493 @@
+<chapter id="usage">
+  <title>Using &app;</title>
+  
+  <para>
+    When used as a standalone player, you can play any SWF file from
+    the command line by entering a command of the format: 
+    <programlisting>
+      gnash <replaceable>&lt;option&gt; &lt;flashfile.swf&gt;</replaceable>
+    </programlisting>
+    The only required argument is the name (and location) of the file
+    to be played. 
+  </para>
+  
+  <para>
+    The available options are listed in the following section, or you
+    may view them in the terminal window by executing the following at
+    the command line: 
+    <programlisting>
+      gnash --help | less
+    </programlisting>
+  </para>
+  
+  <para>
+    The source code download of &app; includes several example SWF
+    files.  They are located in the
+    <filename>testsuite/samples/</filename> directory of the &app;
+    source directory.  If you have installed &app; correctly, issuing
+    a command similar to the following plays a short animation of
+    a car swerving and crashing: 
+    <programlisting>
+      gnash
+      /home/<replaceable>&lt;username&gt;</replaceable>/gnash/testsuite/car_smash.swf 
+    </programlisting>
+  </para>
+  
+  <para>
+    The above is useful for playing Flash files downloaded to your
+    local system.  It is also possible to play Flash files directly
+    from the web.  To do so, use the <option>-u</option> option along
+    with the URL of the desired file. 
+    <programlisting>
+      gnash -u http://example.domain.com/flashfile.swf
+    </programlisting>
+    Note that this will not work with every website; some embedded
+    Flash files are difficult to play. 
+  </para>
+  
+  <sect1 id="options">
+    <title>&app; Command Line Options</title>
+    
+    <para>
+      No options are required for  &app;'s default behavior.  However,
+      there are many options that can be used to change that behavior. 
+    </para>
+    
+    <para>
+      <programlisting>
+	gnash <replaceable>&lt;options&gt;</replaceable>
+	<filename>filename.swf</filename> 
+      </programlisting>
+    </para>
+    
+    <table id="tb-command-line-options">
+      <title>Gnash Command Line Options</title>
+      <tgroup cols='2' align='left' colsep='1' rowsep='1'>
+	<thead>
+	  <row>
+	    <entry>Option</entry>
+	    <entry>Function</entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry><option>-h, --help</option></entry>
+	    <entry>
+	      Print usage information.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-s, --scale</option> <replaceable>&lt;factor&gt;</replaceable>
+	    </entry>
+	    <entry>
+	      Scale the movie up/down by the specified factor.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-c</option>
+	    </entry>
+	    <entry>
+	      Produce a core file instead of letting SDL trap it. By
+	      default, SDL traps all signals, but sometimes a core file
+	      is desired to assist with debugging.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-d, --delay</option> <replaceable>&lt;num&gt;</replaceable>
+	    </entry>
+	    <entry>
+	      Number of milliseconds to delay in main loop. The main
+	      loop polls continuously with a delay to adjust how long
+	      <emphasis>&app;</emphasis> sleeps between iterations of the
+	      loop. The smaller the number, the higher the CPU load
+	      gets, and of course, the more iterations of the main
+	      command loop.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-v, --verbose</option>
+	    </entry>
+	    <entry>
+	      Be verbose; i.e. print important messages to stdout.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-vv</option>
+	    </entry>
+	    <entry>
+	      Be very verbose; i.e. also print debug messages to stdout.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-va</option>
+	    </entry>
+	    <entry>
+	      Be verbose about movie actions (for ActionScript debugging). This usually
+	      generates very large amounts of text and will affect &app;'s performance.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-vp</option>
+	    </entry>
+	    <entry>
+	      Be verbose about parsing the movie. This generates a fairly large
+	      amount of text, and is likely to affect &app;'s performance.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-A, --audio-dump</option> <replaceable>&lt;file&gt;</replaceable>
+	    </entry>
+	    <entry>
+              Write the audio output to a wave format file.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-D</option> <replaceable>&lt;file&gt;</replaceable>
+	    </entry>
+	    <entry>
+              Write the video output to a raw video file.  This option
+              is only valid with dump-gnash.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-w, --writelog</option>
+	    </entry>
+	    <entry>
+	      Write the log messages to disk using the file specified in the gnashrc file.
+	      The default is gnash-dbg.log.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-j, --width</option> <replaceable>&lt;num&gt;</replaceable>
+	    </entry>
+	    <entry>
+	      Specify the starting width of the window. This is mostly used
+	      only by the plugin.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-k, --height</option> <replaceable>&lt;num&gt;</replaceable>
+	    </entry>
+	    <entry>
+	      Specify the starting height of the window. This is mostly used
+	      only by the plugin.
+	    </entry>
+	  </row>
+	    <!--	
+	      <row>
+		<entry>
+		<option>-e</option>
+		</entry>
+		<entry>
+		Use SDL Event thread. This uses a seentryte thread to make
+		the event loop more event driven than polling. This can
+		improve performance for some types of movies.
+		</entry>
+		</row>
+	    -->
+	  <row>
+	    <entry>
+	      <option>-1, --once</option>
+	    </entry>
+	    <entry>
+	      Play once; exit if or when the movie reaches the last
+	      frame.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-r, --render-mode</option> <replaceable>&lt;0|1|2|3&gt;</replaceable>
+	    </entry>
+	    <entry>
+	      <itemizedlist>
+		<listitem>
+		  <para>
+		    0 disables rendering and sound (good for batch tests).
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    1 enables rendering and disables sound.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    2 enables sound and disables rendering.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    3 enables rendering and sound (default).
+		  </para>
+		</listitem>
+	      </itemizedlist>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-t, --timeout</option> <replaceable>&lt;sec&gt;</replaceable>
+	    </entry>
+	    <entry>
+	      Timeout and exit after the specified number of
+	      seconds. This is useful for movies which repeat
+	      themselves.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-g, --debugger</option>
+	    </entry>
+	    <entry>
+	      Start &app; with a Flash debugger console so one can set
+	      break points or watchpoints.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-x, --xid</option> <replaceable>&lt;ID&gt;</replaceable>
+	    </entry>
+	    <entry>
+	      This specifies the X11 window ID to display
+	      in; this is mainly used by plugins.
+	    </entry>
+	  </row>
+<!--
+	  <row>
+	    <entry>
+	      <option>-b bits</option>
+	    </entry>
+	    <entry>
+	      Bit depth of output window (for example, 16 or 32). Appropriate
+	      bit depths depend on the renderer and GUI library used.
+	    </entry>
+	  </row>
+-->
+	  <row>
+	    <entry>
+	      <option>-u, --real-url</option> <replaceable>&lt;URL&gt;</replaceable>
+	    </entry>
+	    <entry>
+	      Set the _url member of the root movie. This is useful 
+	      when you download a movie and play it from a different 
+	      location. See also the -U switch.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-U, --base-url</option> <replaceable>&lt;URL&gt;</replaceable>
+	    </entry>
+	    <entry>
+	      Set base URL for this run. URLs are resolved relative to 
+	      this base. If omitted or empty, it defaults to the _url member of the 
+	      top-level movie (see the -u switch).
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-P, --param</option> <replaceable>&lt;parameter&gt;</replaceable>
+	    </entry>
+	    <entry>
+	      Parameters are given in the syntax &quot;ParamName=Value&quot; and are mostly 
+	      useful for the plugin to honour EMBED tags attributes 
+	      or explicit OBJECT PARAM tags. A common use for -P 
+	      is to provide FlashVars 
+	      (ie: -P "FlashVars=home=http://www.gnu.org").
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-F, --fd</option> <replaceable>&lt;filedescriptor&gt;</replaceable>
+	    </entry>
+	    <entry>
+	      Use the given filedescriptor to send requests to the host
+	      application. This is currently only used for GETURL requests.
+	      The protocol is not documented yet, and also needs improvement.
+	      Primary use for this switch is for the NPAPI plugin to properly
+	      support javascript and target windows in geturl requests.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>-C, --cookie-file</option> <replaceable>&lt;file&gt;</replaceable>
+	    </entry>
+	    <entry>
+              Set cookiefile path. Cookiefile contains HTTP cookies to send to
+              the server. Primary use for this switch is for the NPAPI plugin
+              to pass received HTTP cookies to the standalone player.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>--max-advances</option> <replaceable>&lt;num&gt;</replaceable>
+	    </entry>
+	    <entry>
+          Exit after the specified number of frame advances.
+	    </entry>
+	  </row>	  
+	  <row>
+	    <entry>
+	      <option>--fullscreen</option>
+	    </entry>
+	    <entry>
+          Start &app; in fullscreen mode as long as the GUI and window
+          manager support this. 
+	    </entry>
+	  </row>	
+
+	</tbody>
+      </tgroup>
+    </table>
+    
+  </sect1>
+  
+  <sect1 id="keys">
+    <title>&app; Interactive Control Keys</title>
+    
+    <para>
+      While a movie is playing, there are several control
+      keys. These can be used to step through frames, pause the
+      playing, and control other actions.
+    </para>
+    
+    <table id="tb-control-keys">
+      <title>Gnash Interactive Control Keys</title>
+      <tgroup cols='2' align='left' colsep='1' rowsep='1'>
+	<thead>
+	  <row>
+	    <entry>Key Combination</entry>
+	    <entry>Function</entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry>
+	      <option>CTRL-Q</option>
+	    </entry>
+	    <entry>
+	      Quit/Exit.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>CTRL-W</option>
+	    </entry>
+	    <entry>
+	      Quit/Exit.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>ESC</option>
+	    </entry>
+	    <entry>
+	      Quit/Exit.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>CTRL-P</option>
+	    </entry>
+	    <entry>
+	      Toggle Pause.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>CTRL-R   </option>
+	    </entry>
+	    <entry>
+	      Restart the movie.
+	    </entry>
+	  </row>
+
+<!--
+	  <row>
+	    <entry>
+	      <option>CTRL-[ or kp-</option>
+	    </entry>
+	    <entry>
+	      Step back one frame.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>CTRL-] or kp+</option>
+	    </entry>
+	    <entry>
+	      Step forward one frame.
+	    </entry>
+	  </row>
+-->
+	  <row>
+	      <entry>
+		<option>CTRL-L</option>
+	      </entry>
+	      <entry>
+		Force immediate redraw.
+	      </entry>
+	  </row>
+	    
+	    <!--
+		<entry>
+		<option>CTRL-A</option>
+		</entry>
+		<entry>
+		Toggle anti-aliasing (doesn't work).
+		</entry>
+		</row>
+		<row>
+	    -->
+          <row>
+	    <entry>
+	      <option>CTRL-T</option>
+	    </entry>
+	    <entry>
+	      Debug.  Test the set_variable() function.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>CTRL-G</option>
+	    </entry>
+	    <entry>
+	      Debug.  Test the get_variable() function.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      <option>CTRL-M</option>
+	    </entry>
+	    <entry>
+	      Debug.  Test the call_method() function.
+	    </entry>
+	  </row>
+<!--
+	  <row>
+	    <entry>
+	      <option>CTRL-B</option>
+	    </entry>
+	    <entry>
+	      Toggle the background color.
+	    </entry>
+	  </row>
+-->
+	</tbody>
+      </tgroup>
+    </table>
+  </sect1>
+  
+  &gnashrc;
+  
+</chapter>

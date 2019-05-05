@@ -1,0 +1,45 @@
+
+		TODO: (not really in order of priorities)
+
+  - SWF 8 support. This is mostly adding support
+    for blend modes and bitmap filters.
+  - AVM2 support.
+  - RTMP streaming support and fixes to remoting.
+  - IO redesign.
+  - Performance improvements, and reducing the footprint.
+  - Implement all the missing player classes/methods.
+  - Keep improving the plugin.
+  - Make loading from filesystem predictable
+
+Partially implemented classes are:
+----------------------------------
+NetConnection
+LocalConnection
+NetStream
+flash.display.BitmapData
+flash.external.ExternalInterface
+...
+
+Unimplemented classes are:
+--------------------------
+Accessibility
+Microphone
+Camera
+flash.text.TextRenderer
+flash.filter.*
+flash.net.*
+ContextMenu
+
+* NB: in some cases the AS interface is present, but the actual
+  desired functionality is not implemented.
+...
+
+Others
+------
+
+If you would like to contribute to Gnash's development, please
+subscribe to the developers list at
+http://lists.gnu.org/mailman/listinfo/gnash-dev, and let us know what
+you'd like to work on. Your help is always appreciated as Gnash is a
+community project.
+

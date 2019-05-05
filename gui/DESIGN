@@ -1,0 +1,39 @@
+
+Overview
+========
+
+GUI is the window creation, borders, events, etc.
+Renderer is what we use to draw graphics onto the drawing area
+
+GUI
+===
+
+Frontends are modeled by the gnash::Gui class.
+
+They take care of initializing the Backend module for use in rendering.
+
+For the frontend we have GTK, SDL, KDE(QT), FLTK2, Aqua, Framebuffer.
+
+Functions to implement:
+
+init(int argc, char **argv[]): 	
+This funtion is run first to initialize GUI-specific parameters/variables.
+
+createWindow(const char* title, int width, int height, int xPosition, int yPosition): 
+Here we create a window-widget with calling parameters.
+
+setCursor(gnash_cursor_type newcursor):
+This function is called when the cursor-type is changed.
+
+run(): 
+This is the main()-call for the GUI.
+
+Renderer
+========
+
+Backends modeled by the gnash::render_handler class.
+
+They are the actual renderers, drawing to a memory buffer.
+
+For the renderers we have Antigrain (AGG), OpenGL or Cairo.
+
