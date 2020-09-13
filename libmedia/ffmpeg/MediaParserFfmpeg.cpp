@@ -64,7 +64,7 @@ AVInputFormat*
 MediaParserFfmpeg::probeStream()
 {
     const size_t probeSize = 4096;
-    const size_t bufSize = probeSize + FF_INPUT_BUFFER_PADDING_SIZE;
+    const size_t bufSize = probeSize + AV_INPUT_BUFFER_PADDING_SIZE;
 
 	std::unique_ptr<std::uint8_t[]> buffer(new std::uint8_t[bufSize]);
 
@@ -173,7 +173,7 @@ MediaParserFfmpeg::parseVideoFrame(AVPacket& packet)
 
 	// TODO: We might avoid the copy as a whole by making EncodedVideoFrame
 	//       virtual.
-	size_t allocSize = packet.size + FF_INPUT_BUFFER_PADDING_SIZE;
+	size_t allocSize = packet.size + AV_INPUT_BUFFER_PADDING_SIZE;
 	std::uint8_t* data = new std::uint8_t[allocSize];
 	std::copy(packet.data, packet.data+packet.size, data);
 	std::unique_ptr<EncodedVideoFrame> frame(new EncodedVideoFrame(data, packet.size, 0, timestamp));
@@ -221,7 +221,7 @@ MediaParserFfmpeg::parseAudioFrame(AVPacket& packet)
 
 	// TODO: We might avoid the copy as a whole by making EncodedAudioFrame
 	//       virtual.
-	size_t allocSize = packet.size + FF_INPUT_BUFFER_PADDING_SIZE;
+	size_t allocSize = packet.size + AV_INPUT_BUFFER_PADDING_SIZE;
 	std::uint8_t* data = new std::uint8_t[allocSize];
 	std::copy(packet.data, packet.data+packet.size, data);
 

@@ -149,7 +149,7 @@ MediaHandlerFfmpeg::cameraNames(std::vector<std::string>& /*names*/) const
 size_t
 MediaHandlerFfmpeg::getInputPaddingSize() const
 {
-    return FF_INPUT_BUFFER_PADDING_SIZE;
+    return AV_INPUT_BUFFER_PADDING_SIZE;
 }
 
 } // gnash.media.ffmpeg namespace 
