@@ -449,6 +449,32 @@ AudioDecoderFfmpeg::decode(const EncodedAudioFrame& ef,
     return decodeFrame(ef.data.get(), ef.dataSize, outputSize);
 }
 
+/* basically a polyfill */
+int decode_audio4(AVCodecContext *avctx, AVFrame *frame, int *got_frame, AVPacket *pkt)
+{
+    int ret;
+
+    *got_frame = 0;
+    if(avctx) {
+        avctx->thread_safe_callbacks=1;
+    }
+    if (pkt) {
+        ret = avcodec_send_packet(avctx, pkt);
+        // In particular, we don't expect AVERROR(EAGAIN), because we read all
+        // decoded frames with avcodec_receive_frame() until done.
+        if (ret < 0)
+            return ret == AVERROR_EOF ? 0 : ret;
+    }
+
+    ret = avcodec_receive_frame(avctx, frame);
+    if (ret < 0 && ret != AVERROR(EAGAIN) && ret != AVERROR_EOF)
+        return ret;
+    if (ret >= 0)
+        *got_frame = 1;
+
+    return 0;
+}
+
 std::uint8_t*
 AudioDecoderFfmpeg::decodeFrame(const std::uint8_t* input,
         std::uint32_t inputSize, std::uint32_t& outputSize)
@@ -488,7 +514,7 @@ AudioDecoderFfmpeg::decodeFrame(const std::uint8_t* input,
         log_error(_("failed to allocate frame."));
         return nullptr;
     }
-    int tmp = avcodec_decode_audio4(_audioCodecCtx, frm.get(), &got_frm, &pkt);
+    int tmp = decode_audio4(_audioCodecCtx, frm.get(), &got_frm, &pkt);
 
 #ifdef GNASH_DEBUG_AUDIO_DECODING
     const char* fmtname = av_get_sample_fmt_name(_audioCodecCtx->sample_fmt);

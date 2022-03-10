@@ -349,6 +349,30 @@ VideoDecoderFfmpeg::frameToImage(AVCodecContext* srcCtx,
 
 }
 
+/* basically a polyfill */
+int decode_video2(AVCodecContext *avctx, AVFrame *frame, int *got_frame, AVPacket *pkt)
+{
+    int ret;
+
+    *got_frame = 0;
+
+    if (pkt) {
+        ret = avcodec_send_packet(avctx, pkt);
+        // In particular, we don't expect AVERROR(EAGAIN), because we read all
+        // decoded frames with avcodec_receive_frame() until done.
+        if (ret < 0)
+            return ret == AVERROR_EOF ? 0 : ret;
+    }
+
+    ret = avcodec_receive_frame(avctx, frame);
+    if (ret < 0 && ret != AVERROR(EAGAIN) && ret != AVERROR_EOF)
+        return ret;
+    if (ret >= 0)
+        *got_frame = 1;
+
+    return 0;
+}
+
 std::unique_ptr<image::GnashImage>
 VideoDecoderFfmpeg::decode(const std::uint8_t* input,
         std::uint32_t input_size)
@@ -371,7 +395,7 @@ VideoDecoderFfmpeg::decode(const std::uint8_t* input,
     av_init_packet(&pkt);
     pkt.data = const_cast<uint8_t*>(input);
     pkt.size = input_size;
-    int bytesConsumed = avcodec_decode_video2(_videoCodecCtx->getContext(),
+    int bytesConsumed = decode_video2(_videoCodecCtx->getContext(),
                                               frame.get(), &got_frame, &pkt);
     
     if (bytesConsumed < 0) {
