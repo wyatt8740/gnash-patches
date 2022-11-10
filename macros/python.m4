@@ -20,7 +20,7 @@ AC_DEFUN([GNASH_PATH_PYTHON],
 [
 
   dnl Look for the header
-  AC_ARG_WITH(python_incl, AC_HELP_STRING([--with-python-incl], [directory where libpython header is (w/out the python/ prefix)]), with_python_incl=${withval})
+  AC_ARG_WITH(python_incl, AS_HELP_STRING([--with-python-incl], [directory where libpython header is (w/out the python/ prefix)]), with_python_incl=${withval})
     AC_CACHE_VAL(ac_cv_path_python_incl,[
     if test x"${with_python_incl}" != x ; then
       if test -f ${with_python_incl}/python/python.h ; then
@@ -86,7 +86,7 @@ AC_DEFUN([GNASH_PATH_PYTHON],
     fi
 
     dnl Look for the library
-    AC_ARG_WITH(python_lib, AC_HELP_STRING([--with-python-lib], [directory where python library is]), with_python_lib=${withval})
+    AC_ARG_WITH(python_lib, AS_HELP_STRING([--with-python-lib], [directory where python library is]), with_python_lib=${withval})
       AC_CACHE_VAL(ac_cv_path_python_lib,[
       if test x"${with_python_lib}" != x ; then # {
         if test -f ${with_python_lib}/libpython.a -o -f ${with_python_lib}/libpython.${shlibext}; then # {

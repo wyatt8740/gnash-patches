@@ -20,7 +20,7 @@ AC_DEFUN([GNASH_PATH_DBUS],
 [
 
   dnl Look for the header
-  AC_ARG_WITH(dbus_incl, AC_HELP_STRING([--with-dbus-incl], [directory where libdbus header is]), with_dbus_incl=${withval})
+  AC_ARG_WITH(dbus_incl, AS_HELP_STRING([--with-dbus-incl], [directory where libdbus header is]), with_dbus_incl=${withval})
   AC_CACHE_VAL(ac_cv_path_dbus_incl,[
     if test x"${with_dbus_incl}" != x ; then
       if test -f ${with_dbus_incl}/dbus/dbus.h ; then
@@ -77,7 +77,7 @@ AC_DEFUN([GNASH_PATH_DBUS],
   AC_MSG_RESULT(${ac_cv_path_dbus_incl}) 
 
   dnl Look for the library
-  AC_ARG_WITH(dbus_lib, AC_HELP_STRING([--with-dbus-lib], [directory where dbus library is]), with_dbus_lib=${withval})
+  AC_ARG_WITH(dbus_lib, AS_HELP_STRING([--with-dbus-lib], [directory where dbus library is]), with_dbus_lib=${withval})
   AC_CACHE_VAL(ac_cv_path_dbus_lib,[
     if test x"${with_dbus_lib}" != x ; then
       if test -f ${with_dbus_lib}/libdbus-1.a -o -f ${with_dbus_lib}/libdbus-1.${shlibext}; then

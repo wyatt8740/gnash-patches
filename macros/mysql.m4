@@ -19,7 +19,7 @@ dnl  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 AC_DEFUN([GNASH_PATH_MYSQL],
 [
   dnl Lool for the header
-  AC_ARG_WITH(mysql-incl, AC_HELP_STRING([--with-mysql-incl], [directory where mysql headers are]), with_mysql_incl=${withval})
+  AC_ARG_WITH(mysql-incl, AS_HELP_STRING([--with-mysql-incl], [directory where mysql headers are]), with_mysql_incl=${withval})
   AC_CACHE_VAL(ac_cv_path_mysql_incl,[
     if test x"${with_mysql_incl}" != x ; then
       if test -f ${with_mysql_incl}/mysql.h ; then
@@ -61,7 +61,7 @@ AC_DEFUN([GNASH_PATH_MYSQL],
   fi
 
   dnl Look for the library
-  AC_ARG_WITH(mysql-lib, AC_HELP_STRING([--with-mysql-lib], [directory where mysql libraries are]), with_mysql_lib=${withval})
+  AC_ARG_WITH(mysql-lib, AS_HELP_STRING([--with-mysql-lib], [directory where mysql libraries are]), with_mysql_lib=${withval})
     AC_CACHE_VAL(ac_cv_path_mysql_lib,[
     if test x"${with_mysql_lib}" != x ; then
       if test -f ${with_mysql_lib}/libmysqlclient.a -o -f ${with_mysql_lib}/libmysqlclient.${shlibext}; then

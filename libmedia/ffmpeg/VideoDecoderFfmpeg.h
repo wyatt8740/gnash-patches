@@ -31,6 +31,13 @@
 #include "MediaParser.h" // for videoCodecType enum
 #include "ffmpegHeaders.h"
 
+/* 
+  typedef struct AVPicture {
+    uint8_t *data[AV_NUM_DATA_POINTERS];
+    int linesize[AV_NUM_DATA_POINTERS];
+  } AVPicture;
+*/
+
 namespace gnash {
 namespace media {
 namespace ffmpeg {

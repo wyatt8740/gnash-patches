@@ -44,7 +44,7 @@ AC_DEFUN([GNASH_PKG_INCLUDES],
     	    
     dnl Look for the header
     if test x"${$1}" = x"yes"; then
-      AC_ARG_WITH($1_incl, AC_HELP_STRING([--with-$1-incl], [directory where $2 is]), with_$1_incl=${withval})
+      AC_ARG_WITH($1_incl, AS_HELP_STRING([--with-$1-incl], [directory where $2 is]), with_$1_incl=${withval})
       AC_CACHE_VAL(ac_cv_path_$1_incl, [
       if test x"${with_$1_incl}" != x ; then
         AC_MSG_CHECKING([for $2 header in specified directory])
@@ -163,7 +163,7 @@ ac_manual=yes
 
 if test x"${$1}" = x"yes" -a x"${found_$1_incl}" = "xyes"; then
   dnl Look for the library
-  AC_ARG_WITH($1_lib, AC_HELP_STRING([--with-$1-lib], [directory where $1 library is]), with_$1_lib=${withval})
+  AC_ARG_WITH($1_lib, AS_HELP_STRING([--with-$1-lib], [directory where $1 library is]), with_$1_lib=${withval})
   AC_CACHE_VAL(ac_cv_path_$1_lib,[
   if test x"${with_$1_lib}" != x ; then
     AC_MSG_CHECKING([for lib$1 library in specified directory])

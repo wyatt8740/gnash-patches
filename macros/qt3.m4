@@ -29,7 +29,7 @@ AC_DEFUN([GNASH_PATH_QT3],
   has_qt3=no
 
   dnl Look for the header
-  AC_ARG_WITH(qt3_incl, AC_HELP_STRING([--with-qt3-incl], [directory where QT 3.x headers are]), with_qt3_incl=${withval})
+  AC_ARG_WITH(qt3_incl, AS_HELP_STRING([--with-qt3-incl], [directory where QT 3.x headers are]), with_qt3_incl=${withval})
 
   AC_CACHE_VAL(ac_cv_path_qt3_incl,[
     if test x"${with_qt3_incl}" != x; then
@@ -100,7 +100,7 @@ AC_DEFUN([GNASH_PATH_QT3],
 
 dnl   # QT_LIBS =  -lqtui -lqtcore -lqtprint -L/usr/lib/qt-3.3/lib -lqt-mt
   dnl Look for the libraries
-    AC_ARG_WITH(qt3_lib, AC_HELP_STRING([--with-qt3-lib], [directory where QT 3.x libraries are]), with_qt3_lib=${withval})
+    AC_ARG_WITH(qt3_lib, AS_HELP_STRING([--with-qt3-lib], [directory where QT 3.x libraries are]), with_qt3_lib=${withval})
     AC_CACHE_VAL(ac_cv_path_qt3_lib, [
       if test x"${with_qt3_lib}" != x ; then
         if test `ls -C1 ${with_qt3_lib}/lib/libqt*-mt.* | wc -l` -gt 0 ; then

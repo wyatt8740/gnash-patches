@@ -29,7 +29,7 @@ else
 fi
 
   dnl Look for the header
-  AC_ARG_WITH(gtk2_incl, AC_HELP_STRING([--with-gtk2-incl], [directory where libgtk2 header is]), with_gtk2_incl=${withval})
+  AC_ARG_WITH(gtk2_incl, AS_HELP_STRING([--with-gtk2-incl], [directory where libgtk2 header is]), with_gtk2_incl=${withval})
     AC_CACHE_VAL(ac_cv_path_gtk2_incl,[
     if test x"${with_gtk2_incl}" != x ; then
       if test -f ${with_gtk2_incl}/gtk/gtk.h; then
@@ -79,7 +79,7 @@ fi
 
   dnl Look for the library
   AC_ARG_WITH(gtk2_lib,
-  	AC_HELP_STRING([--with-gtk2-lib], [directory where gtk2 library is]),
+  	AS_HELP_STRING([--with-gtk2-lib], [directory where gtk2 library is]),
 	with_gtk2_lib=${withval})
 
     AC_CACHE_VAL(ac_cv_path_gtk2_lib,[

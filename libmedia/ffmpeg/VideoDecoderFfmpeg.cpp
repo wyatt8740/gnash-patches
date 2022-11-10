@@ -39,6 +39,11 @@
 #  include "GnashVaapiImage.h"
 #endif
 
+/* extern int avpicture_fill(AVPicture *picture, const uint8_t *ptr,
+                          enum AVPixelFormat pix_fmt, int width, int height);
+
+extern int avpicture_get_size(enum AVPixelFormat pix_fmt, int width, int height);*/
+
 namespace gnash {
 namespace media {
 namespace ffmpeg {
@@ -178,9 +183,9 @@ VideoDecoderFfmpeg::init(enum CODECID codecId, int /*width*/, int /*height*/,
     // Starting from this version avcodec_register calls avcodec_init
     avcodec_init();
 #endif
-    avcodec_register_all();// change this to only register need codec?
+/*    avcodec_register_all(); */ // change this to only register need codec?
 
-    _videoCodec = avcodec_find_decoder(codecId); 
+    _videoCodec = (AVCodec *)avcodec_find_decoder(codecId); 
 
     if (!_videoCodec) {
         throw MediaException(_("libavcodec can't decode this video format"));

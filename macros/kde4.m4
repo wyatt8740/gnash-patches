@@ -20,7 +20,7 @@ AC_DEFUN([GNASH_PATH_KDE4],
   has_kde4=no
 
   dnl setup the various options to custimize paths
-  AC_ARG_WITH(kde4_incl, AC_HELP_STRING([--with-kde4-incl],
+  AC_ARG_WITH(kde4_incl, AS_HELP_STRING([--with-kde4-incl],
              [directory where KDE 4.x headers are]),
              with_kde4_incl=${withval})
   dnl make sure the path is a useable one
@@ -30,11 +30,11 @@ AC_DEFUN([GNASH_PATH_KDE4],
     fi
   fi
 
-  AC_ARG_WITH(kde4_prefix, AC_HELP_STRING([--with-kde4-prefix],
+  AC_ARG_WITH(kde4_prefix, AS_HELP_STRING([--with-kde4-prefix],
              [Prefix for KDE plugin, like /usr]),
              with_kde4_prefix=${withval})
 
-  AC_ARG_WITH(kde4_lib, AC_HELP_STRING([--with-kde4-lib],
+  AC_ARG_WITH(kde4_lib, AS_HELP_STRING([--with-kde4-lib],
              [directory where KDE 4.x libraries are]),
              with_kde4_lib=${withval})
   dnl make sure the path is a useable one
@@ -45,7 +45,7 @@ AC_DEFUN([GNASH_PATH_KDE4],
   fi
 
   dnl Specifiy a custom directory for the kparts plugin
-  AC_ARG_WITH(kde4_plugindir, AC_HELP_STRING([--with-kde4-plugindir=DIR],
+  AC_ARG_WITH(kde4_plugindir, AS_HELP_STRING([--with-kde4-plugindir=DIR],
              [Directory to install KDE 4.x plugin in]),
              with_kde4_plugindir=${withval})
   if test x"${with_kde4_plugindir}" != x ; then 
@@ -55,7 +55,7 @@ AC_DEFUN([GNASH_PATH_KDE4],
   fi
 
   dnl Specifiy a custom directory for the kde services directory
-  AC_ARG_WITH(kde4_servicesdir, AC_HELP_STRING([--with-kde4-servicesdir=DIR],
+  AC_ARG_WITH(kde4_servicesdir, AS_HELP_STRING([--with-kde4-servicesdir=DIR],
              [Directory to install KDE 4.x plugin in]),
              with_kde4_servicesdir=${withval})
   if test x"${with_kde4_servicesdir}" != x ; then 
@@ -64,12 +64,12 @@ AC_DEFUN([GNASH_PATH_KDE4],
     fi
   fi
 
-  AC_ARG_WITH(kde4-configdir, AC_HELP_STRING([--with-kde4-configdir=DIR],
+  AC_ARG_WITH(kde4-configdir, AS_HELP_STRING([--with-kde4-configdir=DIR],
       [Directory to install KDE KDE 4.x configfile in]),
     [KDE4_CONFIGDIR=${withval}
   ])
 
-  AC_ARG_WITH(kde-appsdatadir, AC_HELP_STRING([--with-kde-appsdatadir=DIR],
+  AC_ARG_WITH(kde-appsdatadir, AS_HELP_STRING([--with-kde-appsdatadir=DIR],
       [Directory to install KDE 4.x data in]),
     [KDE4_APPSDATADIR=${withval}
   ])

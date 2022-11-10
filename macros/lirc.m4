@@ -18,7 +18,7 @@ dnl  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 AC_DEFUN([GNASH_PATH_LIRC],
 [
   dnl Look for the header
-  AC_ARG_WITH(lirc_incl, AC_HELP_STRING([--with-lirc-incl], [directory where Lirc header is (w/out the lirc/ prefix)]), with_lirc_incl=${withval})
+  AC_ARG_WITH(lirc_incl, AS_HELP_STRING([--with-lirc-incl], [directory where Lirc header is (w/out the lirc/ prefix)]), with_lirc_incl=${withval})
     AC_CACHE_VAL(ac_cv_path_lirc_incl,[
     if test x"${with_lirc_incl}" != x ; then
       if test -f ${with_lirc_incl}/lirc_client.h ; then
@@ -29,7 +29,7 @@ AC_DEFUN([GNASH_PATH_LIRC],
     fi
   ])
 
-  AC_ARG_WITH(lirc_lib, AC_HELP_STRING([--with-lirc-lib], [directory where lirc library is]), with_lirc_lib=${withval})
+  AC_ARG_WITH(lirc_lib, AS_HELP_STRING([--with-lirc-lib], [directory where lirc library is]), with_lirc_lib=${withval})
     AC_CACHE_VAL(ac_cv_path_lirc_lib,[
     if test x"${with_lirc_lib}" != x ; then
       if test -f ${with_lirc_lib}/liblirc_client.a -o -f ${with_lirc_lib}/liblirc_client.${shlibext}; then

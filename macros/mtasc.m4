@@ -30,14 +30,14 @@ AC_DEFUN([AC_PATH_MTASC], [
   MTASC=""
   MTASC_CLASSPATH=""
 
-  AC_ARG_WITH(mtasc, AC_HELP_STRING([--with-mtasc=<path>], [Path to the mtasc executable]), [
+  AC_ARG_WITH(mtasc, AS_HELP_STRING([--with-mtasc=<path>], [Path to the mtasc executable]), [
     case "${withval}" in
       yes|no) ;;
       *) MTASC=${withval} ;;
     esac
   ], MTASC="")
 
-  AC_ARG_WITH(mtasc-classpath, AC_HELP_STRING([--with-mtasc-classpath=<path>], [CLASSPATH for mtasc]), [
+  AC_ARG_WITH(mtasc-classpath, AS_HELP_STRING([--with-mtasc-classpath=<path>], [CLASSPATH for mtasc]), [
     case "${withval}" in
       yes|no) ;;
       *) MTASC_CLASSPATH=${withval} ;;

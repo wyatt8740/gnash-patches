@@ -19,7 +19,7 @@ AC_DEFUN([GNASH_PATH_QT4], [
   gnash_qt4_topdir=
 
   dnl Look for the header
-  AC_ARG_WITH(qt4_incl, AC_HELP_STRING([--with-qt4-incl],
+  AC_ARG_WITH(qt4_incl, AS_HELP_STRING([--with-qt4-incl],
              [directory where QT 4.x headers are]),
 	     with_qt4_incl=${withval})
 
@@ -133,7 +133,7 @@ dnl     fi
 dnl   fi
 
   dnl Look for the libraries
-    AC_ARG_WITH(qt4_lib, AC_HELP_STRING([--with-qt4-lib], [directory where QT 4.x libraries are]), with_qt4_lib=${withval})
+    AC_ARG_WITH(qt4_lib, AS_HELP_STRING([--with-qt4-lib], [directory where QT 4.x libraries are]), with_qt4_lib=${withval})
     AC_CACHE_VAL(ac_cv_path_qt4_lib, [
       if test x"${with_qt4_lib}" != x ; then
         if test `ls -C1 ${with_qt4_lib}/libQtCore.${shlibext}* | wc -l` -gt 0 ; then

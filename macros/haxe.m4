@@ -30,14 +30,14 @@ AC_DEFUN([AC_PATH_HAXE], [
   HAXE=""
   HAXE_CLASSPATH=""
 
-  AC_ARG_WITH(haxe, AC_HELP_STRING([--with-haxe=<path>], [Path to the haxe executable]), [
+  AC_ARG_WITH(haxe, AS_HELP_STRING([--with-haxe=<path>], [Path to the haxe executable]), [
     case "${withval}" in
       yes|no) ;;
       *) HAXE=${withval} ;;
     esac
   ], HAXE="")
 
-  AC_ARG_WITH(haxe-classpath, AC_HELP_STRING([--with-haxe-classpath=<path>], [CLASSPATH for haxe]), [
+  AC_ARG_WITH(haxe-classpath, AS_HELP_STRING([--with-haxe-classpath=<path>], [CLASSPATH for haxe]), [
     case "${withval}" in
       yes|no) ;;
       *) HAXE_CLASSPATH=${withval} ;;

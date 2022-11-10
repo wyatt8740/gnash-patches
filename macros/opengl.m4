@@ -20,7 +20,7 @@ AC_DEFUN([GNASH_PATH_OPENGL],
   opengl=yes
   if test x"$opengl" = x"yes"; then
     dnl Look for the headers.
-    AC_ARG_WITH(opengl_includes, AC_HELP_STRING([--with-opengl-includes], [directory where OpenGL headers are]), with_opengl_includes=${withval})
+    AC_ARG_WITH(opengl_includes, AS_HELP_STRING([--with-opengl-includes], [directory where OpenGL headers are]), with_opengl_includes=${withval})
     AC_CACHE_VAL(ac_cv_path_opengl_includes,[
       if test x"${with_opengl_includes}" != x ; then
         if test -f ${with_opengl_includes}/GL/gl.h -a -f ${with_opengl_includes}/GL/glu.h ; then
@@ -72,7 +72,7 @@ AC_DEFUN([GNASH_PATH_OPENGL],
     AC_MSG_RESULT(${ac_cv_path_opengl_includes})
 
     dnl Look for the libraries.
-    AC_ARG_WITH(opengl_lib, AC_HELP_STRING([--with-opengl-lib], [directory where OpenGL libraries are]), with_opengl_lib=${withval})
+    AC_ARG_WITH(opengl_lib, AS_HELP_STRING([--with-opengl-lib], [directory where OpenGL libraries are]), with_opengl_lib=${withval})
     AC_CACHE_VAL(ac_cv_path_opengl_lib,[
       if test x"${with_opengl_lib}" != x ; then
         if test -f ${with_opengl_lib}/libGL.a -o -f ${with_opengl_lib}/libGL.${shlibext}; then
@@ -107,7 +107,7 @@ AC_DEFUN([GNASH_PATH_OPENGL],
           if test -f $i/libGLU.${shlibext} -o -f $i/libGLU.a; then
             ac_cv_path_opengl_lib="${ac_cv_path_opengl_lib} -lGLU"
           else
-            AC_WARN([No GLU library found!])
+            AC_MSG_WARN(No GLU library found!)
           fi
         else                      dnl nothing found, check for the win32 names
           for i in $newliblist; do

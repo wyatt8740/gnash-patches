@@ -90,7 +90,7 @@ MediaParserFfmpeg::probeStream()
     probe_data.mime_type = nullptr;
 #endif
 
-    AVInputFormat* ret = av_probe_input_format(&probe_data, 1);
+    AVInputFormat* ret = (AVInputFormat*)av_probe_input_format(&probe_data, 1);
 	return ret;
 }
 
@@ -295,7 +295,7 @@ MediaParserFfmpeg::parseNextFrame()
                 packet.stream_index);
 	}
 
-	av_free_packet(&packet);
+	av_packet_unref(&packet);
 
 	// Check if EOF was reached
 	if ( _stream->eof() )
@@ -342,7 +342,8 @@ MediaParserFfmpeg::MediaParserFfmpeg(std::unique_ptr<IOChannel> stream)
 void
 MediaParserFfmpeg::initializeParser()
 {
-    av_register_all(); // TODO: needs to be invoked only once ?
+  /* wyatt */
+/*    av_register_all();*/ // TODO: needs to be invoked only once ?
 
     _inputFmt = probeStream();
 
@@ -410,7 +411,10 @@ MediaParserFfmpeg::initializeParser()
             continue;
 	    }
 	    
-	    AVCodecContext* enc = stream->codec; 
+// wyatt
+        
+/*	    AVCodecContext* enc = stream->codec; */
+	    AVCodecParameters* enc = stream->codecpar;
 	    if (!enc) {
             log_debug("Stream %d of FFMPEG media file has no codec info", i);
             continue;
@@ -424,7 +428,7 @@ MediaParserFfmpeg::initializeParser()
                     // codec_name will only be filled by avcodec_find_decoder
                     // (later);
                     log_debug(_("  Using stream %d for audio: codec id %d"),
-                          i, _audioStream->codec->codec_id);
+                          i, _audioStream->codecpar->codec_id);
                 }
                 break;
 		
@@ -433,7 +437,7 @@ MediaParserFfmpeg::initializeParser()
                     _videoStreamIndex = i;
                     _videoStream = _formatCtx->streams[i];
                     log_debug(_("  Using stream %d for video: codec id %d"),
-                          i, _videoStream->codec->codec_id);
+                          i, _videoStream->codecpar->codec_id);
                 }
                 break;
             default:
@@ -443,9 +447,9 @@ MediaParserFfmpeg::initializeParser()
     
     // Create VideoInfo
     if ( _videoStream) {
-        const int codec = static_cast<int>(_videoStream->codec->codec_id); 
-        std::uint16_t width = _videoStream->codec->width;
-        std::uint16_t height = _videoStream->codec->height;
+        const int codec = static_cast<int>(_videoStream->codecpar->codec_id); 
+        std::uint16_t width = _videoStream->codecpar->width;
+        std::uint16_t height = _videoStream->codecpar->height;
         std::uint16_t frameRate = static_cast<std::uint16_t>(
                 as_double(_videoStream->avg_frame_rate));
 #if !defined(HAVE_LIBAVFORMAT_AVFORMAT_H) && !defined(HAVE_FFMPEG_AVCODEC_H)
@@ -459,24 +463,24 @@ MediaParserFfmpeg::initializeParser()
         } else {
             duration = duration / as_double(_videoStream->time_base); // TODO: check this
         }
-	
+        /* wyatt */
         _videoInfo.reset(new VideoInfo(codec, width, height, frameRate,
                     duration, CODEC_TYPE_CUSTOM /*codec type*/));
 	
         // NOTE: AVCodecContext.extradata : void* for 51.11.0, uint8_t* for 51.38.0
         _videoInfo->extra.reset(new ExtraVideoInfoFfmpeg(
-                     (uint8_t*)_videoStream->codec->extradata,
-                     _videoStream->codec->extradata_size));
+                     (uint8_t*)_videoStream->codecpar->extradata,
+                     _videoStream->codecpar->extradata_size));
 	
     }
     
     // Create AudioInfo
     if (_audioStream) {
 
-        const int codec = static_cast<int>(_audioStream->codec->codec_id); 
-        std::uint16_t sampleRate = _audioStream->codec->sample_rate;
-        std::uint16_t sampleSize = SampleFormatToSampleSize(_audioStream->codec->sample_fmt);
-        bool stereo = (_audioStream->codec->channels == 2);
+        const int codec = static_cast<int>(_audioStream->codecpar->codec_id); 
+        std::uint16_t sampleRate = _audioStream->codecpar->sample_rate;
+        std::uint16_t sampleSize = SampleFormatToSampleSize(static_cast<AVSampleFormat>(_audioStream->codecpar->format));
+        bool stereo = (_audioStream->codecpar->channels == 2);
 #if !defined(HAVE_LIBAVFORMAT_AVFORMAT_H) && !defined(HAVE_FFMPEG_AVCODEC_H)
         std::uint64_t duration = _audioStream->codec_info_duration;
 #else
@@ -495,8 +499,8 @@ MediaParserFfmpeg::initializeParser()
         
         // NOTE: AVCodecContext.extradata : void* for 51.11.0, uint8_t* for 51.38.0
         _audioInfo->extra.reset(new ExtraAudioInfoFfmpeg(
-                     (uint8_t*)_audioStream->codec->extradata,
-                     _audioStream->codec->extradata_size));
+                     (uint8_t*)_audioStream->codecpar->extradata,
+                     _audioStream->codecpar->extradata_size));
 	
     }
     

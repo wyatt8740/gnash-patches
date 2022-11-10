@@ -19,7 +19,7 @@ dnl  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 AC_DEFUN([GNASH_PATH_GLIB],
 [
     dnl Look for the header
-  AC_ARG_WITH(glib_incl, AC_HELP_STRING([--with-glib-incl], [directory where libglib header is]), with_glib_incl=${withval})
+  AC_ARG_WITH(glib_incl, AS_HELP_STRING([--with-glib-incl], [directory where libglib header is]), with_glib_incl=${withval})
   AC_CACHE_VAL(ac_cv_path_glib_incl,[
     if test x"${with_glib_incl}" != x ; then
       if test -f ${with_glib_incl}/glib.h ; then
@@ -71,7 +71,7 @@ AC_DEFUN([GNASH_PATH_GLIB],
  
 
   dnl Look for the library
-  AC_ARG_WITH(glib_lib, AC_HELP_STRING([--with-glib-lib], [directory where glib library is]), with_glib_lib=${withval})
+  AC_ARG_WITH(glib_lib, AS_HELP_STRING([--with-glib-lib], [directory where glib library is]), with_glib_lib=${withval})
   AC_CACHE_VAL(ac_cv_path_glib_lib,[
     if test x"${with_glib_lib}" != x ; then
       if test -f ${with_glib_lib}/libglib-${gnash_glib_version}.a -o -f ${with_glib_lib}/libglib-${gnash_glib_version}.${shlibext}; then

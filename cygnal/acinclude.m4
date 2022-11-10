@@ -19,8 +19,8 @@ dnl These aren't needed unless this is buult standalone. Currently Cygnal is
 dnl built as part of Gnash, so this is included in the top level configure,.ac.
 dnl
 
-dnl AC_PREREQ(2.50)
-dnl AC_INIT(gnash, trunk)
+dnl AC_PREREQ([2.71])
+dnl AC_INIT([gnash],[trunk])
 dnl AC_CONFIG_SRCDIR(libcore/gnash.h)
 dnl AM_CONFIG_HEADER(gnashconfig.h)
 
@@ -44,11 +44,9 @@ AC_DEFUN([CYGNAL_PATHS],
 AC_CHECK_HEADERS(poll.h sys/epoll.h)
 
 dnl AC_CHECK_HEADERS(sys/sendfile)
-AC_TRY_COMPILE([#include <sys/sendfile.h>], [
-    sendfile(0, 0, 0, 0); ],
-    has_sendfile=yes,
-    has_sendfile=no
-)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/sendfile.h>]], [[
+    sendfile(0, 0, 0, 0); ]])],[has_sendfile=yes],[has_sendfile=no
+])
 if test x${has_sendfile} = xyes; then
    AC_DEFINE(HAVE_SENDFILE, [1], [Has the Linux sendfile() system call])
 fi
@@ -56,20 +54,16 @@ fi
 dnl Look for the various ways of blocking while waiting for I/O
 AC_CHECK_FUNCS(pselect ppoll)
 
-AC_TRY_COMPILE([#include <fcntl.h>], [
-    splice(0, 0, 0, 0); ],
-    has_splice=yes,
-    has_splice=no
-)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <fcntl.h>]], [[
+    splice(0, 0, 0, 0); ]])],[has_splice=yes],[has_splice=no
+])
 if test x${has_splice} = xyes; then
    AC_DEFINE(HAVE_FCNTL_SPLICE, [1], [Has the Linux splice() system call])
 fi
 
-AC_TRY_COMPILE([#include <fcntl.h>], [
-    tee(0, 0, 0, 0); ],
-    has_tee=yes,
-    has_tee=no
-)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <fcntl.h>]], [[
+    tee(0, 0, 0, 0); ]])],[has_tee=yes],[has_tee=no
+])
 if test x${has_tee} = xyes; then
    AC_DEFINE(HAVE_FCNTL_TEE, [1], [Has the Linux tee() system call])
 fi

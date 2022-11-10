@@ -19,7 +19,7 @@ AC_DEFUN([GNASH_PATH_OPENVG],
   has_openvg=no
   mesavg=no
   dnl Look for the headers.
-  AC_ARG_WITH(openvg_includes, AC_HELP_STRING([--with-openvg-includes], [directory where Openvg headers are]), with_openvg_includes=${withval})
+  AC_ARG_WITH(openvg_includes, AS_HELP_STRING([--with-openvg-includes], [directory where Openvg headers are]), with_openvg_includes=${withval})
   AC_CACHE_VAL(ac_cv_path_openvg_includes,[
     if test x"${with_openvg_includes}" != x; then
       if test -f ${with_openvg_includes}/VG/openvg.h; then
@@ -68,7 +68,7 @@ AC_DEFUN([GNASH_PATH_OPENVG],
   AC_MSG_RESULT(${ac_cv_path_openvg_includes})
 
   dnl Look for the libraries.
-  AC_ARG_WITH(openvg_lib, AC_HELP_STRING([--with-openvg-lib], [directory where Openvg libraries are]), with_openvg_lib=${withval})
+  AC_ARG_WITH(openvg_lib, AS_HELP_STRING([--with-openvg-lib], [directory where Openvg libraries are]), with_openvg_lib=${withval})
   AC_CACHE_VAL(ac_cv_path_openvg_lib,[
     if test x"${with_openvg_lib}" != x ; then
       if test -f ${with_openvg_lib}/libOpenVG.a -o -f ${with_openvg_lib}/libOpenVG.${shlibext}; then

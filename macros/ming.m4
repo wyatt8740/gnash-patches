@@ -75,7 +75,7 @@ AC_DEFUN([AC_PATH_MING], [
 
   dnl if MING_LIBS is empty, no MING_CONFIG found.
   if test x"${MING_LIBS}" = x; then
-    AC_ARG_WITH(ming_incl, AC_HELP_STRING([--with-ming-incl], [Directory where Ming header is]), with_ming_incl=${withval})
+    AC_ARG_WITH(ming_incl, AS_HELP_STRING([--with-ming-incl], [Directory where Ming header is]), with_ming_incl=${withval})
     AC_CACHE_VAL(ac_cv_path_ming_incl, [
       if test x"${with_ming_incl}" != x ; then
         if test -f ${with_ming_incl}/ming.h ; then
@@ -110,7 +110,7 @@ AC_DEFUN([AC_PATH_MING], [
     AC_MSG_RESULT(${ac_cv_path_ming_incl})
 
     dnl Look for the library
-    AC_ARG_WITH(ming_lib, AC_HELP_STRING([--with-ming-lib], [directory where ming library is]), with_ming_lib=${withval})
+    AC_ARG_WITH(ming_lib, AS_HELP_STRING([--with-ming-lib], [directory where ming library is]), with_ming_lib=${withval})
     AC_CACHE_VAL(ac_cv_path_ming_lib, [
       if test x"${with_ming_lib}" != x ; then
         if test -f ${with_ming_lib}/libming.a -o -f ${with_ming_lib}/libming.${shlibext}; then

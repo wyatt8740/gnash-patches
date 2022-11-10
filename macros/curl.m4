@@ -19,7 +19,7 @@ dnl  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 AC_DEFUN([GNASH_PATH_CURL],
 [
   dnl Look for the header
-  AC_ARG_WITH(curl_incl, AC_HELP_STRING([--with-curl-incl], [directory where libcurl header is (w/out the curl/ prefix)]), with_curl_incl=${withval})
+  AC_ARG_WITH(curl_incl, AS_HELP_STRING([--with-curl-incl], [directory where libcurl header is (w/out the curl/ prefix)]), with_curl_incl=${withval})
     AC_CACHE_VAL(ac_cv_path_curl_incl,[
     if test x"${with_curl_incl}" != x ; then
       if test -f ${with_curl_incl}/curl/curl.h ; then
@@ -66,7 +66,7 @@ AC_DEFUN([GNASH_PATH_CURL],
   fi
 
   dnl Look for the library
-  AC_ARG_WITH(curl_lib, AC_HELP_STRING([--with-curl-lib], [directory where curl library is]), with_curl_lib=${withval})
+  AC_ARG_WITH(curl_lib, AS_HELP_STRING([--with-curl-lib], [directory where curl library is]), with_curl_lib=${withval})
     AC_CACHE_VAL(ac_cv_path_curl_lib,[
     if test x"${with_curl_lib}" != x ; then # {
       if test -f ${with_curl_lib}/libcurl.a -o -f ${with_curl_lib}/libcurl.${shlibext}; then # {
