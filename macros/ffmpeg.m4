@@ -52,7 +52,11 @@ AC_DEFUN([GNASH_PATH_FFMPEG],
         AC_MSG_ERROR([${with_ffmpeg_incl} directory does not contain the avcodec.h header])
       fi
       if test -f ${with_ffmpeg_incl}/version.h; then
-        avcodec_version_h=${with_ffmpeg_incl}/version.h
+        if test -f ${with_ffmpeg_incl}/version_major.h; then
+          avcodec_version_h=${with_ffmpeg_incl}/version_major.h
+        else
+          avcodec_version_h=${with_ffmpeg_incl}/version.h
+        fi
       fi
     fi
   ])
