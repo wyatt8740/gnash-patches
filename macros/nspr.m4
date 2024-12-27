@@ -26,7 +26,7 @@ AC_DEFUN([GNASH_PATH_NSPR],
   has_nspr=no
 
   dnl Look for the header
-  AC_ARG_WITH(nspr-incl, AC_HELP_STRING([--with-nspr-incl], [directory where NSPR headers are]), with_nspr_incl=${withval})
+  AC_ARG_WITH(nspr-incl, AS_HELP_STRING([--with-nspr-incl], [directory where NSPR headers are]), with_nspr_incl=${withval})
   AC_CACHE_VAL(ac_cv_path_nspr_incl, [
     if test x"${with_nspr_incl}" != x ; then
       if test -f ${with_nspr_incl}/nspr.h ; then
@@ -38,7 +38,7 @@ AC_DEFUN([GNASH_PATH_NSPR],
   ])
 
   dnl Look for the library
-  AC_ARG_WITH(nspr_lib, AC_HELP_STRING([--with-nspr-lib], [directory where NSPR libraries are]), with_nspr_lib=${withval})
+  AC_ARG_WITH(nspr_lib, AS_HELP_STRING([--with-nspr-lib], [directory where NSPR libraries are]), with_nspr_lib=${withval})
   AC_CACHE_VAL(ac_cv_path_nspr_lib, [
     if test x"${with_nspr_lib}" != x ; then
       if test -f ${with_nspr_libs}/libnspr.so; then

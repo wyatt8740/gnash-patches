@@ -19,7 +19,7 @@ dnl  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 AC_DEFUN([GNASH_PATH_SDL], [
   has_sdl=no
   dnl Lool for the header
-  AC_ARG_WITH(sdl-incl, AC_HELP_STRING([--with-sdl-incl], [directory where sdl header is]), with_sdl_incl=${withval})
+  AC_ARG_WITH(sdl-incl, AS_HELP_STRING([--with-sdl-incl], [directory where sdl header is]), with_sdl_incl=${withval})
   AC_CACHE_VAL(ac_cv_path_sdl_incl, [
     if test x"${with_sdl_incl}" != x ; then
       if test -f ${with_sdl_incl}/SDL.h ; then
@@ -102,7 +102,7 @@ AC_DEFUN([GNASH_PATH_SDL], [
   fi
   
   dnl Look for the library
-  AC_ARG_WITH(sdl_lib, AC_HELP_STRING([--with-sdl-lib], [directory where sdl library is]), with_sdl_lib=${withval})
+  AC_ARG_WITH(sdl_lib, AS_HELP_STRING([--with-sdl-lib], [directory where sdl library is]), with_sdl_lib=${withval})
 dnl  AC_MSG_CHECKING([for sdl library])
   AC_CACHE_VAL(ac_cv_path_sdl_lib, [
     if test x"${with_sdl_lib}" != x ; then

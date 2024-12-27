@@ -17,7 +17,7 @@ dnl  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 AC_DEFUN([GNASH_DOCBOOK], [
 
-  AC_ARG_ENABLE(docbook, AC_HELP_STRING([--enable-docbook], [Enable support for building documentation with "make html" and "make pdf"]),
+  AC_ARG_ENABLE(docbook, AS_HELP_STRING([--enable-docbook], [Enable support for building documentation with "make html" and "make pdf"]),
   [case "${enableval}" in
     yes) docbook=yes ;;
     no)  docbook=no ;;
@@ -33,7 +33,7 @@ AC_DEFUN([GNASH_DOCBOOK], [
     AM_CONDITIONAL(ENABLE_INFO, test x${INSTALL_INFO} != x)
 
     docbook_styles=
-    AC_ARG_WITH(docbook_styles, AC_HELP_STRING([--with-docbook-styles], [directory where Docbook stylesheets are]), with_docbook_styles=${withval})
+    AC_ARG_WITH(docbook_styles, AS_HELP_STRING([--with-docbook-styles], [directory where Docbook stylesheets are]), with_docbook_styles=${withval})
     if test x"${with_docbook_styles}" != x ; then dnl## {
 
       if test -f ${with_docbook_styles}/html/docbook.xsl ; then dnl## {

@@ -28,7 +28,7 @@ dnl
 AC_DEFUN([AC_PATH_SWFMILL], [
   SWFMILL=""
 
-  AC_ARG_WITH(swfmill, AC_HELP_STRING([--with-swfmill=<path>], [Path to the swfmill executable]), [
+  AC_ARG_WITH(swfmill, AS_HELP_STRING([--with-swfmill=<path>], [Path to the swfmill executable]), [
     case "${withval}" in
       yes|no) ;;
       *) SWFMILL=${withval} ;;

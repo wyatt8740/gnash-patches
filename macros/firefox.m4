@@ -28,7 +28,7 @@ AC_DEFUN([GNASH_PATH_FIREFOX],
   if test x"${npapi}" = x"yes"; then
 
   AC_ARG_WITH(npapi-install,
-    AC_HELP_STRING([--with-npapi-install=system|user|prefix], [Policy for NPAPI plugin install. Default: user.]),
+    AS_HELP_STRING([--with-npapi-install=system|user|prefix], [Policy for NPAPI plugin install. Default: user.]),
       [case "${withval}" in
   	  user) NPAPI_INSTALL_POLICY=user ;;
   	  system) NPAPI_INSTALL_POLICY=system ;;
@@ -43,7 +43,7 @@ AC_DEFUN([GNASH_PATH_FIREFOX],
     [ AC_MSG_WARN([--with-plugindir is obsoleted, use --with-npapi-plugindir instead]); FIREFOX_PLUGINS=$withval])
 
   AC_ARG_WITH(npapi-plugindir,
-    AC_HELP_STRING([--with-npapi-plugindir=DIR], [Directory to install NPAPI plugin in]),
+    AS_HELP_STRING([--with-npapi-plugindir=DIR], [Directory to install NPAPI plugin in]),
     [FIREFOX_PLUGINS=$withval]
   )
 

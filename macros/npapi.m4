@@ -20,7 +20,7 @@ AC_DEFUN([GNASH_PATH_NPAPI],
 [
 
   dnl Look for npapi.h
-  AC_ARG_WITH(npapi_incl, AC_HELP_STRING([--with-npapi-incl], [directory where npapi headers are]), with_npapi_incl=${withval})
+  AC_ARG_WITH(npapi_incl, AS_HELP_STRING([--with-npapi-incl], [directory where npapi headers are]), with_npapi_incl=${withval})
     AC_CACHE_VAL(ac_cv_path_npapi_incl,[
     if test x"${with_npapi_incl}" != x ; then
       if test -f ${with_npapi_incl}/npapi.h; then

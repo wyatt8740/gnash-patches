@@ -185,6 +185,23 @@ extern "C" {
 }
 #endif
 
+#ifdef HAVE_LIBAVUTIL_IMGUTILS_H
+extern "C" {
+#include <libavutil/imgutils.h>
+typedef struct AVPicture {
+  uint8_t *data[AV_NUM_DATA_POINTERS];
+  int linesize[AV_NUM_DATA_POINTERS];
+} AVPicture;
+#ifndef AVPICTURE_JUNK
+int avpicture_fill(AVPicture *picture, const uint8_t *ptr,
+                   enum AVPixelFormat pix_fmt, int width, int height);
+int avpicture_get_size(enum AVPixelFormat pix_fmt, int width, int height);
+#endif
+}
+#endif
+
+
+
 #if LIBAVUTIL_VERSION_MAJOR < 55
 #define AVPixelFormat        PixelFormat
 #define AV_PIX_FMT_YUV444P   PIX_FMT_YUV444P

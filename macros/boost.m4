@@ -49,7 +49,7 @@ AC_DEFUN([GNASH_PATH_BOOST],
   newlist=$incllist
 
   dnl Look for the header
-  AC_ARG_WITH(boost_incl, AC_HELP_STRING([--with-boost-incl], [directory where boost headers are]), with_boost_incl=${withval})
+  AC_ARG_WITH(boost_incl, AS_HELP_STRING([--with-boost-incl], [directory where boost headers are]), with_boost_incl=${withval})
   if test x"${with_boost_incl}" != x ; then
     gnash_boost_topdir="`(cd ${with_boost_incl}; pwd)`"
     newlist=${gnash_boost_topdir}
@@ -95,7 +95,7 @@ AC_DEFUN([GNASH_PATH_BOOST],
   newlist=$libslist
 
   dnl Look for the library
-  AC_ARG_WITH(boost_lib, AC_HELP_STRING([--with-boost-lib], [directory where boost libraries are]), with_boost_lib=${withval})
+  AC_ARG_WITH(boost_lib, AS_HELP_STRING([--with-boost-lib], [directory where boost libraries are]), with_boost_lib=${withval})
   if test x"${with_boost_lib}" != x ; then
     gnash_boost_libdir="`(cd ${with_boost_lib}; pwd)`"
     newlist="${gnash_boost_libdir}"

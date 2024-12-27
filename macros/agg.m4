@@ -21,7 +21,7 @@ dnl but not in AGG 2.3. As we need AGG 2.4, we use this as
 AC_DEFUN([GNASH_PATH_AGG],
 [
   dnl Lool for the header
-  AC_ARG_WITH(agg_incl, AC_HELP_STRING([--with-agg-incl], [directory where AGG headers are]), with_agg_incl=${withval})
+  AC_ARG_WITH(agg_incl, AS_HELP_STRING([--with-agg-incl], [directory where AGG headers are]), with_agg_incl=${withval})
   AC_MSG_CHECKING([for AGG headers])
   AC_CACHE_VAL(ac_cv_path_agg_incl, [
     if test x"${with_agg_incl}" != x ; then
@@ -79,7 +79,7 @@ AC_DEFUN([GNASH_PATH_AGG],
 
 
   dnl Look for the library
-  AC_ARG_WITH(agg_lib, AC_HELP_STRING([--with-agg-lib], [directory where AGG libraries are]), with_agg_lib=${withval})
+  AC_ARG_WITH(agg_lib, AS_HELP_STRING([--with-agg-lib], [directory where AGG libraries are]), with_agg_lib=${withval})
   AC_CACHE_VAL(ac_cv_path_agg_lib,[
     if test x"${with_agg_lib}" != x ; then
       if test -f ${with_agg_lib}/libagg.a -o -f ${with_agg_lib}/libagg.${shlibext}; then

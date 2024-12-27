@@ -18,7 +18,7 @@ dnl  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 AC_DEFUN([GNASH_PATH_FREETYPE2],
 [
   dnl Look for the header
-  AC_ARG_WITH(freetype_incl, AC_HELP_STRING([--with-freetype-incl], [directory where libfreetype header is (w/out the freetype/ prefix)]), with_freetype_incl=${withval})
+  AC_ARG_WITH(freetype_incl, AS_HELP_STRING([--with-freetype-incl], [directory where libfreetype header is (w/out the freetype/ prefix)]), with_freetype_incl=${withval})
     AC_CACHE_VAL(ac_cv_path_freetype_incl,[
     if test x"${with_freetype_incl}" != x ; then
       if test -f ${with_freetype_incl}/freetype/freetype.h ; then
@@ -77,7 +77,7 @@ dnl   if test x"${darwin}" = xyes; then
 dnl   else
 dnl     libname=freetype2
 dnl   fi
-  AC_ARG_WITH(freetype_lib, AC_HELP_STRING([--with-freetype-lib], [directory where freetype library is]), with_freetype_lib=${withval})
+  AC_ARG_WITH(freetype_lib, AS_HELP_STRING([--with-freetype-lib], [directory where freetype library is]), with_freetype_lib=${withval})
     AC_CACHE_VAL(ac_cv_path_freetype_lib,[
     if test x"${with_freetype_lib}" != x ; then
       if test -f ${with_freetype_lib}/lib${libname}.a -o -f ${with_freetype_lib}/lib${libname}.${shlibext}; then

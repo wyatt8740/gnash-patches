@@ -1,4 +1,49 @@
+This version of Gnash has been hacked at to continue building in
+(current year). It gets updated basically whenever I have to compile Gnash
+on another computer for one reason or another and I find errors in the process.
 
+My most recent working build was in Devuan Ceres (Debian Sid/Unstable),
+on 10 November 2022. The configure command I used was as follows (for a 32-bit
+Debian-derived system):
+
+CXXFLAGS='-std=c++11 -fcommon' CFLAGS='-fcommon' ./configure --prefix=/usr \
+  --libdir=/usr/lib/i386-linux-gnu --sysconfdir=/etc --enable-media=ffmpeg \
+  --enable-sound=sdl --enable-gui=gtk,dump --enable-renderer=agg,cairo     \
+  --disable-ssl --without-gconf --disable-testsuite --disable-devtests     \
+  --disable-npapi --disable-plugins
+
+You will want to change '--libdir=...' on your system if your library path is
+not /usr/lib/i386-linux-gnu. For example, 64-bit debian uses 'x86_64-linux-gnu'
+instead.
+
+You might also want to change the other choices I made; the program might well
+work with the opengl renderer enabled, for instance. If you somehow still have
+gstreamer 0.12 installed, you might want that in addition to or instead of
+ffmpeg as well. Fixing ffmpeg was the lesser of two evils, so I have put zero
+effort into upgrades for gstreamer.
+
+There are other things that might be interesting, too - there's an FLTK 2.x
+frontend, apparently. FLTK 2 has been dead for a long time (the current
+development is focused on 1.4) - but it might be interesting to see if that can
+be made to work or ported to 1.4. There is lots of interesting code in this
+repository.
+
+Do note that there are probably little things here and there to be manually
+worked around. For instance, on this occasion, I had to edit 'gui/Makefile'
+manually after running configure, since something is wrong with how the build
+system is trying to detect the Libavcodec version (LIBAVCODEC_IDENT variable).
+
+I simply ran 'ffmpeg' to check what my current libavcodec version was, and then
+changed the line starting with 'LIBAVCODEC_IDENT = ' in the Makefile to read
+'Lavc59.37.100'.
+
+This is something I could probably fix, but I've fought with this thing for a
+couple hours today already to get ffmpeg working and this is an easy enough
+fix. Maybe I'll look into it more next time I need to build the program.
+
+Pull requests are welcomed!
+
+----
 	            Gnash: the GNU SWF Player
 
 Gnash is a player for animated "movies" in the Macromedia Shockwave Flash

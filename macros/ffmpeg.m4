@@ -35,7 +35,7 @@ AC_DEFUN([GNASH_PATH_FFMPEG],
   dnl           /usr/local/include/ffmpeg/libavcodec becomes /usr/local/include/ffmpeg.
   dnl avcode_h - stores the path and file name for avcodec.h, which is used later on
   dnl           in this macro to extract the version number of ffmpeg we're using.
-  AC_ARG_WITH(ffmpeg_incl, AC_HELP_STRING([--with-ffmpeg-incl], [directory where avcodec.h is]), with_ffmpeg_incl=${withval})
+  AC_ARG_WITH(ffmpeg_incl, AS_HELP_STRING([--with-ffmpeg-incl], [directory where avcodec.h is]), with_ffmpeg_incl=${withval})
   AC_CACHE_VAL(ac_cv_path_ffmpeg_incl,[
     if test x"${with_ffmpeg_incl}" != x ; then
       dnl top level path for include files minus the last directory from the user
@@ -326,6 +326,7 @@ dnl | libav  | 0.8 (53.35.0)   S16 | 9   (54.35.0)   FLTP |
   if test -f "${ffmpeg_top_incl}/libavutil/opt.h"; then
     have_ffmpeg_libavutil=yes
     AC_DEFINE(HAVE_LIBAVUTIL_OPT_H, 1, [Define if libavutil/opt.h is found])
+    AC_DEFINE(HAVE_LIBAVUTIL_IMGUTILS_H, 1, [Define if libavutil/imgutils.h is found])
   fi
   AC_MSG_RESULT($have_ffmpeg_libavutil)
 
@@ -382,7 +383,7 @@ dnl | libav  | 0.8 (53.35.0)   S16 | 9   (54.35.0)   FLTP |
   top_lib_dir=""
 
   dnl Did they tell us where the libs are ?
-  AC_ARG_WITH(ffmpeg_lib, AC_HELP_STRING([--with-ffmpeg-lib], [directory where ffmpeg libraries are]), with_ffmpeg_lib=${withval})
+  AC_ARG_WITH(ffmpeg_lib, AS_HELP_STRING([--with-ffmpeg-lib], [directory where ffmpeg libraries are]), with_ffmpeg_lib=${withval})
   AC_CACHE_VAL(ac_cv_path_ffmpeg_lib, [
     if test x"${with_ffmpeg_lib}" != x ; then
       if test -f ${with_ffmpeg_lib}/libavcodec.a -o -f ${with_ffmpeg_lib}/libavcodec.${shlibext}; then

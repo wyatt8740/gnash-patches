@@ -78,8 +78,9 @@ AudioDecoderFfmpeg::~AudioDecoderFfmpeg()
 
 void AudioDecoderFfmpeg::setup(SoundInfo& info)
 {
+#if LIBAVFORMAT_VERSION_MAJOR < 58
     avcodec_register_all();// change this to only register need codec?
-
+#endif
     enum CODECID codec_id;
 
     switch(info.getFormat()) {
@@ -104,7 +105,7 @@ void AudioDecoderFfmpeg::setup(SoundInfo& info)
             throw MediaException(err.str());
     }
 
-    _audioCodec = avcodec_find_decoder(codec_id);
+    _audioCodec = (AVCodec *)avcodec_find_decoder(codec_id);
     if (!_audioCodec) {
         audioCodecType codec = info.getFormat();
         boost::format err = boost::format(
@@ -165,8 +166,9 @@ void AudioDecoderFfmpeg::setup(SoundInfo& info)
 void AudioDecoderFfmpeg::setup(const AudioInfo& info)
 {
     // Init the avdecoder-decoder
+#if LIBAVFORMAT_VERSION_MAJOR < 58
     avcodec_register_all();// change this to only register need codec?
-
+#endif
     enum CODECID codec_id = AV_CODEC_ID_NONE;
 
     if (info.type == CODEC_TYPE_CUSTOM)
@@ -232,7 +234,7 @@ void AudioDecoderFfmpeg::setup(const AudioInfo& info)
         throw MediaException(err.str());
     }
 
-    _audioCodec = avcodec_find_decoder(codec_id);
+    _audioCodec = (AVCodec*)avcodec_find_decoder(codec_id);
     if (!_audioCodec)
     {
         if (info.type == CODEC_TYPE_FLASH) {

@@ -20,7 +20,7 @@ AC_DEFUN([GNASH_PATH_KDE3],
   has_kde3=no
 
   dnl setup the various options to custimize paths
-  AC_ARG_WITH(kde3_incl, AC_HELP_STRING([--with-kde3-incl],
+  AC_ARG_WITH(kde3_incl, AS_HELP_STRING([--with-kde3-incl],
              [directory where KDE 3.x headers are]),
              with_kde3_incl=${withval})
   dnl make sure the path is a useable one
@@ -30,11 +30,11 @@ AC_DEFUN([GNASH_PATH_KDE3],
     fi
   fi
 
-  AC_ARG_WITH(kde3_prefix, AC_HELP_STRING([--with-kde3-prefix],
+  AC_ARG_WITH(kde3_prefix, AS_HELP_STRING([--with-kde3-prefix],
              [Prefix for KDE plugin, like /usr]),
              with_kde3_prefix=${withval})
 
-  AC_ARG_WITH(kde3_lib, AC_HELP_STRING([--with-kde3-lib],
+  AC_ARG_WITH(kde3_lib, AS_HELP_STRING([--with-kde3-lib],
              [directory where KDE 3.x libraries are]),
              with_kde3_lib=${withval})
   dnl make sure the path is a useable one
@@ -45,7 +45,7 @@ AC_DEFUN([GNASH_PATH_KDE3],
   fi
 
   dnl Specifiy a custom directory for the kparts plugin
-  AC_ARG_WITH(kde3_plugindir, AC_HELP_STRING([--with-kde3-plugindir=DIR],
+  AC_ARG_WITH(kde3_plugindir, AS_HELP_STRING([--with-kde3-plugindir=DIR],
              [Directory to install KDE 3.x plugin in]),
              with_kde3_plugindir=${withval})
   if test x"${with_kde3_plugindir}" != x ; then 
@@ -55,7 +55,7 @@ AC_DEFUN([GNASH_PATH_KDE3],
   fi
 
   dnl Specifiy a custom directory for the kde services directory
-  AC_ARG_WITH(kde3_servicesdir, AC_HELP_STRING([--with-kde3-servicesdir=DIR],
+  AC_ARG_WITH(kde3_servicesdir, AS_HELP_STRING([--with-kde3-servicesdir=DIR],
              [Directory to install KDE 3.x plugin in]),
              with_kde3_servicesdir=${withval})
   if test x"${with_kde3_servicesdir}" != x ; then 
@@ -64,12 +64,12 @@ AC_DEFUN([GNASH_PATH_KDE3],
     fi
   fi
 
-  AC_ARG_WITH(kde3-configdir, AC_HELP_STRING([--with-kde3-configdir=DIR],
+  AC_ARG_WITH(kde3-configdir, AS_HELP_STRING([--with-kde3-configdir=DIR],
       [Directory to install KDE 3.x configfile in]),
     [KDE3_CONFIGDIR=${withval}
   ])
 
-  AC_ARG_WITH(kde3-appsdatadir, AC_HELP_STRING([--with-kde3-appsdatadir=DIR],
+  AC_ARG_WITH(kde3-appsdatadir, AS_HELP_STRING([--with-kde3-appsdatadir=DIR],
       [Directory to install KDE 3.x data in]),
     [KDE3_APPSDATADIR=${withval}
   ])

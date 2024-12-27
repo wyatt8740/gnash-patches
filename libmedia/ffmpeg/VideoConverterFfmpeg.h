@@ -42,6 +42,7 @@ private:
 #if HAVE_SWSCALE_H
     std::unique_ptr<SwsContextWrapper> _swsContext;
 #endif
+
 };
 
 }

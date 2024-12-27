@@ -16,8 +16,8 @@ dnl  along with this program; if not, write to the Free Software
 dnl  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 dnl  
 
-AC_PREREQ(2.59c)
-AC_INIT(gnash, 0.8.11dev)
+AC_PREREQ([2.71])
+AC_INIT([gnash],[0.8.11dev])
 AC_CONFIG_SRCDIR([libcore/as_object.h])
 AC_CONFIG_HEADERS([gnashconfig.h])
 AC_CONFIG_MACRO_DIR([macros])
@@ -220,7 +220,7 @@ BUILDDATE="`date +%Y%m%d`"
 AC_SUBST(BUILDDATE)
 
 dnl These are required by automake
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([subdir-objects])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AM_MAINTAINER_MODE
 AC_PROG_MAKE_SET
@@ -244,7 +244,7 @@ dnl like pentium->geode, which can use the same compiler, but have
 dnl different development libraries.
 
 AC_ARG_WITH(sysroot,
-  AC_HELP_STRING([--with-sysroot], [system root directory for cross compiling]),
+  AS_HELP_STRING([--with-sysroot],[system root directory for cross compiling]),
   with_top_level=${withval};
   cross_compiling=yes)
 
@@ -275,7 +275,7 @@ dnl  /opt/android-ndk-r3/build/platforms/android-3/arch-arm/usr/lib/crtbegin_dyn
 dnl Recent versions of G++ (I'm using 4.5 from source
 android_ndk=no
 AC_ARG_WITH([android],
-  AC_HELP_STRING([--with-android], [directory where android NDK is installed]),
+  AS_HELP_STRING([--with-android],[directory where android NDK is installed]),
         android_ndk=${withval}
         if test x"${withval}" != x; then
           android_ndk=${withval}
@@ -322,7 +322,7 @@ memory=no
 cache=yes
 stat_proplookup=no
 AC_ARG_WITH(statistics,
-  AC_HELP_STRING([--with-statistics], [Specify which statistics features to enable]),
+  AS_HELP_STRING([--with-statistics],[Specify which statistics features to enable]),
   if test -n ${withval}; then
     if test "x${withval}" != "xno"; then
       extlist="${withval}"
@@ -424,7 +424,7 @@ solreadonly=no
 localconnection=yes
 
 AC_ARG_WITH(security,
-  AC_HELP_STRING([--with-security], [Specify which security features to enable]),
+  AS_HELP_STRING([--with-security],[Specify which security features to enable]),
   if test -n ${withval}; then
     if test "x${withval}" != "xno"; then
       extlist="${withval}"
@@ -587,7 +587,7 @@ build_sdl=no
 build_aqua=no                   dnl Native MacOSX
 build_dump=no
 AC_ARG_ENABLE(gui,
-  AC_HELP_STRING([--enable-gui], [Enable support for the specified GUI toolkits (default=gtk,qt4)]),
+  AS_HELP_STRING([--enable-gui],[Enable support for the specified GUI toolkits (default=gtk,qt4)]),
   [if test -n ${enableval}; then
     enableval=`echo ${enableval} | tr '\054' ' ' `
   fi
@@ -677,8 +677,7 @@ fi
 dnl We can use Xephyr or fbe to create a fake framebuffer instead of real
 dnl video memory. This lets us test on a desktop machine.
 AC_ARG_WITH(fakefb,
-AC_HELP_STRING([--with-fakefb],
- [specify a file to be mapped instead of a real framebuffer]),
+AS_HELP_STRING([--with-fakefb],[specify a file to be mapped instead of a real framebuffer]),
  with_fakefb=${withval})
 
 fakefb=
@@ -702,8 +701,7 @@ dnl run as part of "make check", as they are either incomplete, or
 dnl can only be run interactively. These are all primarily oriented
 dnl towards code development and debugging, instead of regression
 dnl or unit testing.
-AC_ARG_ENABLE(devtests, AC_HELP_STRING([--enable-devtests],
-  [Developer only tests, not to be included in make check]),
+AC_ARG_ENABLE(devtests, AS_HELP_STRING([--enable-devtests],[Developer only tests, not to be included in make check]),
 [case "${enableval}" in
   yes) devtests=yes ;;
   no)  devtests=no ;;
@@ -720,7 +718,7 @@ build_sound_sdl=no
 build_sound_ahi=no
 build_sound_mkit=no
 AC_ARG_ENABLE(sound,
-  AC_HELP_STRING([--enable-sound=[[sdl|ahi|mkit]]], [Use the specified sound handler (default=sdl)]),
+  AS_HELP_STRING([--enable-sound=[[sdl|ahi|mkit]]],[Use the specified sound handler (default=sdl)]),
      [case "${enableval}" in
       sdl|SDL|Sdl)
         build_sound_sdl=yes
@@ -762,8 +760,7 @@ build_media_gst=no
 build_media_ffmpeg=auto
 build_media_none=no
 AC_ARG_ENABLE(media,
-  AC_HELP_STRING([--enable-media=handler],
-    [Enable media handling support using the specified handlers: ffmpeg gst none(no sound) (default=auto) ]),
+  AS_HELP_STRING([--enable-media=handler],[Enable media handling support using the specified handlers: ffmpeg gst none(no sound) (default=auto) ]),
   
     if test -n ${enableval}; then
       enableval=`echo ${enableval} | tr '\054' ' ' `
@@ -855,7 +852,7 @@ else
   input_events=
 fi
 AC_ARG_ENABLE(input,
-  AC_HELP_STRING([--enable-input], [Enable support for the specified input devices for the framebuffer GUI (default=ps2mouse|ps2keyboard|events|touchscreen)]),
+  AS_HELP_STRING([--enable-input],[Enable support for the specified input devices for the framebuffer GUI (default=ps2mouse|ps2keyboard|events|touchscreen)]),
   [if test -n ${enableval}; then
     enableval=`echo ${enableval} | tr '\054' ' ' `
   fi
@@ -952,7 +949,7 @@ build_agg=yes
 build_cairo=yes
 renderer_list="agg cairo"
 AC_ARG_ENABLE(renderer,
-  AC_HELP_STRING([--enable-renderer], [Enable support for the specified renderers (agg|cairo|opengl|openvg|all, default=all)]),
+  AS_HELP_STRING([--enable-renderer],[Enable support for the specified renderers (agg|cairo|opengl|openvg|all, default=all)]),
   if test -n ${enableval}; then
     if test "x${enableval}" != "xno" -o "x${enableval}" != "xnone" ; then
       renderer_list="none"
@@ -1070,7 +1067,7 @@ else
   ndevice=0
 fi
 AC_ARG_ENABLE(device,
-  AC_HELP_STRING([--enable-device], [Specify which hardware abstraction to use to support to enable (none,egl,directfb,rawfb,x11,vaapi)]),
+  AS_HELP_STRING([--enable-device],[Specify which hardware abstraction to use to support to enable (none,egl,directfb,rawfb,x11,vaapi)]),
   enableval=`echo ${enableval} | tr '\054' ' ' `
   build_egl_device=no
   build_rawfb_device=no
@@ -1204,13 +1201,11 @@ if test x"${build_egl_device}" = xyes; then
   CFLAGS="$CFLAGS -Wall -Werror"
   native_window_type=none
   AC_MSG_CHECKING([For EGLNativeWindowType type])
-  AC_TRY_COMPILE([#include <EGL/eglplatform.h>], [
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <EGL/eglplatform.h>]], [[
     EGLNativeWindowType foo = 1;
     int bar = foo;
-    bar++; ],
-    native_window_type=int,
-    native_window_type=void
-  )
+    bar++; ]])],[native_window_type=int],[native_window_type=void
+  ])
   CFLAGS="$save_CFLAGS"
   AC_MSG_RESULT([${native_window_type}])
   if test x"${native_window_type}" = x"int"; then
@@ -1230,7 +1225,7 @@ dnl 24 bit: RGB24, BGR24
 dnl 32 bit: RGBA32, BGRA32
 pixelformat=all
 AC_ARG_WITH(pixelformat,
-  AC_HELP_STRING([--with-pixelformat=], [Use the specified pixel format for AGG (default=all)]),
+  AS_HELP_STRING([--with-pixelformat=],[Use the specified pixel format for AGG (default=all)]),
   [if test -n ${withval}; then
     pixelformat="${withval}"
     withval=`echo ${withval} | tr '\054' ' ' `
@@ -1362,8 +1357,8 @@ extensions_list=
 extensions_support=no
 nextensions=0
 AC_ARG_ENABLE(extensions,
-  AC_HELP_STRING([--enable-extensions=], [Specify which extensions to build (default: none)])
-AC_HELP_STRING([--disable-extensions], [Disable support for extensions entirely]),
+  AS_HELP_STRING([--enable-extensions=],[Specify which extensions to build (default: none)])
+AS_HELP_STRING([--disable-extensions],[Disable support for extensions entirely]),
   if test -n ${enableval}; then
     if test "x${enableval}" != "xno"; then
       extlist="${enableval}"
@@ -1455,10 +1450,20 @@ dnl --------------------------------------------------------
 dnl Libtool
 dnl --------------------------------------------------------
 
-AC_LIBTOOL_DLOPEN
-AC_LIBTOOL_WIN32_DLL
+#_LT_SET_OPTION([LT_INIT],[dlopen])
+#m4_warn([obsolete],[AC_LIBTOOL_DLOPEN: Remove this warning and the call to _LT_SET_OPTION when you
+#put the 'dlopen' option into LT_INIT's first parameter.])
+LT_INIT([dlopen win32-dll])
+
+
+#AC_REQUIRE(AC_CANONICAL_HOST)_LT_SET_OPTION([LT_INIT],[win32-dll])
+#m4_warn([obsolete],[AC_LIBTOOL_WIN32_DLL: Remove this warning and the call to _LT_SET_OPTION when you
+#put the 'win32-dll' option into LT_INIT's first parameter.])
+# LT_INIT([win32-dll])
+
 AC_DISABLE_STATIC
-AC_PROG_LIBTOOL
+# LT_INIT
+LT_INIT([dlopen win32-dll])
 AC_SUBST(LIBTOOL_DEPS)
 DLOPEN="-dlopen"
 DLPREOPEN="-dlpreopen"
@@ -1476,8 +1481,7 @@ dnl SOL dir
 dnl --------------------------------------------------------
 soldir=/tmp
 AC_ARG_WITH(soldir,
- AC_HELP_STRING([--with-soldir],
- [directory for .sol files]),
+ AS_HELP_STRING([--with-soldir],[directory for .sol files]),
  with_soldir=${withval})
 if test x${with_soldir} != x; then
   soldir=${with_soldir}
@@ -1489,7 +1493,7 @@ dnl --------------------------------------------------------
 dnl AVM2
 dnl --------------------------------------------------------
 dnl AC_ARG_ENABLE(avm2,
-dnl   AC_HELP_STRING([--enable-avm2], [Enable support for AS3]),
+dnl   AS_HELP_STRING([--enable-avm2],[Enable support for AS3]),
 dnl   [case "${enableval}" in
 dnl     yes) avm2=yes ;;
 dnl     no)  avm2=no ;;
@@ -1506,8 +1510,7 @@ dnl This option is only used if you want Gnash to interwork with
 dnl the Adobe player using the LocalConnection class.
 dnl lckey=0xdd3adabd
 AC_ARG_WITH(lckey,
- AC_HELP_STRING([--with-lckey],
- [shared memory key for your system]),
+ AS_HELP_STRING([--with-lckey],[shared memory key for your system]),
  with_lckey=${withval})
 
 if test x${with_lckey} != x; then
@@ -1519,7 +1522,7 @@ LC_KEY=${lckey}
 AC_SUBST(LC_KEY)
 
 AC_ARG_ENABLE(python,
-  AC_HELP_STRING([--enable-python],[Enable python for the python wrapper]),
+  AS_HELP_STRING([--enable-python],[Enable python for the python wrapper]),
 [case "${enableval}" in
   yes) python=yes ;;
   no)  python=no ;;
@@ -1537,7 +1540,7 @@ dnl be disabled, as when running as a plugin, nobody sees the debug messages
 dnl anyway. Debug logging is primarily for developers, so we can turn it off
 dnl for package builds.
 AC_ARG_ENABLE(log,
-  AC_HELP_STRING([--enable-log],[Enable debug logging]),
+  AS_HELP_STRING([--enable-log],[Enable debug logging]),
 [case "${enableval}" in
   yes) debuglog=yes ;;
   no)  debuglog=no ;;
@@ -1553,8 +1556,8 @@ fi
 # This seems like a good idea, as both the other player and
 # Mozilla/Firefox both recently switched to using jemalloc.
 AC_ARG_ENABLE(jemalloc,
-  AC_HELP_STRING([--enable-jemalloc],[Enable jemalloc instead of system malloc])
-AC_HELP_STRING([--disable-jemalloc],[Disable jemalloc]),
+  AS_HELP_STRING([--enable-jemalloc],[Enable jemalloc instead of system malloc])
+AS_HELP_STRING([--disable-jemalloc],[Disable jemalloc]),
 [case "${enableval}" in
   yes) jemalloc=yes ;;
   no)  jemalloc=no ;;
@@ -1580,16 +1583,15 @@ AM_CONDITIONAL(JEMALLOC, test x"${has_jemalloc}" = xyes)
 AC_SEARCH_LIBS([getaddrinfo], [c])
 
 AC_ARG_ENABLE(fps-debug,
-  AC_HELP_STRING([--enable-fps-debug],[Enable FPS debugging code]),
+  AS_HELP_STRING([--enable-fps-debug],[Enable FPS debugging code]),
 [case "${enableval}" in
   yes) AC_DEFINE([GNASH_FPS_DEBUG], [1], [Enable FPS debugging code])
 esac])
 
 dnl IPC_INFO isn't portable, and doesn't exist on BSD
-AC_TRY_COMPILE([#include <sys/ipc.h> #include <sys/shm.h>], [
-  int flag = IPC_INFO; ],
-  AC_DEFINE([HAVE_IPC_INFO], [1], [Use ipc_info])
-)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/ipc.h> #include <sys/shm.h>]], [[
+  int flag = IPC_INFO; ]])],[AC_DEFINE(HAVE_IPC_INFO, 1, Use ipc_info)
+],[])
 
 dnl --------------------------------------------------------
 dnl Disable menus
@@ -1597,7 +1599,7 @@ dnl --------------------------------------------------------
 dnl Don't add the GUI menu. Some educational systems think this adds
 dnl clutter and confusion, like on the OLPC.
 AC_ARG_ENABLE(menus,
-  AC_HELP_STRING([--disable-menus],[Disable the GUI menus]),
+  AS_HELP_STRING([--disable-menus],[Disable the GUI menus]),
 [case "${enableval}" in
   yes) menus=yes ;;
   no)  menus=no ;;
@@ -1616,7 +1618,7 @@ dnl Don't gather SWF information in tree form. This takes
 dnl resources and memory that can be saved if there's no
 dnl need to examine SWF internals.
 AC_ARG_ENABLE(swftree,
-  AC_HELP_STRING([--disable-swftree],[Disable showing SWF properties]),
+  AS_HELP_STRING([--disable-swftree],[Disable showing SWF properties]),
 [case "${enableval}" in
   yes) swftree=yes ;;
   no)  swftree=no ;;
@@ -1637,7 +1639,7 @@ dnl DISTCHECK_CONFIGURE_FLAGS when building packages. Gnash's testing infrastruc
 dnl is complex, and often the the testsuites will work, but due to some obscure reason,
 dnl make distcheck fails.
 AC_ARG_ENABLE(testsuite,
-  AC_HELP_STRING([--disable-testsuite],[Disable the testsuite, maintainers option only]),
+  AS_HELP_STRING([--disable-testsuite],[Disable the testsuite, maintainers option only]),
 [case "${enableval}" in
   yes) testsuite=yes ;;
   no)  testsuite=no ;;
@@ -1653,7 +1655,7 @@ dnl --------------------------------------------------------
 dnl Write the file to disk in the plugin
 dnl --------------------------------------------------------
 AC_ARG_ENABLE(write,
-  AC_HELP_STRING([--enable-write], [Makes the Mozilla plugin write the currently playing SWF movie to /tmp.]),
+  AS_HELP_STRING([--enable-write],[Makes the Mozilla plugin write the currently playing SWF movie to /tmp.]),
 [case "${enableval}" in
   yes) write=yes ;;
   no)  write=no ;;
@@ -1668,7 +1670,7 @@ dnl --------------------------------------------------------
 dnl Write a standalone gnash launcher to disk from the plugin
 dnl --------------------------------------------------------
 AC_ARG_ENABLE(sa-launcher,
-  AC_HELP_STRING([--disable-sa-launcher], [Drops support for the NPAPI plugin writing of standalone executable launcher scripts for the currently playing SWF movie to /tmp.]),
+  AS_HELP_STRING([--disable-sa-launcher],[Drops support for the NPAPI plugin writing of standalone executable launcher scripts for the currently playing SWF movie to /tmp.]),
 [case "${enableval}" in
   yes) sa_launcher=yes ;;
   no)  sa_launcher=no ;;
@@ -1683,7 +1685,7 @@ dnl --------------------------------------------------------
 dnl Build the cygnal server if specified.
 dnl --------------------------------------------------------
 AC_ARG_ENABLE(cygnal,
-  AC_HELP_STRING([--enable-cygnal], [Enable building of the Cygnal server]),
+  AS_HELP_STRING([--enable-cygnal],[Enable building of the Cygnal server]),
 [case "${enableval}" in
   yes) cygnal=yes
        extensions_support=yes ;;
@@ -1701,7 +1703,7 @@ dnl --------------------------------------------------------
 dnl Build the cgibins server if specified.
 dnl --------------------------------------------------------
 AC_ARG_ENABLE(cgibins,
-  AC_HELP_STRING([--enable-cgibins], [Enable building of the CGIs for Cygnal]),
+  AS_HELP_STRING([--enable-cgibins],[Enable building of the CGIs for Cygnal]),
 [case "${enableval}" in
   yes) cgibin=yes ;;
   no)  cgibin=no ;;
@@ -1721,7 +1723,7 @@ dnl If defined, an internal software-buffer is used for rendering and is then
 dnl copied to the video RAM. This avoids flicker and is faster for complex 
 dnl graphics, as video RAM access is usually slower. (strongly suggested)
 AC_ARG_ENABLE(doublebuf,
-  AC_HELP_STRING([--disable-doublebuf], [Disble support for double buffering when rendering with AGG]),
+  AS_HELP_STRING([--disable-doublebuf],[Disble support for double buffering when rendering with AGG]),
   [case "${enableval}" in
     yes) doublebuf=yes ;;
     no)  doublebuf=no ;;
@@ -1738,7 +1740,7 @@ dnl  Offscreen buffer
 dnl --------------------------------------------------------
 dnl This enables rendering to an offscreen buffer, instead of directly to window
 AC_ARG_ENABLE(offscreen,
-  AC_HELP_STRING([--enable-offscreen], [Enable support for rendering offscreen]),
+  AS_HELP_STRING([--enable-offscreen],[Enable support for rendering offscreen]),
   [case "${enableval}" in
     yes) offscreen=yes ;;
     no)  offscreen=no ;;
@@ -1752,7 +1754,7 @@ dnl  SSH support selection
 dnl --------------------------------------------------------
 dnl Enable using libssh with libnet
 AC_ARG_ENABLE(ssh,
-  AC_HELP_STRING([--enable-ssh], [Enable using SSH for network authentication]),
+  AS_HELP_STRING([--enable-ssh],[Enable using SSH for network authentication]),
 [case "${enableval}" in
   yes) build_ssh=yes ;;
   no)  build_ssh=no ;;
@@ -1774,7 +1776,7 @@ dnl --------------------------------------------------------
 
 dnl Enable using OpenSSL with libnet.
 AC_ARG_ENABLE(ssl,
-  AC_HELP_STRING([--enable-ssl], [Enable using OpenSSL directly]),
+  AS_HELP_STRING([--enable-ssl],[Enable using OpenSSL directly]),
 [case "${enableval}" in
   yes) build_ssl=yes ;;
   no)  build_ssl=no ;;
@@ -1785,12 +1787,10 @@ with_cert=
 with_pem=
 AM_CONDITIONAL(BUILD_SSL, test x"${build_ssl}" = xyes)
 AC_ARG_WITH(cert,
-  AC_HELP_STRING([--with-cert],
-  [cert file for SSL]),
+  AS_HELP_STRING([--with-cert],[cert file for SSL]),
   with_cert=${withval})
 AC_ARG_WITH(pem,
-  AC_HELP_STRING([--with-pe],
-  [pem file for SSL]),
+  AS_HELP_STRING([--with-pe],[pem file for SSL]),
   with_pem=${withval})
 
 if test x"${build_ssl}" = xyes; then
@@ -1806,7 +1806,7 @@ dnl (NOTE: before GNASH_PATH_FIREFOX and GNASH_PATH_KDE*)
 dnl -----------------------------------------------------------
 
 AC_ARG_WITH(plugins-install,
-  AC_HELP_STRING([--with-plugins-install=system|user|prefix], [Policy for plugins install. Default: user.]),
+  AS_HELP_STRING([--with-plugins-install=system|user|prefix],[Policy for plugins install. Default: user.]),
 	[case "${withval}" in
 	  user) PLUGINS_INSTALL_POLICY=user ;;
 	  system) PLUGINS_INSTALL_POLICY=system ;;
@@ -1917,7 +1917,7 @@ else
   input_events=
 fi
 AC_ARG_ENABLE(input,
-  AC_HELP_STRING([--enable-input], [Enable support for the specified input devices for the framebuffer GUI (default=ps2mouse|ps2keyboard|events|touchscreen)]),
+  AS_HELP_STRING([--enable-input],[Enable support for the specified input devices for the framebuffer GUI (default=ps2mouse|ps2keyboard|events|touchscreen)]),
   [if test -n ${enableval}; then
     enableval=`echo ${enableval} | tr '\054' ' ' `
   fi
@@ -2008,7 +2008,7 @@ dnl Add KPARTS support, if specified or KDE gui is built
 dnl ----------------------------------------------------
 
 AC_ARG_ENABLE(kparts3,
-  AC_HELP_STRING([--disable-kparts3], [Disable support for Konqueror 3.x plugin (default: enabled if kde3 gui is)]),
+  AS_HELP_STRING([--disable-kparts3],[Disable support for Konqueror 3.x plugin (default: enabled if kde3 gui is)]),
 [case "${enableval}" in
   yes) build_kparts3=yes ;;
   no)  build_kparts3=no ;;
@@ -2020,7 +2020,7 @@ dnl Add KPARTS 4.x support, if specified or KDE gui is built
 dnl --------------------------------------------------------
 
 AC_ARG_ENABLE(kparts4,
-  AC_HELP_STRING([--disable-kparts4], [Disable support for Konqueror 4.x plugin (default: enabled if Qt4 gui is)]),
+  AS_HELP_STRING([--disable-kparts4],[Disable support for Konqueror 4.x plugin (default: enabled if Qt4 gui is)]),
 [case "${enableval}" in
   yes) build_kparts4=yes ;;
   no)  build_kparts4=no ;;
@@ -2036,7 +2036,7 @@ dnl Add NPAPI support, if specified or GTK or Qt4 gui is built
 dnl -----------------------------------------------------------
 
 AC_ARG_ENABLE(npapi,
-  AC_HELP_STRING([--disable-npapi], [Disable NPAPI plugin build (default: enabled if gtk or Qt4 gui is)]),
+  AS_HELP_STRING([--disable-npapi],[Disable NPAPI plugin build (default: enabled if gtk or Qt4 gui is)]),
   [case "${enableval}" in
     yes) npapi=yes ;;
     no)  npapi=no ;;
@@ -2056,7 +2056,7 @@ dnl Enable us to disable building all browser plugins in one command.
 dnl -----------------------------------------------------------------
 
 AC_ARG_ENABLE(plugins,
-  AC_HELP_STRING([--disable-plugins], [Disable all browser plugins from building (default=no)]),
+  AS_HELP_STRING([--disable-plugins],[Disable all browser plugins from building (default=no)]),
   [case "${enableval}" in
     yes) plugins=yes ;;
     no)  plugins=no ;;
@@ -2086,11 +2086,10 @@ else
   AC_MSG_RESULT([no])
 fi
 
-AC_TRY_COMPILE([#include <linux/input.h>], [
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <linux/input.h>]], [[
   struct input_absinfo abs;
-  abs.resolution = 0;; ],
- AC_DEFINE([ABSINFO_RESOLUTION], [1], [ABS Resolution field])
-)
+  abs.resolution = 0;; ]])],[AC_DEFINE(ABSINFO_RESOLUTION, 1, ABS Resolution field)
+],[])
 
 dnl -----------------------------------------------------------------
 dnl END OF PLUGIN RELATED STUFF
@@ -2127,24 +2126,22 @@ fi
 dnl See if ipc_perm structure has the ipc_perm.key field, and if so,
 dnl which variant of the name is used.
 ipc_key=no
-AC_TRY_COMPILE([
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
   #include <sys/ipc.h>
-  #include <sys/shm.h>], [
+  #include <sys/shm.h>]], [[
  struct shmid_ds shmseg;      
- key_t x = shmseg.shm_perm.key;],
- ipc_key=yes
- AC_DEFINE(IPC_PERM_KEY, [key], [Has the key field in ipc_perm])
-)
+ key_t x = shmseg.shm_perm.key;]])],[ipc_key=yes
+ AC_DEFINE(IPC_PERM_KEY, key, Has the key field in ipc_perm)
+],[])
 
 if test x$ipc_key = xno; then
-  AC_TRY_COMPILE([
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
     #include <sys/ipc.h>
-    #include <sys/shm.h>], [
+    #include <sys/shm.h>]], [[
     struct shmid_ds shmseg;      
-    key_t x = shmseg.shm_perm.__key;],
-    AC_DEFINE(IPC_PERM_KEY, [__key], [Has the key field in ipc_perm])
+    key_t x = shmseg.shm_perm.__key;]])],[AC_DEFINE(IPC_PERM_KEY, __key, Has the key field in ipc_perm)
     ipc_key=yes
-  )
+  ],[])
 fi
 
 dnl If sysv semaphores functs are stubs (e.g. on Hurd),
@@ -2153,15 +2150,12 @@ AC_CHECK_FUNCS(semget, semget=yes)
 AM_CONDITIONAL(HAVE_SEMGET, test x${semget} = xyes)
 
 AC_CACHE_CHECK([for finite], ac_cv_finite,
- [AC_TRY_COMPILE([
+ [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
    #include <math.h>
    #ifdef HAVE_IEEEFP_H
    #include <ieeefp.h>
-   #endif],
- [double x; int y; y = finite(x);],
- ac_cv_finite=yes,
- ac_cv_finite=no
-)])
+   #endif]], [[double x; int y; y = finite(x);]])],[ac_cv_finite=yes],[ac_cv_finite=no
+])])
 if test x"$ac_cv_finite" = x"yes"; then
   AC_SEARCH_LIBS(finite, m,
     [AC_DEFINE(HAVE_FINITE, [1], [Has finite])]
@@ -2170,11 +2164,8 @@ fi
 
 AC_LANG_PUSH(C++)
 AC_CACHE_CHECK([for isfinite], ac_cv_isfinite,
- [AC_TRY_COMPILE([#include <cmath>],
- [using namespace std; double x; int y; y = isfinite(x);],
- ac_cv_isfinite=yes,
- ac_cv_isfinite=no
-)])
+ [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <cmath>]], [[using namespace std; double x; int y; y = isfinite(x);]])],[ac_cv_isfinite=yes],[ac_cv_isfinite=no
+])])
 AC_LANG_POP(C++)
 if test x"$ac_cv_isfinite" = x"yes"; then
   dnl Don't give up if isfinite is not found in -lm
@@ -2185,36 +2176,27 @@ fi
 
 AC_LANG_PUSH(C++)
 AC_CACHE_CHECK([whether $CXX implements __PRETTY_FUNCTION__], ac_cv_implements___PRETTY_FUNCTION__, [
-  AC_TRY_LINK([#include <cstdio>
-], 
-    [ std::printf("%s", __PRETTY_FUNCTION__); ], 
-    [ ac_cv_implements___PRETTY_FUNCTION__="yes" ],
-    [ ac_cv_implements___PRETTY_FUNCTION__="no" ]
-  )
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <cstdio>
+]], [[ std::printf("%s", __PRETTY_FUNCTION__); ]])],[ ac_cv_implements___PRETTY_FUNCTION__="yes" ],[ ac_cv_implements___PRETTY_FUNCTION__="no" 
+  ])
 ])
 if test "x$ac_cv_implements___PRETTY_FUNCTION__" = "xyes" ; then
   AC_DEFINE(HAVE_PRETTY_FUNCTION, [1], [__PRETTY_FUNCTION__ is defined])
 fi
 
 AC_CACHE_CHECK([whether $CXX implements __FUNCTION__], ac_cv_implements___FUNCTION__, [
-  AC_TRY_LINK([#include <cstdio>
-], 
-    [ std::printf("%s", __FUNCTION__); ], 
-    [ ac_cv_implements___FUNCTION__="yes" ],
-    [ ac_cv_implements___FUNCTION__="no" ]
-  )
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <cstdio>
+]], [[ std::printf("%s", __FUNCTION__); ]])],[ ac_cv_implements___FUNCTION__="yes" ],[ ac_cv_implements___FUNCTION__="no" 
+  ])
 ])
 if test "x$ac_cv_implements___FUNCTION__" = "xyes" ; then
   AC_DEFINE(HAVE_FUNCTION, [1], [__FUNCTION__ is defined])
 fi
 
 AC_CACHE_CHECK([whether $CXX implements __func__], ac_cv_implements___func__, [
-  AC_TRY_LINK([#include <cstdio>
-], 
-    [ std::printf("%s", __func__); ], 
-    [ ac_cv_implements___func__="yes" ],
-    [ ac_cv_implements___func__="no" ]
-  )
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <cstdio>
+]], [[ std::printf("%s", __func__); ]])],[ ac_cv_implements___func__="yes" ],[ ac_cv_implements___func__="no" 
+  ])
 ])
 if test "x$ac_cv_implements___func__" = "xyes" ; then
   AC_DEFINE(HAVE_func, [1], [__func__ is defined])
@@ -2229,7 +2211,7 @@ AC_CHECK_FUNCS(tzset)
 AC_CHECK_FUNCS(localtime_r)
 
 AC_CACHE_CHECK([whether struct tm has tm_gmtoff], ac_cv_tm_gmtoff, [
-        AC_TRY_LINK([
+        AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 /* ctime(1) says "The glibc version of struct tm has additional fields
  * defined  when _BSD_SOURCE was set before including <time.h>"
  * In practice, you do not need to define it yourself (tested on glibc-2.2.1 
@@ -2238,18 +2220,15 @@ AC_CACHE_CHECK([whether struct tm has tm_gmtoff], ac_cv_tm_gmtoff, [
  */
 // #define _BSD_SOURCE 1
 #include <time.h>
-], 
-                [ struct tm tm; long l = tm.tm_gmtoff; ], 
-                [ ac_cv_tm_gmtoff="yes" ],
-                [ ac_cv_tm_gmtoff="no" ]
-        )
+]], [[ struct tm tm; long l = tm.tm_gmtoff; ]])],[ ac_cv_tm_gmtoff="yes" ],[ ac_cv_tm_gmtoff="no" 
+        ])
 ])
 if test "x$ac_cv_tm_gmtoff" = "xyes" ; then
         AC_DEFINE(HAVE_TM_GMTOFF, [1], [struct tm has member tm_gmtoff])
 fi
 
 AC_CACHE_CHECK([whether timezone is a long], ac_cv_long_timezone, [
-        AC_TRY_LINK([
+        AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 /* On Linux/glibc, tzset(3) says "extern long timezone;" (seconds West of GMT)
  * but on BSD char *timezone(int,int) is a function returning a string name.
  * The BSD function timegm() may be the equivalent, but this should
@@ -2259,11 +2238,8 @@ AC_CACHE_CHECK([whether timezone is a long], ac_cv_long_timezone, [
 #include <stdio.h>
 #include <time.h>
 extern long timezone;
-  ], 
-    [ printf("%ld", timezone); ], 
-    [ ac_cv_long_timezone="yes" ],
-    [ ac_cv_long_timezone="no" ]
-   )
+  ]], [[ printf("%ld", timezone); ]])],[ ac_cv_long_timezone="yes" ],[ ac_cv_long_timezone="no" 
+   ])
 ])
 if test "x$ac_cv_long_timezone" = "xyes" ; then
   AC_DEFINE(HAVE_LONG_TIMEZONE, [1], [extern timezone is a long integer, not a function])
@@ -2346,8 +2322,7 @@ AM_CONDITIONAL(MING_VERSION_0_4_4,
 
 if test x$cross_compiling = xno; then
     AC_ARG_WITH([swfdec_testsuite],
-        AC_HELP_STRING([--with-swfdec-testsuite],
-            [directory where swfdec testsuite (the 'test' dir) is]),
+        AS_HELP_STRING([--with-swfdec-testsuite],[directory where swfdec testsuite (the 'test' dir) is]),
         if test x"${withval}" = xyes; then
             dir=`dirname $0`
             dir=`cd ${dir} && pwd`
@@ -2361,8 +2336,7 @@ AM_CONDITIONAL(ENABLE_SWFDEC_TESTSUITE, [ test x"$SWFDEC_TESTSUITE" != x ])
 
 if test x$cross_compiling = xno; then
   AC_ARG_ENABLE([http_testsuite],
-      AC_HELP_STRING([--enable-http-testsuite@<:@=URL@:>@],
-          [Enable http based testsuite (default url is http://www.gnashdev.org/testcases)]),
+      AS_HELP_STRING([--enable-http-testsuite@<:@=URL@:>@],[Enable http based testsuite (default url is http://www.gnashdev.org/testcases)]),
           [case "${enableval}" in
              no) HTTP_TESTSUITE="" ;;
             yes) HTTP_TESTSUITE="http://www.gnashdev.org/testcases" ;;
@@ -2374,8 +2348,7 @@ AM_CONDITIONAL(ENABLE_HTTP_TESTSUITE, [ test x"$HTTP_TESTSUITE" != x ])
 
 if test x$cross_compiling = xno; then
   AC_ARG_ENABLE([red5_testing],
-      AC_HELP_STRING([--enable-red5-testing@<:@=HOST@:>@],
-          [Enable red5 based testing (default host is www.gnashdev.org)]),
+      AS_HELP_STRING([--enable-red5-testing@<:@=HOST@:>@],[Enable red5 based testing (default host is www.gnashdev.org)]),
           [case "${enableval}" in
              no) RED5_HOST="" ;;
             yes) RED5_HOST="www.gnashdev.org" ;;
@@ -2390,8 +2363,7 @@ AM_CONDITIONAL(ENABLE_RED5_TESTING, [ test x"$RED5_TESTING" != x ])
 
 if test x$cross_compiling = xno; then
   AC_ARG_ENABLE([rtmpy_testing],
-      AC_HELP_STRING([--enable-rtmpy-testing@<:@=HOST@:>@],
-          [Enable rtmpy based testing (default host is www.gnashdev.org)]),
+      AS_HELP_STRING([--enable-rtmpy-testing@<:@=HOST@:>@],[Enable rtmpy based testing (default host is www.gnashdev.org)]),
           [case "${enableval}" in
              no) RTMPY_HOST="" ;;
             yes) RTMPY_HOST="www.gnashdev.org" ;;
@@ -2536,7 +2508,7 @@ AM_CONDITIONAL(BUILD_X11_DEVICE, [test x${build_x11_device} = xyes])
 
 if test x"${build_gtk}" = xyes; then
   AC_ARG_ENABLE(ghelp,
-    AC_HELP_STRING([--enable-ghelp], [Enable support for the GNOME help system]),
+    AS_HELP_STRING([--enable-ghelp],[Enable support for the GNOME help system]),
     [case "${enableval}" in
       yes) ghelp=yes ;;
       no)  ghelp=no ;;
@@ -2578,7 +2550,7 @@ AM_CONDITIONAL(HAVE_GLEXT, [test x$glext = xyes])
 dnl We don't have GTKGLExt, so default to SDL, and don't build the Firefox plugin
 if test x$glext = xno -a x$build_ogl = xyes; then
   if test x$gtk2 = xyes -a x$build_gtk = xyes; then
-    AC_ERROR([You have GTK installed, but not GtkGLExt. You need GtkGLExt to use the OpenGL renderer. Attempting to build SDL version])
+    AC_MSG_ERROR(You have GTK installed, but not GtkGLExt. You need GtkGLExt to use the OpenGL renderer. Attempting to build SDL version)
   fi
   gui=sdl
   npapi=no
@@ -2700,8 +2672,8 @@ dnl ****************************************
 
 dnl Enable visibility by default, disabled if extensions are enabled
 AC_ARG_ENABLE([visibility],
-  AC_HELP_STRING([--enable-visibility], [Use ELF visibility attributes])
-AC_HELP_STRING([--disable-visibility], [Disable ELF visibility]), [], [
+  AS_HELP_STRING([--enable-visibility],[Use ELF visibility attributes])
+AS_HELP_STRING([--disable-visibility],[Disable ELF visibility]), [], [
     if test x"$extensions_support" != x"no"; then
       enable_visibility=no
     else
@@ -2731,7 +2703,7 @@ if test x"$enable_visibility" != x"no"; then
 fi
 
 AC_ARG_ENABLE([pch],
-  AC_HELP_STRING([--enable-pch], [Enable precompiled header support]), [], [enable_pch=no])
+  AS_HELP_STRING([--enable-pch],[Enable precompiled header support]), [], [enable_pch=no])
 
 AM_CONDITIONAL([ENABLE_PCH], [test x"$enable_pch" != x"no"])
 
@@ -2743,7 +2715,7 @@ GNASH_PATH_PTHREADS
 GNASH_PATH_BOOST
 
 AC_ARG_ENABLE([strict],
-  AC_HELP_STRING([--enable-strict],[Accept only standards compliant code (GCC only)]),
+  AS_HELP_STRING([--enable-strict],[Accept only standards compliant code (GCC only)]),
   [case "${enableval}" in
     yes) strict=yes ;;
     no) strict=no ;;
@@ -2802,7 +2774,7 @@ if test x"$GCC" = x"yes"; then
 fi
 
 AC_ARG_ENABLE([cassert],
-  AC_HELP_STRING([--disable-cassert],[Disable assertion checking]),
+  AS_HELP_STRING([--disable-cassert],[Disable assertion checking]),
   [case "${enableval}" in
     yes) cassert=yes ;;
     no) cassert=no ;;
@@ -2832,8 +2804,7 @@ AC_DEFUN([CHECK_VISIBILITY_GCC_BUG],
         CXXFLAGS="-fPIC -fvisibility-inlines-hidden -O0"
         LDFLAGS="$LDFLAGS -shared -fPIC"
 
-        AC_TRY_LINK(
-        [          
+        AC_LINK_IFELSE([AC_LANG_PROGRAM([[          
           template<typename CharT>
           struct VisTest
           {
@@ -2849,8 +2820,7 @@ AC_DEFUN([CHECK_VISIBILITY_GCC_BUG],
             VisTest<char> a;
             return 0;
           }
-        ], [],
-        ac_cv_gcc_visibility_bug=no, ac_cv_gcc_visibility_bug=yes)
+        ]], [[]])],[ac_cv_gcc_visibility_bug=no],[ac_cv_gcc_visibility_bug=yes])
 
         CFLAGS=$save_CFLAGS
         CXXFLAGS=$save_CXXFLAGS
@@ -2888,7 +2858,7 @@ if test x"$ac_cv_gcc_visibility" = xyes -a x"$enable_visibility" != xno; then
 fi
 
 AC_ARG_ENABLE([harden],
-  AC_HELP_STRING([--disable-harden],[Disable hardening]),
+  AS_HELP_STRING([--disable-harden],[Disable hardening]),
   [case "${enableval}" in
     yes) harden=yes ;;
     no)  harden=no ;;
@@ -3022,7 +2992,7 @@ desktop/gnash-gtk-launcher:desktop/gnash-gtk-launcher.in
 desktop/gnash-qt-launcher:desktop/gnash-qt-launcher.in
 )
 
-AC_OUTPUT(Makefile
+AC_CONFIG_FILES([Makefile
 desktop/Makefile
 po/Makefile
 libmedia/Makefile
@@ -3090,7 +3060,8 @@ cygnal/testsuite/Makefile
 cygnal/testsuite/libamf.all/Makefile
 cygnal/testsuite/libnet.all/Makefile
 cygnal/testsuite/cygnal.all/Makefile
-)
+])
+AC_OUTPUT
 
 ###
 ########################## Final report begins... ############################

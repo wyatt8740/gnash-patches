@@ -23,8 +23,23 @@
 
 #include "VideoConverterFfmpeg.h"
 #include "GnashException.h"
+
+/*#define AVPICTURE_JUNK*/
 #include "ffmpegHeaders.h"
 #include "log.h"
+
+
+int avpicture_fill(AVPicture *picture, const uint8_t *ptr,
+                     enum AVPixelFormat pix_fmt, int width, int height)
+{
+  return av_image_fill_arrays(picture->data, picture->linesize,
+                              ptr, pix_fmt, width, height, 1);
+}
+
+int avpicture_get_size(enum AVPixelFormat pix_fmt, int width, int height)
+{
+  return av_image_get_buffer_size(pix_fmt, width, height, 1);
+}
 
 namespace gnash {
 namespace media {
@@ -123,6 +138,8 @@ VideoConverterFfmpeg::VideoConverterFfmpeg(ImgBuf::Type4CC srcFormat, ImgBuf::Ty
                               "requested format"));
      }
 }
+
+
 
 VideoConverterFfmpeg::~VideoConverterFfmpeg()
 {

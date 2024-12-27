@@ -18,7 +18,7 @@ dnl  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 AC_DEFUN([GNASH_PATH_GLEXT],
 [
-  AC_ARG_ENABLE(glext, AC_HELP_STRING([--disable-glext], [Disable support for GTK OpenGL extension]),
+  AC_ARG_ENABLE(glext, AS_HELP_STRING([--disable-glext], [Disable support for GTK OpenGL extension]),
   [case "${enableval}" in
     yes) glext=yes ;;
     no)  glext=no ;;
@@ -31,7 +31,7 @@ dnl fi
 
 if test x"$glext" = x"yes"; then
 dnl Look for the header
-AC_ARG_WITH(glext_incl, AC_HELP_STRING([--with-glext-incl], [directory where libglext header is]), with_glext_incl=${withval})
+AC_ARG_WITH(glext_incl, AS_HELP_STRING([--with-glext-incl], [directory where libglext header is]), with_glext_incl=${withval})
 AC_CACHE_VAL(ac_cv_path_glext_incl,[
 	if test x"${with_glext_incl}" != x ; then
 		if test -f ${with_glext_incl}/gtk/gtkgl.h ; then
@@ -96,7 +96,7 @@ AC_MSG_CHECKING([for gtk/gtkgl.h])
 AC_MSG_RESULT([${ac_cv_path_glext_incl}])
 
 dnl Look for the library
-AC_ARG_WITH(glext_lib, AC_HELP_STRING([--with-glext-lib], [directory where gtkglext library is]), with_glext_lib=${withval})
+AC_ARG_WITH(glext_lib, AS_HELP_STRING([--with-glext-lib], [directory where gtkglext library is]), with_glext_lib=${withval})
 AC_CACHE_VAL(ac_cv_path_glext_lib,[
 if test x"${with_glext_lib}" != x ; then
 	if test -f ${with_glext_lib}/libgtkglext-x11-${gnash_glext_version}.a -o -f ${with_glext_lib}/libgtkglext-x11-${gnash_glext_version}.${shlibext}; then

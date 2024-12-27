@@ -22,7 +22,7 @@ AC_DEFUN([GNASH_PATH_X11],
   has_x11=no
 
   dnl Look for the header
-  AC_ARG_WITH(x11_incl, AC_HELP_STRING([--with-x11-incl], [Directory where x11 header is]), with_x11_incl=${withval})
+  AC_ARG_WITH(x11_incl, AS_HELP_STRING([--with-x11-incl], [Directory where x11 header is]), with_x11_incl=${withval})
   AC_CACHE_VAL(ac_cv_path_x11_incl, [
     if test x"${with_x11_incl}" != x ; then
       if test -f ${with_x11_incl}/X11/X.h ; then
@@ -62,7 +62,7 @@ AC_DEFUN([GNASH_PATH_X11],
   fi
 
   dnl Look for the library
-  AC_ARG_WITH(x11_lib, AC_HELP_STRING([--with-x11-lib], [directory where x11 library is]), with_x11_lib=${withval})
+  AC_ARG_WITH(x11_lib, AS_HELP_STRING([--with-x11-lib], [directory where x11 library is]), with_x11_lib=${withval})
   AC_CACHE_VAL(ac_cv_path_x11_lib,[
     if test x"${with_x11_lib}" != x ; then
       if test -f ${with_x11_lib}/libX11.a -o -f ${with_x11_lib}/libX11.${shlibext}; then

@@ -36,7 +36,7 @@ AC_DEFUN([GNASH_PATH_GLES],
   fi
 
   dnl Look for the headers.
-  AC_ARG_WITH(gles1_includes, AC_HELP_STRING([--with-gles1-includes], [directory where OpenGLES 1 headers are]), with_gles1_includes=${withval})
+  AC_ARG_WITH(gles1_includes, AS_HELP_STRING([--with-gles1-includes], [directory where OpenGLES 1 headers are]), with_gles1_includes=${withval})
   AC_CACHE_VAL(ac_cv_path_gles1_includes,[
     if test x"${with_gles1_includes}" != x ; then
       if test -f ${with_gles1_includes}/GLES/egl.h -o -f ${with_gles1_includes}/GLES/gl.h; then
@@ -47,7 +47,7 @@ AC_DEFUN([GNASH_PATH_GLES],
     fi
   ])
 
-  AC_ARG_WITH(gles2_includes, AC_HELP_STRING([--with-gles2-includes], [directory where OpenGLES 2 headers are]), with_gles2_includes=${withval})
+  AC_ARG_WITH(gles2_includes, AS_HELP_STRING([--with-gles2-includes], [directory where OpenGLES 2 headers are]), with_gles2_includes=${withval})
   AC_CACHE_VAL(ac_cv_path_gles2_includes,[
     if test x"${with_gles2_includes}" != x ; then
       if test -f ${with_gles2_includes}/GLES2/gl2.h ; then
@@ -193,7 +193,7 @@ AC_DEFUN([GNASH_PATH_GLES],
   fi
 
   dnl Look for the libraries.
-  AC_ARG_WITH(gles1_lib, AC_HELP_STRING([--with-gles1-lib], [directory where OpenGLES 1 libraries are]), with_gles1_lib=${withval})
+  AC_ARG_WITH(gles1_lib, AS_HELP_STRING([--with-gles1-lib], [directory where OpenGLES 1 libraries are]), with_gles1_lib=${withval})
   AC_CACHE_VAL(ac_cv_path_gles1_lib,[
     if test x"${with_gles1_lib}" != x ; then
       for j in $gleslist1; do
@@ -204,7 +204,7 @@ AC_DEFUN([GNASH_PATH_GLES],
       done
     fi
   ])
-  AC_ARG_WITH(gles2_lib, AC_HELP_STRING([--with-gles2-lib], [directory where OpenGLES 2 libraries are]), with_gles2_lib=${withval})
+  AC_ARG_WITH(gles2_lib, AS_HELP_STRING([--with-gles2-lib], [directory where OpenGLES 2 libraries are]), with_gles2_lib=${withval})
   AC_CACHE_VAL(ac_cv_path_gles2_lib,[
     if test x"${with_gles2_lib}" != x ; then
       for j in $gleslist2; do

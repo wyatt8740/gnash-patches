@@ -20,7 +20,7 @@ AC_DEFUN([GNASH_PATH_PANGO],
 [
 
   dnl Look for the header
-  AC_ARG_WITH(pango_incl, AC_HELP_STRING([--with-pango-incl], [directory where libpango header is]), with_pango_incl=${withval})
+  AC_ARG_WITH(pango_incl, AS_HELP_STRING([--with-pango-incl], [directory where libpango header is]), with_pango_incl=${withval})
   AC_CACHE_VAL(ac_cv_path_pango_incl,[
     if test x"${with_pango_incl}" != x ; then
       if test -f ${with_pango_incl}/pango/pango.h ; then
@@ -83,7 +83,7 @@ AC_DEFUN([GNASH_PATH_PANGO],
   AC_MSG_RESULT(${ac_cv_path_pango_incl}) 
 
   dnl Look for the library
-  AC_ARG_WITH(pango_lib, AC_HELP_STRING([--with-pango-lib], [directory where pango library is]), with_pango_lib=${withval})
+  AC_ARG_WITH(pango_lib, AS_HELP_STRING([--with-pango-lib], [directory where pango library is]), with_pango_lib=${withval})
   AC_CACHE_VAL(ac_cv_path_pango_lib,[
     if test x"${with_pango_lib}" != x ; then
       if test -f ${with_pango_lib}/libpangox-${gnash_pango_version}.a -o -f ${with_pango_lib}/libpangox-${gnash_pango_version}.${shlibext} -o -f ${with_pango_lib}/libpangox-${gnash_pango_version}.${shlibext}.a; then
