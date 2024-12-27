@@ -257,7 +257,7 @@ if test x"${cross_compiling}" = xyes; then
     if test -d ${with_top_level}/include; then
       with_top_level=${withval}
     else
-      AC_MSG_ERROR([Specified sysroot \"${with_top_level}/include\" doesn't exist!])
+      AC_MSG_ERROR([Specified sysroot "${with_top_level}/include" doesn't exist!])
     fi
   fi
 fi
