@@ -44,7 +44,7 @@ AC_DEFUN([GNASH_PATH_FFMPEG],
       ffmpeg_top_incl=`dirname ${with_ffmpeg_incl}`
       if test -f ${with_ffmpeg_incl}/avcodec.h; then
         ac_cv_path_ffmpeg_incl="-I`(cd ${ffmpeg_top_incl}; pwd)`"
-        if test -f ${with_ffmpeg_incl}/version.h && $EGREP LIBAVCODEC_VERSION ${with_ffmpeg_incl}/version.h 2>&1 >/dev/null; then
+        if test -f ${with_ffmpeg_incl}/version.h && $EGREP_TRADITIONAL LIBAVCODEC_VERSION ${with_ffmpeg_incl}/version.h 2>&1 >/dev/null; then
           avcodec_h=${with_ffmpeg_incl}/version.h
         else
           avcodec_h=${with_ffmpeg_incl}/avcodec.h
@@ -78,7 +78,7 @@ AC_DEFUN([GNASH_PATH_FFMPEG],
         for i in "" ffmpeg libavcodec ffmpeg/libavcodec; do
           if test -f ${ffmpeg_top_incl}/${i}/avcodec.h; then
             ac_cv_path_ffmpeg_incl="-I`(cd ${ffmpeg_top_incl}; pwd)`"
-            if test -f ${ffmpeg_top_incl}/${i}/version.h && $EGREP LIBAVCODEC_VERSION ${ffmpeg_top_incl}/${i}/version.h  2>&1 >/dev/null; then
+            if test -f ${ffmpeg_top_incl}/${i}/version.h && $EGREP_TRADITIONAL LIBAVCODEC_VERSION ${ffmpeg_top_incl}/${i}/version.h  2>&1 >/dev/null; then
               avcodec_h="${ffmpeg_top_incl}/${i}/version.h"
             else
               avcodec_h="${ffmpeg_top_incl}/${i}/avcodec.h"
@@ -107,7 +107,7 @@ AC_DEFUN([GNASH_PATH_FFMPEG],
       for i in ffmpeg libavcodec ffmpeg/libavcodec; do
         if test -f ${ffmpeg_top_incl}/${i}/avcodec.h; then
           ac_cv_path_ffmpeg_incl="-I`(cd ${ffmpeg_top_incl}/${i}; pwd)`"
-          if test -f ${ffmpeg_top_incl}/${i}/version.h && $EGREP LIBAVCODEC_VERSION ${ffmpeg_top_incl}/${i}/version.h  2>&1 >/dev/null; then
+          if test -f ${ffmpeg_top_incl}/${i}/version.h && $EGREP_TRADITIONAL LIBAVCODEC_VERSION ${ffmpeg_top_incl}/${i}/version.h  2>&1 >/dev/null; then
             avcodec_h=${ffmpeg_top_incl}/${i}/version.h
           else
             avcodec_h=${ffmpeg_top_incl}/${i}/avcodec.h
@@ -237,9 +237,9 @@ AC_DEFUN([GNASH_PATH_FFMPEG],
   
       AC_MSG_CHECKING([ffmpeg version])
 
-      ffmpeg_major_version=`$EGREP "define LIBAVCODEC_VERSION_MAJOR " ${versionmajorfile} 2>&1 | sed -e "s%[[^0-9]]%%g"`
-      ffmpeg_minor_version=`$EGREP "define LIBAVCODEC_VERSION_MINOR " ${versionfile} 2>&1 | sed -e "s%[[^0-9]]%%g"`
-      ffmpeg_micro_version=`$EGREP "define LIBAVCODEC_VERSION_MICRO " ${versionfile} 2>&1 | sed -e "s%[[^0-9]]%%g"`
+      ffmpeg_major_version=`$EGREP_TRADITIONAL "define LIBAVCODEC_VERSION_MAJOR " ${versionmajorfile} 2>&1 | sed -e "s%[[^0-9]]%%g"`
+      ffmpeg_minor_version=`$EGREP_TRADITIONAL "define LIBAVCODEC_VERSION_MINOR " ${versionfile} 2>&1 | sed -e "s%[[^0-9]]%%g"`
+      ffmpeg_micro_version=`$EGREP_TRADITIONAL "define LIBAVCODEC_VERSION_MICRO " ${versionfile} 2>&1 | sed -e "s%[[^0-9]]%%g"`
 
       if test x"${ffmpeg_major_version}" != x ; then
 
@@ -248,15 +248,15 @@ AC_DEFUN([GNASH_PATH_FFMPEG],
       else
 
         dnl #define LIBAVCODEC_VERSION_TRIPLET 51,50,1
-        ffmpeg_version=`$EGREP "define LIBAVCODEC_VERSION_TRIPLET " ${versionfile}  2>&1 | awk '{print $'3'}' | sed -e "s%,%.%g"`
+        ffmpeg_version=`$EGREP_TRADITIONAL "define LIBAVCODEC_VERSION_TRIPLET " ${versionfile}  2>&1 | awk '{print $'3'}' | sed -e "s%,%.%g"`
 
         if test x"${ffmpeg_version}" = x ; then
 
           dnl NOTE: the [0-9]*d. pattern discards deb-heads rubbish prefix
-          ffmpeg_version=`$EGREP "define LIBAVCODEC_VERSION " ${versionfile} | awk '{print $'3'}' 2>&1 | sed -e "s%^[[0-9]]d\.%%"` 
+          ffmpeg_version=`$EGREP_TRADITIONAL "define LIBAVCODEC_VERSION " ${versionfile} | awk '{print $'3'}' 2>&1 | sed -e "s%^[[0-9]]d\.%%"` 
 
           if test x"${ffmpeg_version}" = x ; then
-            ffmpeg_version=`$EGREP "define LIBAVCODEC_BUILD " ${versionfile} 2>&1  | awk '{print $'3'}'`
+            ffmpeg_version=`$EGREP_TRADITIONAL "define LIBAVCODEC_BUILD " ${versionfile} 2>&1  | awk '{print $'3'}'`
           fi
         fi
 
