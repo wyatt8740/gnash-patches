@@ -23,6 +23,7 @@ AC_DEFUN([GNASH_PATH_FFMPEG],
   backupCFLAGS="$CFLAGS"
   avcodec_h=""
   avcodec_version_h=""
+  avcodec_version_major_h=""
   ffmpeg_top_incl=""
 
   dnl If the user specify an path to include headers from, we assume it's the full
@@ -83,6 +84,11 @@ AC_DEFUN([GNASH_PATH_FFMPEG],
               avcodec_h="${ffmpeg_top_incl}/${i}/avcodec.h"
             fi
             if test -f ${ffmpeg_top_incl}/${i}/version.h; then
+              if test -f ${ffmpeg_top_incl}/${i}/version_major.h; then
+                avcodec_version_major_h=${ffmpeg_top_incl}/${i}/version_major.h
+              else
+                avcodec_version_major_h=${ffmpeg_top_incl}/${i}/version.h
+              fi
               avcodec_version_h=${ffmpeg_top_incl}/${i}/version.h
             fi
             break
@@ -107,6 +113,11 @@ AC_DEFUN([GNASH_PATH_FFMPEG],
             avcodec_h=${ffmpeg_top_incl}/${i}/avcodec.h
           fi
           if test -f ${ffmpeg_top_incl}/${i}/version.h; then
+            if test -f ${ffmpeg_top_incl}/${i}/version_major.h; then
+              avcodec_version_major_h=${ffmpeg_top_incl}/${i}/version_major.h
+            else
+              avcodec_version_major_h=${ffmpeg_top_incl}/${i}/version.h
+            fi
             avcodec_version_h=${ffmpeg_top_incl}/${i}/version.h
           fi
           break
@@ -212,64 +223,68 @@ AC_DEFUN([GNASH_PATH_FFMPEG],
 
   dnl Check avcodec version number, if it was found
   if test x"${avcodec_version_h}" != x; then
-    versionfile=${avcodec_version_h}
-  else
-    if test x"${avcodec_h}" != x; then
-      versionfile=${avcodec_h}
-    fi
-  fi
-
-  if test x"${versionfile}" != x; then
-
-    AC_MSG_CHECKING([ffmpeg version])
-
-    ffmpeg_major_version=`$EGREP "define LIBAVCODEC_VERSION_MAJOR " ${versionfile} 2>&1 | sed -e "s%[[^0-9]]%%g"`
-    ffmpeg_minor_version=`$EGREP "define LIBAVCODEC_VERSION_MINOR " ${versionfile} 2>&1 | sed -e "s%[[^0-9]]%%g"`
-    ffmpeg_micro_version=`$EGREP "define LIBAVCODEC_VERSION_MICRO " ${versionfile} 2>&1 | sed -e "s%[[^0-9]]%%g"`
-
-    if test x"${ffmpeg_major_version}" != x ; then
-
-      ffmpeg_version="${ffmpeg_major_version}.${ffmpeg_minor_version}.${ffmpeg_micro_version}"
-
+    if test x"${avcodec_version_major_h}" != x; then
+      versionfile=${avcodec_version_h}
+      versionmajorfile=${avcodec_version_major_h}
     else
+      if test x"${avcodec_h}" != x; then
+        versionfile=${avcodec_h}
+        versionmajorfile=${avcodec_h}
+      fi
+    fi
+  
+    if test x"${versionfile}" != x; then
+  
+      AC_MSG_CHECKING([ffmpeg version])
 
-      dnl #define LIBAVCODEC_VERSION_TRIPLET 51,50,1
-      ffmpeg_version=`$EGREP "define LIBAVCODEC_VERSION_TRIPLET " ${versionfile}  2>&1 | awk '{print $'3'}' | sed -e "s%,%.%g"`
+      ffmpeg_major_version=`$EGREP "define LIBAVCODEC_VERSION_MAJOR " ${versionmajorfile} 2>&1 | sed -e "s%[[^0-9]]%%g"`
+      ffmpeg_minor_version=`$EGREP "define LIBAVCODEC_VERSION_MINOR " ${versionfile} 2>&1 | sed -e "s%[[^0-9]]%%g"`
+      ffmpeg_micro_version=`$EGREP "define LIBAVCODEC_VERSION_MICRO " ${versionfile} 2>&1 | sed -e "s%[[^0-9]]%%g"`
 
-      if test x"${ffmpeg_version}" = x ; then
+      if test x"${ffmpeg_major_version}" != x ; then
 
-        dnl NOTE: the [0-9]*d. pattern discards deb-heads rubbish prefix
-        ffmpeg_version=`$EGREP "define LIBAVCODEC_VERSION " ${versionfile} | awk '{print $'3'}' 2>&1 | sed -e "s%^[[0-9]]d\.%%"` 
+        ffmpeg_version="${ffmpeg_major_version}.${ffmpeg_minor_version}.${ffmpeg_micro_version}"
+
+      else
+
+        dnl #define LIBAVCODEC_VERSION_TRIPLET 51,50,1
+        ffmpeg_version=`$EGREP "define LIBAVCODEC_VERSION_TRIPLET " ${versionfile}  2>&1 | awk '{print $'3'}' | sed -e "s%,%.%g"`
 
         if test x"${ffmpeg_version}" = x ; then
-          ffmpeg_version=`$EGREP "define LIBAVCODEC_BUILD " ${versionfile} 2>&1  | awk '{print $'3'}'`
+
+          dnl NOTE: the [0-9]*d. pattern discards deb-heads rubbish prefix
+          ffmpeg_version=`$EGREP "define LIBAVCODEC_VERSION " ${versionfile} | awk '{print $'3'}' 2>&1 | sed -e "s%^[[0-9]]d\.%%"` 
+
+          if test x"${ffmpeg_version}" = x ; then
+            ffmpeg_version=`$EGREP "define LIBAVCODEC_BUILD " ${versionfile} 2>&1  | awk '{print $'3'}'`
+          fi
         fi
+
+        if test x"${ffmpeg_version}" != x ; then
+          ffmpeg_major_version=`echo ${ffmpeg_version} | cut -d. -f1`
+          ffmpeg_minor_version=`echo ${ffmpeg_version} | cut -d. -f2`
+          ffmpeg_micro_version=`echo ${ffmpeg_version} | cut -d. -f3`
+        fi
+
       fi
 
-      if test x"${ffmpeg_version}" != x ; then
-        ffmpeg_major_version=`echo ${ffmpeg_version} | cut -d. -f1`
-        ffmpeg_minor_version=`echo ${ffmpeg_version} | cut -d. -f2`
-        ffmpeg_micro_version=`echo ${ffmpeg_version} | cut -d. -f3`
-      fi
+      ffmpeg_num_version=`printf %02d%02d%02d $ffmpeg_major_version $ffmpeg_minor_version $ffmpeg_micro_version`
 
-    fi
-
-    ffmpeg_num_version=`printf %02d%02d%02d $ffmpeg_major_version $ffmpeg_minor_version $ffmpeg_micro_version`
-
-    AC_MSG_RESULT($ffmpeg_version ($ffmpeg_num_version))
+      AC_MSG_RESULT($ffmpeg_version ($ffmpeg_num_version))
 
 
 dnl  minimum supported libavcodec version = Debian stable one = currently Wheezy 7.0 53.35.00
 
-    if test -z "$ffmpeg_num_version" -o "$ffmpeg_num_version" -lt 533500; then
-      AC_MSG_WARN([Wrong ffmpeg/libavcodec version! 53.35.0 or greater required, $ffmpeg_version detected.])
-    else
-      ffmpeg_version_check=ok
-    fi
+      if test -z "$ffmpeg_num_version" -o "$ffmpeg_num_version" -lt 533500; then
+        AC_MSG_WARN([Wrong ffmpeg/libavcodec version! 53.35.0 or greater required, $ffmpeg_version detected.])
+      else
+        ffmpeg_version_check=ok
+      fi
 
-  else
-    AC_MSG_WARN([Could not check ffmpeg version (can't find avcodec.h file)])
-    # ffmpeg_version_check=ok # this is NOT ok, why would it be ?! 
+    else
+      AC_MSG_WARN([Could not check ffmpeg version (can't find avcodec.h file)])
+      # ffmpeg_version_check=ok # this is NOT ok, why would it be ?! 
+    fi
   fi
 
 dnl Check if installed ffmpeg/libav already switched aac decoding from S16 to
